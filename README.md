@@ -21,10 +21,14 @@ A Flutter plugin that provides a unified and easy-to-use API for Google Mobile A
 
 ---
 
-## 🚀 Installation
+[//]: # (## 🚀 Installation)
 
-Add this to your `pubspec.yaml`:
+[//]: # ()
+[//]: # (Add this to your `pubspec.yaml`:)
 
-```yaml
-dependencies:
-  flutter_monetization_kit: ^0.0.1
+[//]: # ()
+[//]: # (```yaml)
+
+[//]: # (dependencies:)
+
+[//]: # (  flutter_monetization_kit: ^0.0.1)

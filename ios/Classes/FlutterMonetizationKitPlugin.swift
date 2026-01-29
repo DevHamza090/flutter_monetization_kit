@@ -12,6 +12,10 @@ public class FlutterMonetizationKitPlugin: NSObject, FlutterPlugin {
     switch call.method {
     case "getPlatformVersion":
       result("iOS " + UIDevice.current.systemVersion)
+    case "requestTrackingAuthorization":
+        ATTManager.requestAuthorization { status in
+            result(status)
+        }
     default:
       result(FlutterMethodNotImplemented)
     }
