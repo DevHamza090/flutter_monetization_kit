@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
-import 'package:flutter_monetization_kit/app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:flutter_monetization_kit/flutter_monetization_kit.dart';
 
 void main() {

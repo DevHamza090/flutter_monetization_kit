@@ -1,3 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.flutter.monetization.kit.flutter_monetization_kit">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+
 </manifest>

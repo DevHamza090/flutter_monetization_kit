@@ -8,10 +8,13 @@ environment:
   flutter: '>=3.3.0'
 
 dependencies:
+  connectivity_plus: ^7.0.0
   flutter:
     sdk: flutter
-  google_mobile_ads: ^7.0.0
   plugin_platform_interface: ^2.0.2
+  google_mobile_ads: ^7.0.0
+  shared_preferences: ^2.5.4
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:
