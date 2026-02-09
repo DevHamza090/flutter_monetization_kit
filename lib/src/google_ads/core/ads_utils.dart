@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-
 import 'ads_constants.dart';
 import 'ads_registry.dart';
 import 'ads_settings.dart';
+import 'enums/ad_type.dart';
+import 'enums/ad_validation_reason.dart';
 import 'enums/banner_type.dart';
 import 'network_info.dart';
 
@@ -11,20 +13,20 @@ class AdUtils {
   AdUtils._();
 
   /// The ultimate check: Should we attempt to load or show an ad?
-  /// This combines Premium status and Network status.
-  static Future<bool> canProcessAd() async {
+  /// This returns null if we CAN process the ad, or a reason why we CAN'T.
+  static Future<AdValidationReason?> validateAdProcess() async {
     // 1. If user is premium, never process ads
     if (AdsSettings.instance.isPremium) {
-      return false;
+      return AdValidationReason.userIsPremium;
     }
 
     // 2. Check internet connection
     final bool hasInternet = await NetworkInfo().isConnected;
     if (!hasInternet) {
-      return false;
+      return AdValidationReason.noInternet;
     }
 
-    return true;
+    return null;
   }
 
   /// Checks if a specific Ad Unit is ready to be shown
@@ -123,15 +125,20 @@ class AdUtils {
 extension BannerTypeExtension on BannerType {
   /// Converts the package BannerType into Google AdMob's AdSize
 
-  AdSize getAdSize() {
+  Future<AdSize> getAdSize({double? width, Orientation? orientation}) async {
     return switch (this) {
       StandardBanner() => AdSize.banner,
       LargeBanner() => AdSize.largeBanner,
       RectangleBanner() => AdSize.mediumRectangle,
-      AdaptiveBanner() => AdSize.fluid, // Or use anchoredAdaptive
-      CustomHeightBanner(height: var h) => AdSize(width: -1, height: h),
-      CustomSizeBanner(width: var w, height: var h) => AdSize(width: w, height: h),
-      CollapsibleBanner() => AdSize.banner, // Size is standard, but request changes
+      AdaptiveBanner() || CollapsibleBanner() => width != null
+          ? await AdSize.getAnchoredAdaptiveBannerAdSize(
+                  orientation ?? Orientation.portrait, width.truncate()) ??
+              AdSize.banner
+          : AdSize.banner,
+      CustomHeightBanner(height: var h) =>
+        AdSize(width: width?.truncate() ?? -1, height: h),
+      CustomSizeBanner(width: var w, height: var h) =>
+        AdSize(width: w, height: h),
     };
   }
 

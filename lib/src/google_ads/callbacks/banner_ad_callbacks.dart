@@ -20,6 +20,16 @@ class BannerAdCallbacks {
   /// Triggered when the user returns to the app
   final Function(Ad ad)? onAdClosed;
 
+  /// Triggered when the ad is about to dismiss the overlay
+  final Function(Ad ad)? onAdWillDismissScreen;
+
+  /// Triggered when an impression is recorded for the ad
+  final Function(Ad ad)? onAdImpression;
+
+  /// Triggered when the ad records a paid event
+  final void Function(Ad ad, double valueMicros, PrecisionType precision,
+      String currencyCode)? onPaidEvent;
+
   const BannerAdCallbacks({
     this.onAdValidated,
     this.onAdLoaded,
@@ -27,5 +37,8 @@ class BannerAdCallbacks {
     this.onAdClicked,
     this.onAdOpened,
     this.onAdClosed,
+    this.onAdWillDismissScreen,
+    this.onAdImpression,
+    this.onPaidEvent,
   });
 }

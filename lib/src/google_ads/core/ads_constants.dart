@@ -1,13 +1,5 @@
-enum AdType {
-  banner,
-  adaptiveBanner,
-  interstitial,
-  rewarded,
-  rewardedInterstitial,
-  native,
-  nativeVideo,
-  appOpen
-}
+import 'dart:io';
+
 
 class AdConstants {
   // Private constructor to prevent instantiation

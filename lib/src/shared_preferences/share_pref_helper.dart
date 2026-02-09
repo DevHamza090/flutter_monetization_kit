@@ -90,7 +90,7 @@ class SharedPrefHelper {
 
   /// Check if it's user premium
   bool isPremium() {
-    return _prefs?.getBool('is_premium') ?? true;
+    return _prefs?.getBool('is_premium') ?? false;
   }
 
   /// set user premium
