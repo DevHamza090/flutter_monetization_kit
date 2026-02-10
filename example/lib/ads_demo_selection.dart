@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_monetization_kit_example/rewarded_inters.dart';
+import 'package:flutter_monetization_kit_example/rewardeds.dart';
 
 import 'banners.dart';
 import 'interstitials.dart';
@@ -52,24 +54,20 @@ class AdsDemoSelection extends StatelessWidget {
             title: 'Rewarded Ads',
             icon: Icons.video_library,
             color: Colors.red,
-            onTap: () {
-              // TODO: Implement Rewarded Demo
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Rewarded Demo coming soon')),
-              );
-            },
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const RewardedsScreen()),
+            ),
           ),
           _buildAdButton(
             context,
             title: 'Rewarded Interstitial',
             icon: Icons.video_stable,
             color: Colors.purple,
-            onTap: () {
-              // TODO: Implement Rewarded Interstitial Demo
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Rewarded Interstitial Demo coming soon')),
-              );
-            },
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const RewardedIntersScreen()),
+            ),
           ),
           _buildAdButton(
             context,

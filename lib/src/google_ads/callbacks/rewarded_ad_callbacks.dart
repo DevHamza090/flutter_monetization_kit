@@ -1,19 +1,20 @@
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../core/enums/ad_validation_reason.dart';
 
-class RewardedInterAdCallbacks {
+class RewardedAdCallbacks {
   /// Triggered when the package blocks an ad request (Internet, Premium, etc.)
   final Function(AdValidationReason reason)? onAdValidated;
-  final Function(RewardedInterstitialAd ad)? onAdLoaded;
+  final Function(RewardedAd ad)? onAdLoaded;
   final Function(LoadAdError error)? onAdFailedToLoad;
 
   // Show Listeners
-  final Function(RewardedInterstitialAd ad, RewardItem reward)? onUserEarnedReward;
-  final Function(RewardedInterstitialAd ad)? onAdShowedFullScreenContent;
-  final Function(RewardedInterstitialAd ad)? onAdDismissedFullScreenContent;
-  final Function(RewardedInterstitialAd ad, AdError error)? onAdFailedToShowFullScreenContent;
+  final Function(RewardedAd ad, RewardItem reward)? onUserEarnedReward;
+  final Function(RewardedAd ad)? onAdShowedFullScreenContent;
+  final Function(RewardedAd ad)? onAdDismissedFullScreenContent;
+  final Function(RewardedAd ad, AdError error)? onAdFailedToShowFullScreenContent;
+  final Function(RewardedAd ad)? onAdClicked;
 
-  const RewardedInterAdCallbacks({
+  const RewardedAdCallbacks({
     this.onAdValidated,
     this.onAdLoaded,
     this.onAdFailedToLoad,
@@ -21,5 +22,6 @@ class RewardedInterAdCallbacks {
     this.onAdShowedFullScreenContent,
     this.onAdDismissedFullScreenContent,
     this.onAdFailedToShowFullScreenContent,
+    this.onAdClicked,
   });
 }

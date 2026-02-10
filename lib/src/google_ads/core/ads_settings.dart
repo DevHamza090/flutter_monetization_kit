@@ -80,4 +80,12 @@ class AdsSettings {
 
     return null;
   }
+
+  /// Check if a rewarded ad can be shown based on premium status
+  /// and toggle. (Rewarded ads do not have interval or max count limits)
+  AdValidationReason? validateRewardedShow() {
+    if (isPremium) return AdValidationReason.userIsPremium;
+    if (!enableRewardedAds) return AdValidationReason.adDisabled;
+    return null;
+  }
 }

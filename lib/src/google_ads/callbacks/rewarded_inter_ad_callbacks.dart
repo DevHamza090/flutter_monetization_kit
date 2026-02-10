@@ -12,6 +12,8 @@ class RewardedInterAdCallbacks {
   final Function(RewardedInterstitialAd ad)? onAdShowedFullScreenContent;
   final Function(RewardedInterstitialAd ad)? onAdDismissedFullScreenContent;
   final Function(RewardedInterstitialAd ad, AdError error)? onAdFailedToShowFullScreenContent;
+  final Function(RewardedInterstitialAd ad)? onAdClicked;
+
 
   const RewardedInterAdCallbacks({
     this.onAdValidated,
@@ -21,5 +23,6 @@ class RewardedInterAdCallbacks {
     this.onAdShowedFullScreenContent,
     this.onAdDismissedFullScreenContent,
     this.onAdFailedToShowFullScreenContent,
+    this.onAdClicked,
   });
 }

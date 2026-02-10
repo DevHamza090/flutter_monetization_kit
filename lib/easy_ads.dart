@@ -6,12 +6,17 @@ export 'src/google_ads/widgets/banner_widget.dart';
 export 'src/google_ads/core/enums/banner_type.dart';
 export 'src/google_ads/core/enums/ad_type.dart';
 export 'src/google_ads/core/enums/ad_validation_reason.dart';
+export 'src/google_ads/core/enums/native_type.dart';
 export 'src/google_ads/core/ads_utils.dart';
 export 'src/google_ads/core/ads_settings.dart';
 export 'src/google_ads/callbacks/banner_ad_callbacks.dart';
 export 'src/google_ads/callbacks/interstitial_ad_callbacks.dart';
+export 'src/google_ads/callbacks/rewarded_ad_callbacks.dart';
+export 'src/google_ads/callbacks/rewarded_inter_ad_callbacks.dart';
 export 'src/google_ads/managers/banner_ad_manager.dart';
 export 'src/google_ads/managers/interstitial_ad_manager.dart';
+export 'src/google_ads/managers/rewarded_ad_manager.dart';
+export 'src/google_ads/managers/rewarded_inter_ad_manager.dart';
 
 class EasyAds {
   EasyAds._();
