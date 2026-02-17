@@ -88,4 +88,12 @@ class AdsSettings {
     if (!enableRewardedAds) return AdValidationReason.adDisabled;
     return null;
   }
+
+  /// Check if an app open ad can be shown based on premium status
+  /// and toggle.
+  AdValidationReason? validateAppOpenShow() {
+    if (isPremium) return AdValidationReason.userIsPremium;
+    if (!enableAppOpen) return AdValidationReason.adDisabled;
+    return null;
+  }
 }
