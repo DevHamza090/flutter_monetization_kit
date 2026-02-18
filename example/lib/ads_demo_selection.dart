@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_monetization_kit_example/app_opens.dart';
 import 'package:flutter_monetization_kit_example/rewarded_inters.dart';
 import 'package:flutter_monetization_kit_example/rewardeds.dart';
+import 'package:flutter_monetization_kit_example/natives.dart';
 
 import 'banners.dart';
 import 'interstitials.dart';
@@ -43,12 +44,10 @@ class AdsDemoSelection extends StatelessWidget {
             title: 'Native Ads',
             icon: Icons.article,
             color: Colors.green,
-            onTap: () {
-              // TODO: Implement Native Demo
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Native Demo coming soon')),
-              );
-            },
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const NativesScreen()),
+            ),
           ),
           _buildAdButton(
             context,

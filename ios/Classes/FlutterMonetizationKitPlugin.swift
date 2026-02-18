@@ -6,6 +6,12 @@ public class FlutterMonetizationKitPlugin: NSObject, FlutterPlugin {
     let channel = FlutterMethodChannel(name: "flutter_monetization_kit", binaryMessenger: registrar.messenger())
     let instance = FlutterMonetizationKitPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
+    
+    FLTGoogleMobileAdsPlugin.registerNativeAdFactory(
+        registrar,
+        factoryId: "native_ad_factory",
+        nativeAdFactory: GoogleNativeAdFactory()
+    )
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {

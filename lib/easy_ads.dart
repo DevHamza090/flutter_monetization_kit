@@ -19,6 +19,10 @@ export 'src/google_ads/managers/rewarded_ad_manager.dart';
 export 'src/google_ads/managers/rewarded_inter_ad_manager.dart';
 export 'src/google_ads/managers/app_open_manager.dart';
 export 'src/google_ads/callbacks/app_open_callbacks.dart';
+export 'src/google_ads/widgets/native_widget.dart';
+export 'src/google_ads/managers/native_ad_manager.dart';
+export 'src/google_ads/core/native_ad_style.dart';
+export 'src/google_ads/callbacks/native_ad_callbacks.dart';
 
 class EasyAds {
   EasyAds._();

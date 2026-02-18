@@ -1,6 +1,7 @@
 package com.flutter.monetization.kit.flutter_monetization_kit
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import com.flutter.monetization.kit.flutter_monetization_kit.google_ads.GoogleNativeAdFactory
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
