@@ -8,11 +8,11 @@ import com.flutter.monetization.kit.flutter_monetization_kit.google_ads.GoogleNa
 class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-
+        
         GoogleMobileAdsPlugin.registerNativeAdFactory(
             flutterEngine,
-            "native_ad_factory",
-            GoogleNativeAdFactory(context)
+            "MonetizationNativeFactory",
+            GoogleNativeAdFactory(this)
         )
     }
 }

@@ -6,22 +6,22 @@ class NativeAdCallbacks {
   final Function(AdValidationReason reason)? onAdValidated;
 
   /// Triggered when the native ad assets (image, text) are ready
-  final Function(Ad ad)? onAdLoaded;
+  final Function(String adUnitId)? onAdLoaded;
 
   /// Triggered if the native ad fails to load
-  final Function(Ad ad, LoadAdError error)? onAdFailedToLoad;
+  final Function(String adUnitId, LoadAdError error)? onAdFailedToLoad;
 
   /// Triggered when the user taps any part of the native ad
-  final Function(Ad ad)? onAdClicked;
+  final Function(String adUnitId)? onAdClicked;
 
   /// Triggered when the ad opens a full-screen overlay
-  final Function(Ad ad)? onAdOpened;
+  final Function(String adUnitId)? onAdOpened;
 
   /// Triggered when the user closes the ad overlay
-  final Function(Ad ad)? onAdClosed;
+  final Function(String adUnitId)? onAdClosed;
 
   /// Triggered when the ad is actually visible on the screen
-  final Function(Ad ad)? onAdImpression;
+  final Function(String adUnitId)? onAdImpression;
 
   const NativeAdCallbacks({
     this.onAdValidated,

@@ -1,6 +1,7 @@
 enum AdValidationReason {
   noInternet,
   userIsPremium,
+  platformNotSupported,
   adDisabled,
   adAlreadyLoading,
   adAlreadyReady,

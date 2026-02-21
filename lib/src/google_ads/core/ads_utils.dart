@@ -1,6 +1,8 @@
 import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+
 import 'ads_constants.dart';
 import 'ads_registry.dart';
 import 'ads_settings.dart';
@@ -24,6 +26,10 @@ class AdUtils {
     final bool hasInternet = await NetworkInfo().isConnected;
     if (!hasInternet) {
       return AdValidationReason.noInternet;
+    }
+    // 3. Check platform is support
+    if (!isSupportedPlatform()) {
+      return AdValidationReason.platformNotSupported;
     }
 
     return null;
@@ -130,15 +136,16 @@ extension BannerTypeExtension on BannerType {
       StandardBanner() => AdSize.banner,
       LargeBanner() => AdSize.largeBanner,
       RectangleBanner() => AdSize.mediumRectangle,
-      AdaptiveBanner() || CollapsibleBanner() => width != null
-          ? await AdSize.getAnchoredAdaptiveBannerAdSize(
-                  orientation ?? Orientation.portrait, width.truncate()) ??
-              AdSize.banner
-          : AdSize.banner,
-      CustomHeightBanner(height: var h) =>
-        AdSize(width: width?.truncate() ?? -1, height: h),
-      CustomSizeBanner(width: var w, height: var h) =>
-        AdSize(width: w, height: h),
+      AdaptiveBanner() || CollapsibleBanner() =>
+        width != null
+            ? await AdSize.getAnchoredAdaptiveBannerAdSize(
+                    orientation ?? Orientation.portrait,
+                    width.truncate(),
+                  ) ??
+                  AdSize.banner
+            : AdSize.banner,
+      CustomHeightBanner(height: var h) => AdSize(width: width?.truncate() ?? -1, height: h),
+      CustomSizeBanner(width: var w, height: var h) => AdSize(width: w, height: h),
     };
   }
 

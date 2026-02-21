@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_monetization_kit/easy_ads.dart';
 import 'package:flutter_monetization_kit_example/app_opens.dart';
 import 'package:flutter_monetization_kit_example/rewarded_inters.dart';
 import 'package:flutter_monetization_kit_example/rewardeds.dart';
@@ -7,9 +10,24 @@ import 'package:flutter_monetization_kit_example/natives.dart';
 import 'banners.dart';
 import 'interstitials.dart';
 
-class AdsDemoSelection extends StatelessWidget {
+class AdsDemoSelection extends StatefulWidget {
   const AdsDemoSelection({super.key});
 
+  @override
+  State<AdsDemoSelection> createState() => _AdsDemoSelectionState();
+}
+
+class _AdsDemoSelectionState extends State<AdsDemoSelection> {
+  // Google Test IDs for Native Ads
+  String get _testAdUnitId => Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/2247696110'
+      : 'ca-app-pub-3940256099942544/3986624511';
+  @override
+  void initState() {
+    NativeAdManager.instance.load(screenRemote: true,adUnitId: _testAdUnitId, screenName: "custom");
+    
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

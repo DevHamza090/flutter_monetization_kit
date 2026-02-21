@@ -17,11 +17,20 @@ class NativeAdStyle {
   // Content Text Style
   final Color? headingColor;
   final Color? bodyColor;
+  final int? maxBodyLines;
+  final Color? advertiserColor;
+
+  // Ratings Style
+  final Color? ratingColor;
+  final Color? ratingBgColor;
 
   // Button (CTA) Style
   final Color? buttonBgColor;
   final Color? buttonTextColor;
   final double buttonCornerRadius;
+
+  // Typography
+  final String? fontFamily;
 
   const NativeAdStyle({
     this.bgColor,
@@ -35,9 +44,14 @@ class NativeAdStyle {
     this.adStrokeWidth = 0.0,
     this.headingColor = Colors.black,
     this.bodyColor = Colors.grey,
+    this.maxBodyLines = 2,
+    this.advertiserColor = Colors.grey,
+    this.ratingColor = Colors.amber,
+    this.ratingBgColor = Colors.black12,
     this.buttonBgColor = Colors.blue,
     this.buttonTextColor = Colors.white,
     this.buttonCornerRadius = 4.0,
+    this.fontFamily = 'Poppins',
   });
 
   // Default Factory for quick use

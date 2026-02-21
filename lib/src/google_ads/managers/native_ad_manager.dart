@@ -1,79 +1,135 @@
-import 'dart:ui';
-
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+
 import '../callbacks/native_ad_callbacks.dart';
-import '../core/native_ad_style.dart';
+import '../core/ads_registry.dart';
+import '../core/ads_settings.dart';
+import '../core/ads_utils.dart';
+import '../core/enums/ad_type.dart';
+import '../core/enums/ad_validation_reason.dart';
 
+/// Manages Native Ads using Custom Method Channels caching.
 class NativeAdManager {
-  static final NativeAdManager _instance = NativeAdManager._internal();
-  factory NativeAdManager() => _instance;
-  NativeAdManager._internal();
+  NativeAdManager._() {
+    _channel.setMethodCallHandler(_handleMethodCall);
+  }
+  static final NativeAdManager instance = NativeAdManager._();
 
-  final Map<String, NativeAd?> _ads = {};
-  final Map<String, bool> _loadingStates = {};
+  static const MethodChannel _channel = MethodChannel('flutter_monetization_kit/native_ads');
 
-  NativeAd? getAd(String screenName) => _ads[screenName];
+  final Map<String, NativeAdCallbacks> _loadCallbacks = {};
 
-  bool isLoading(String screenName) => _loadingStates[screenName] ?? false;
+  Future<dynamic> _handleMethodCall(MethodCall call) async {
+    final args = call.arguments as Map<dynamic, dynamic>? ?? {};
+    final String cacheId = args['cacheId'] as String? ?? '';
+    final String adUnitId = args['adUnitId'] as String? ?? '';
+    final String screenName = args['screenName'] as String? ?? '';
 
-  void loadAd({
+    switch (call.method) {
+      case 'onAdLoaded':
+        debugPrint(AdUtils.logLoaded(AdType.native, screenName));
+        AdRegistry.instance.setAd(cacheId, 'LOADED_NATIVE_AD');
+        _loadCallbacks[cacheId]?.onAdLoaded?.call(adUnitId);
+        break;
+
+      case 'onAdFailedToLoad':
+        final String error = args['error'] as String? ?? 'Unknown error';
+        debugPrint(AdUtils.logFailed(AdType.native, screenName, error));
+        AdRegistry.instance.removeAd(cacheId);
+        _loadCallbacks[cacheId]?.onAdFailedToLoad?.call(adUnitId, LoadAdError(0, error, '', null));
+        break;
+    }
+  }
+
+  /// Loads a Native Ad raw data.
+  Future<void> load({
+    String? screenName,
+    required bool screenRemote,
     required String adUnitId,
-    required String screenName,
-    required String designId,
-    required NativeAdCallbacks callbacks,
-    NativeAdStyle style = const NativeAdStyle(),
-  }) {
-    if (_ads[screenName] != null || (_loadingStates[screenName] ?? false)) {
+    NativeAdCallbacks? callbacks,
+  }) async {
+    final validationReason = await AdUtils.validateAdProcess();
+    if (validationReason != null) {
+      debugPrint("NativeAdManager: Ad request blocked ($validationReason)");
+      callbacks?.onAdValidated?.call(validationReason);
       return;
     }
 
-    _loadingStates[screenName] = true;
-
-    NativeAd(
-      adUnitId: adUnitId,
-      factoryId: 'native_ad_factory',
-      request: const AdRequest(),
-      customOptions: {
-        'designId': designId,
-        'backgroundColor': _colorToHex(style.bgColor),
-        'buttonColor': _colorToHex(style.buttonBgColor),
-        'textColor': _colorToHex(style.headingColor),
-      },
-      listener: NativeAdListener(
-        onAdLoaded: (ad) {
-          _ads[screenName] = ad as NativeAd;
-          _loadingStates[screenName] = false;
-          callbacks.onAdLoaded?.call(ad);
-        },
-        onAdFailedToLoad: (ad, error) {
-          _loadingStates[screenName] = false;
-          ad.dispose();
-          callbacks.onAdFailedToLoad?.call(ad, error);
-        },
-        onAdClicked: (ad) => callbacks.onAdClicked?.call(ad),
-        onAdOpened: (ad) => callbacks.onAdOpened?.call(ad),
-        onAdClosed: (ad) => callbacks.onAdClosed?.call(ad),
-        onAdImpression: (ad) => callbacks.onAdImpression?.call(ad),
-      ),
-    ).load();
-  }
-
-  void disposeAd(String screenName) {
-    _ads[screenName]?.dispose();
-    _ads.remove(screenName);
-    _loadingStates.remove(screenName);
-  }
-
-  void disposeAll() {
-    for (var ad in _ads.values) {
-      ad?.dispose();
+    if (!AdsSettings.instance.enableNativeAds) {
+      debugPrint("NativeAdManager: Native ads are disabled in settings");
+      callbacks?.onAdValidated?.call(AdValidationReason.adDisabled);
+      return;
     }
-    _ads.clear();
-    _loadingStates.clear();
+
+    final cacheId = getRegistryKey(screenName);
+
+    if (AdRegistry.instance.isAdLoading(cacheId)) {
+      debugPrint(AdUtils.logAlreadyLoading(AdType.native, adUnitId, screenName));
+      callbacks?.onAdValidated?.call(AdValidationReason.adAlreadyLoading);
+      return;
+    }
+
+    if (AdRegistry.instance.isAdReady(cacheId)) {
+      debugPrint("NativeAdManager: Ad $cacheId already loaded in cache.");
+      callbacks?.onAdValidated?.call(AdValidationReason.adAlreadyReady);
+      callbacks?.onAdLoaded?.call(adUnitId);
+      return;
+    }
+
+    AdRegistry.instance.markLoading(cacheId);
+    debugPrint(AdUtils.logLoading(AdType.native, adUnitId, screenName));
+
+    if (callbacks != null) {
+      _loadCallbacks[cacheId] = callbacks;
+    }
+
+    try {
+      await _channel.invokeMethod('loadAd', {
+        'cacheId': cacheId,
+        'adUnitId': adUnitId,
+        'screenName': screenName ?? '',
+      });
+    } catch (e) {
+      AdRegistry.instance.removeAd(cacheId);
+      callbacks?.onAdFailedToLoad?.call(adUnitId, LoadAdError(0, e.toString(), '', null));
+    }
   }
 
-  String _colorToHex(Color? color) {
-    if (color == null) return '#FFFFFF';
-    return '#${color.value.toRadixString(16).padLeft(8, '0').toUpperCase()}';
+  bool isAdPreloaded(String? screenName, String adUnitId) {
+    bool ready = AdRegistry.instance.isAdReady(getRegistryKey(screenName));
+    if (!ready && screenName != null) {
+      ready = AdRegistry.instance.isAdReady(getRegistryKey(null)); // Fallback to Universal
+    }
+    return ready;
+  }
+
+  String getTargetCacheId(String? screenName, String adUnitId) {
+    bool screenReady = AdRegistry.instance.isAdReady(getRegistryKey(screenName));
+    if (screenReady) return getRegistryKey(screenName);
+    return getRegistryKey(null); 
+  }
+
+  void removeAd(String? screenName) {
+    String cacheId = getRegistryKey(screenName);
+    AdRegistry.instance.removeAd(cacheId);
+    _channel.invokeMethod('disposeAd', {
+      'cacheId': cacheId,
+    });
+  }
+
+  void consumeAd(String? screenName) {
+    String cacheId = getRegistryKey(screenName);
+    AdRegistry.instance.removeAd(cacheId);
+    _channel.invokeMethod('consumeAd', {
+      'cacheId': cacheId,
+    });
+  }
+
+  String getRegistryKey(String? screenName) {
+    if (screenName != null && screenName.isNotEmpty) {
+      return "${screenName}_native";
+    }
+    return "universal_native";
   }
 }
