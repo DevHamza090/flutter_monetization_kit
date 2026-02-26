@@ -1,10 +1,10 @@
 import Flutter
 import UIKit
-import google_mobile_ads
+import GoogleMobileAds
 
-public class FlutterMonetizationKitPlugin: NSObject, FlutterPlugin, GADNativeAdLoaderDelegate {
+public class FlutterMonetizationKitPlugin: NSObject, FlutterPlugin, NativeAdLoaderDelegate {
     private var channel: FlutterMethodChannel?
-    private var adLoaders: [String: GADAdLoader] = [:]
+    private var adLoaders: [String: AdLoader] = [:]
     private var cacheIdMap: [String: String] = [:] // Maps adLoader to cacheId for callback tracking
     
     public static func register(with registrar: FlutterPluginRegistrar) {
@@ -60,7 +60,7 @@ public class FlutterMonetizationKitPlugin: NSObject, FlutterPlugin, GADNativeAdL
     private func loadNativeAd(cacheId: String, adUnitId: String) {
         guard let window = UIApplication.shared.windows.first, let rootVC = window.rootViewController else { return }
         
-        let adLoader = GADAdLoader(
+        let adLoader = AdLoader(
             adUnitID: adUnitId,
             rootViewController: rootVC,
             adTypes: [.native],
@@ -71,11 +71,12 @@ public class FlutterMonetizationKitPlugin: NSObject, FlutterPlugin, GADNativeAdL
         adLoaders[adUnitId] = adLoader
         cacheIdMap[adUnitId] = cacheId
         
-        adLoader.load(GADRequest())
+        adLoader.load(Request())
     }
     
-    public func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADNativeAd) {
-        guard let adUnitId = adLoader.adUnitID, let cacheId = cacheIdMap[adUnitId] else { return }
+    public func adLoader(_ adLoader: AdLoader, didReceive nativeAd: NativeAd) {
+        let adUnitId = adLoader.adUnitID
+        guard let cacheId = cacheIdMap[adUnitId] else { return }
         
         NativeAdCache.ads[cacheId] = nativeAd
         channel?.invokeMethod("onAdLoaded", arguments: ["cacheId": cacheId, "adUnitId": adUnitId])
@@ -85,8 +86,9 @@ public class FlutterMonetizationKitPlugin: NSObject, FlutterPlugin, GADNativeAdL
         cacheIdMap.removeValue(forKey: adUnitId)
     }
     
-    public func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: Error) {
-        guard let adUnitId = adLoader.adUnitID, let cacheId = cacheIdMap[adUnitId] else { return }
+    public func adLoader(_ adLoader: AdLoader, didFailToReceiveAdWithError error: Error) {
+        let adUnitId = adLoader.adUnitID
+        guard let cacheId = cacheIdMap[adUnitId] else { return }
         
         channel?.invokeMethod("onAdFailedToLoad", arguments: ["cacheId": cacheId, "adUnitId": adUnitId, "error": error.localizedDescription])
         

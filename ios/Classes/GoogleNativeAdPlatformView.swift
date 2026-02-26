@@ -1,6 +1,6 @@
 import Foundation
 import Flutter
-import google_mobile_ads
+import GoogleMobileAds
 
 public class GoogleNativeAdPlatformViewFactory: NSObject, FlutterPlatformViewFactory {
     private var messenger: FlutterBinaryMessenger
@@ -58,14 +58,14 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
 
     deinit {
         // Explicitly clear references for immediate ARC deallocation identical to Android `.destroy()`
-        if let adView = _view.subviews.first as? GADNativeAdView {
+        if let adView = _view.subviews.first as? NativeAdView {
             adView.nativeAd = nil
             adView.removeFromSuperview()
         }
     }
     
-    private func buildNativeAdView(nativeAd: GADNativeAd, customOptions: [String: Any]) -> GADNativeAdView {
-        let adView = GADNativeAdView()
+    private func buildNativeAdView(nativeAd: NativeAd, customOptions: [String: Any]) -> NativeAdView {
+        let adView = NativeAdView()
         
         let bgColorStr = customOptions["bgColor"] as? String
         let bgCorner = (customOptions["bgCorner"] as? Double) ?? 8.0
@@ -143,13 +143,23 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
         adView.addSubview(actionButton)
         adView.callToActionView = actionButton
         
+        // Disable touch interactions on elements that shouldn't steal clicks, let the adView handle it.
+        iconView.isUserInteractionEnabled = false
+        badgeView.isUserInteractionEnabled = false
+        headlineView.isUserInteractionEnabled = false
+        bodyView.isUserInteractionEnabled = false
+        advertiserView.isUserInteractionEnabled = false
+        ratingView.isUserInteractionEnabled = false
+        
         let padding: CGFloat = 8.0
         
         let type = customOptions["nativeType"] as? String ?? "small1"
         
         if type == "small2" {
-            // Small 2 Layout (No Icon, Top Banner Stack)
-            iconView.isHidden = true
+            // To prevent overlap/hidden issues, we must embed everything carefully.
+            // Action button size
+            actionButton.setContentHuggingPriority(.required, for: .horizontal)
+            actionButton.setContentCompressionResistancePriority(.required, for: .horizontal)
             
             NSLayoutConstraint.activate([
                 // CTA Action Button (Far Right, Vertically Centered with entire View)
@@ -166,27 +176,37 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
                 
                 headlineView.leadingAnchor.constraint(equalTo: badgeView.trailingAnchor, constant: 4),
                 headlineView.centerYAnchor.constraint(equalTo: badgeView.centerYAnchor),
-                headlineView.trailingAnchor.constraint(equalTo: actionButton.leadingAnchor, constant: -padding),
+                headlineView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
                 
                 // Body Stack: Body
                 bodyView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
-                bodyView.trailingAnchor.constraint(equalTo: actionButton.leadingAnchor, constant: -padding),
+                bodyView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
                 bodyView.topAnchor.constraint(equalTo: headlineView.bottomAnchor, constant: 4),
                 
                 // Bottom Stack: Advertiser/Rating
                 advertiserView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
                 advertiserView.topAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: 4),
+                advertiserView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
+                advertiserView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
                 
                 ratingView.leadingAnchor.constraint(equalTo: advertiserView.trailingAnchor, constant: 4),
                 ratingView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
-                ratingView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding)
+                ratingView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
+                ratingView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
+                
+                // Extra boundary constraint for body if no advertiser is present
+                bodyView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding)
             ])
             
         } else {
-            // Default Small 1 Layout (Icon Left, Text Right Stack)
+            actionButton.setContentHuggingPriority(.required, for: .horizontal)
+            actionButton.setContentCompressionResistancePriority(.required, for: .horizontal)
+            
             NSLayoutConstraint.activate([
                 iconView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
                 iconView.centerYAnchor.constraint(equalTo: adView.centerYAnchor),
+                iconView.topAnchor.constraint(greaterThanOrEqualTo: adView.topAnchor, constant: padding),
+                iconView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
                 iconView.widthAnchor.constraint(equalToConstant: 56),
                 iconView.heightAnchor.constraint(equalToConstant: 56),
                 
@@ -197,53 +217,72 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
                 
                 headlineView.leadingAnchor.constraint(equalTo: badgeView.trailingAnchor, constant: 4),
                 headlineView.centerYAnchor.constraint(equalTo: badgeView.centerYAnchor),
-                headlineView.trailingAnchor.constraint(equalTo: actionButton.leadingAnchor, constant: -padding),
+                headlineView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
                 
                 bodyView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
                 bodyView.topAnchor.constraint(equalTo: headlineView.bottomAnchor, constant: 2),
-                bodyView.trailingAnchor.constraint(equalTo: actionButton.leadingAnchor, constant: -padding),
+                bodyView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
                 
                 advertiserView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
                 advertiserView.topAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: 2),
+                advertiserView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
+                advertiserView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
                 
                 ratingView.leadingAnchor.constraint(equalTo: advertiserView.trailingAnchor, constant: 4),
                 ratingView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
                 ratingView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
+                ratingView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
                 
                 actionButton.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -padding),
                 actionButton.centerYAnchor.constraint(equalTo: adView.centerYAnchor),
                 actionButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 80),
-                actionButton.heightAnchor.constraint(equalToConstant: 36)
+                actionButton.heightAnchor.constraint(equalToConstant: 36),
+                
+                // Additional boundary enforcement
+                bodyView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding)
             ])
         }
         
         // Populate Data
         (adView.headlineView as? UILabel)?.text = nativeAd.headline
-        (adView.bodyView as? UILabel)?.text = nativeAd.body
-        (adView.callToActionView as? UIButton)?.setTitle(nativeAd.callToAction, for: .normal)
+        
+        if let bodyText = nativeAd.body {
+            (adView.bodyView as? UILabel)?.text = bodyText
+        } else {
+            bodyView.isHidden = true
+            adView.bodyView = nil
+        }
+        
+        if let ctaText = nativeAd.callToAction {
+            (adView.callToActionView as? UIButton)?.setTitle(ctaText, for: .normal)
+        } else {
+            actionButton.isHidden = true
+            adView.callToActionView = nil
+        }
         
         if let adv = nativeAd.advertiser {
             (adView.advertiserView as? UILabel)?.text = adv
             ratingView.isHidden = true
+            adView.starRatingView = nil
         } else if let stars = nativeAd.starRating {
             (adView.starRatingView as? UILabel)?.text = "★ \(stars)"
             advertiserView.isHidden = true
+            adView.advertiserView = nil
         } else {
             advertiserView.isHidden = true
             ratingView.isHidden = true
+            adView.advertiserView = nil
+            adView.starRatingView = nil
         }
         
-        if let icon = nativeAd.icon {
+        if type == "small2" {
+            iconView.isHidden = true
+            adView.iconView = nil
+        } else if let icon = nativeAd.icon {
             iconView.image = icon.image
         } else {
             iconView.isHidden = true
-        }
-        
-        if nativeAd.body == nil {
-            bodyView.isHidden = true
-        }
-        if nativeAd.callToAction == nil {
-            actionButton.isHidden = true
+            adView.iconView = nil
         }
         
         adView.callToActionView?.isUserInteractionEnabled = false

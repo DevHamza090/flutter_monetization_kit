@@ -390,7 +390,7 @@ class _NativeWidgetState extends State<NativeWidget> {
   }
 
   double _getHeightForType(NativeType type) {
-    if (type.name.startsWith('small')) return 110.0;
+    if (type.name.startsWith('small')) return 90.0;
     if (type.name.startsWith('medium')) return 250.0;
     if (type.name.startsWith('large')) return 350.0;
     if (type.name.startsWith('fullscreen')) return double.infinity;

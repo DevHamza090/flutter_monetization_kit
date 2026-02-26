@@ -1,6 +1,6 @@
 import Foundation
-import google_mobile_ads
+import GoogleMobileAds
 
 public class NativeAdCache {
-    public static var ads: [String: GADNativeAd] = [:]
+    public static var ads: [String: NativeAd] = [:]
 }
