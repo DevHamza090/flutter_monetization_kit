@@ -66,7 +66,11 @@ class GoogleNativeAdPlatformView(
 
     private fun buildNativeAdView(nativeAd: NativeAd, options: Map<String, Any?>?): NativeAdView {
         val type = options?.get("nativeType") as? String ?: "small1"
-        val layoutRes = if (type == "small2") {
+        val layoutRes = if (type == "small4") {
+            R.layout.native_ad_small_4
+        } else if (type == "small3") {
+            R.layout.native_ad_small_3
+        } else if (type == "small2") {
             R.layout.native_ad_small_2
         } else {
             R.layout.native_ad_small
@@ -88,7 +92,8 @@ class GoogleNativeAdPlatformView(
         view.bodyView = bodyView
         view.advertiserView = advertiserView
         view.starRatingView = ratingBar
-        view.callToActionView = callToActionView
+        val priceView = view.findViewById<TextView>(R.id.ad_price)
+        view.priceView = priceView
 
         // 2. Populate data
         headlineView.text = nativeAd.headline
@@ -108,10 +113,10 @@ class GoogleNativeAdPlatformView(
         }
 
         if (nativeAd.icon == null) {
-            iconView.visibility = View.GONE
+            iconView?.visibility = View.GONE
         } else {
-            iconView.visibility = View.VISIBLE
-            iconView.setImageDrawable(nativeAd.icon?.drawable)
+            iconView?.visibility = View.VISIBLE
+            iconView?.setImageDrawable(nativeAd.icon?.drawable)
         }
 
         if (nativeAd.advertiser == null) {
@@ -129,8 +134,15 @@ class GoogleNativeAdPlatformView(
             ratingBar.rating = nativeAd.starRating!!.toFloat()
             advertiserView.visibility = View.GONE
         }
+        
+        if (nativeAd.price == null) {
+            priceView?.visibility = View.GONE
+        } else {
+            priceView?.visibility = View.VISIBLE
+            priceView?.text = nativeAd.price
+        }
 
-        applyStyles(options, backgroundView, adBadgeView, headlineView, bodyView, callToActionView, ratingBar, advertiserView)
+        applyStyles(options, type, backgroundView, adBadgeView, headlineView, bodyView, callToActionView, ratingBar, advertiserView, priceView)
 
         view.setNativeAd(nativeAd)
         return view
@@ -138,13 +150,15 @@ class GoogleNativeAdPlatformView(
 
     private fun applyStyles(
         options: Map<String, Any?>?,
+        type: String,
         backgroundView: View,
         adBadgeView: TextView,
         headlineView: TextView,
         bodyView: TextView,
         callToActionView: Button,
         ratingBar: RatingBar,
-        advertiserView: TextView
+        advertiserView: TextView,
+        priceView: TextView?
     ) {
         if (options == null) return
 
@@ -169,7 +183,17 @@ class GoogleNativeAdPlatformView(
             val btnCorner = (options["buttonCornerRadius"] as? Double)?.toFloat() ?: 4f
 
             val btnDrawable = GradientDrawable()
-            btnDrawable.cornerRadius = btnCorner * context.resources.displayMetrics.density
+            if (type == "small3" || type == "small4") {
+                val cr = bgCorner * context.resources.displayMetrics.density
+                btnDrawable.cornerRadii = floatArrayOf(
+                    0f, 0f, // Top-Left
+                    cr, cr, // Top-Right
+                    cr, cr, // Bottom-Right
+                    0f, 0f  // Bottom-Left
+                )
+            } else {
+                btnDrawable.cornerRadius = btnCorner * context.resources.displayMetrics.density
+            }
             if (!btnColorStr.isNullOrEmpty() && btnColorStr.length >= 7) {
                 btnDrawable.setColor(Color.parseColor(btnColorStr))
             } else {
@@ -200,6 +224,11 @@ class GoogleNativeAdPlatformView(
             val advertiserColorStr = options["advertiserColor"] as? String
             if (!advertiserColorStr.isNullOrEmpty() && advertiserColorStr.length >= 7) {
                 advertiserView.setTextColor(Color.parseColor(advertiserColorStr))
+            }
+            
+            val priceColorStr = options["priceColor"] as? String
+            if (!priceColorStr.isNullOrEmpty() && priceColorStr.length >= 7) {
+                priceView?.setTextColor(Color.parseColor(priceColorStr))
             }
 
             // Ratings

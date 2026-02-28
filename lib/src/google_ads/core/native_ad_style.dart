@@ -23,6 +23,7 @@ class NativeAdStyle {
   // Ratings Style
   final Color? ratingColor;
   final Color? ratingBgColor;
+  final Color? priceColor;
 
   // Button (CTA) Style
   final Color? buttonBgColor;
@@ -48,6 +49,7 @@ class NativeAdStyle {
     this.advertiserColor = Colors.grey,
     this.ratingColor = Colors.amber,
     this.ratingBgColor = Colors.black12,
+    this.priceColor = Colors.grey,
     this.buttonBgColor = Colors.blue,
     this.buttonTextColor = Colors.white,
     this.buttonCornerRadius = 4.0,

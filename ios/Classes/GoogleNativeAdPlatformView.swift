@@ -132,6 +132,13 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
         adView.addSubview(ratingView)
         adView.starRatingView = ratingView
         
+        let priceView = UILabel()
+        priceView.translatesAutoresizingMaskIntoConstraints = false
+        priceView.font = regularFont
+        priceView.textColor = colorFromHex(customOptions["priceColor"] as? String) ?? UIColor.gray
+        adView.addSubview(priceView)
+        adView.priceView = priceView
+        
         let actionButton = UIButton(type: .system)
         actionButton.translatesAutoresizingMaskIntoConstraints = false
         actionButton.titleLabel?.font = boldFont
@@ -155,7 +162,101 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
         
         let type = customOptions["nativeType"] as? String ?? "small1"
         
-        if type == "small2" {
+        if type == "small4" {
+            iconView.isHidden = true
+            
+            actionButton.setContentHuggingPriority(.required, for: .horizontal)
+            actionButton.setContentCompressionResistancePriority(.required, for: .horizontal)
+            
+            priceView.setContentHuggingPriority(.required, for: .horizontal)
+            priceView.setContentCompressionResistancePriority(.required, for: .horizontal)
+            
+            if #available(iOS 11.0, *) {
+                actionButton.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
+                actionButton.layer.cornerRadius = CGFloat(bgCorner)
+            }
+            
+            NSLayoutConstraint.activate([
+                actionButton.trailingAnchor.constraint(equalTo: adView.trailingAnchor),
+                actionButton.topAnchor.constraint(equalTo: adView.topAnchor),
+                actionButton.bottomAnchor.constraint(equalTo: adView.bottomAnchor),
+                actionButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 100),
+                
+                badgeView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
+                badgeView.topAnchor.constraint(equalTo: adView.topAnchor, constant: padding),
+                badgeView.widthAnchor.constraint(equalToConstant: 24),
+                badgeView.heightAnchor.constraint(equalToConstant: 16),
+                
+                headlineView.leadingAnchor.constraint(equalTo: badgeView.trailingAnchor, constant: 4),
+                headlineView.centerYAnchor.constraint(equalTo: badgeView.centerYAnchor),
+                headlineView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
+                
+                bodyView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
+                bodyView.topAnchor.constraint(equalTo: headlineView.bottomAnchor, constant: 4),
+                bodyView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
+                
+                advertiserView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
+                advertiserView.topAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: 4),
+                advertiserView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
+                
+                ratingView.leadingAnchor.constraint(equalTo: advertiserView.trailingAnchor, constant: 4),
+                ratingView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
+                ratingView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
+                
+                priceView.leadingAnchor.constraint(greaterThanOrEqualTo: ratingView.trailingAnchor, constant: 4),
+                priceView.trailingAnchor.constraint(equalTo: actionButton.leadingAnchor, constant: -padding),
+                priceView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
+                
+                bodyView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding)
+            ])
+            
+        } else if type == "small3" {
+            actionButton.setContentHuggingPriority(.required, for: .horizontal)
+            actionButton.setContentCompressionResistancePriority(.required, for: .horizontal)
+            
+            if #available(iOS 11.0, *) {
+                actionButton.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
+                actionButton.layer.cornerRadius = CGFloat(bgCorner)
+            }
+            
+            NSLayoutConstraint.activate([
+                actionButton.trailingAnchor.constraint(equalTo: adView.trailingAnchor),
+                actionButton.topAnchor.constraint(equalTo: adView.topAnchor),
+                actionButton.bottomAnchor.constraint(equalTo: adView.bottomAnchor),
+                actionButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 100),
+                
+                iconView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
+                iconView.centerYAnchor.constraint(equalTo: adView.centerYAnchor),
+                iconView.widthAnchor.constraint(equalToConstant: 56),
+                iconView.heightAnchor.constraint(equalToConstant: 56),
+                
+                badgeView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
+                badgeView.topAnchor.constraint(equalTo: iconView.topAnchor),
+                badgeView.widthAnchor.constraint(equalToConstant: 24),
+                badgeView.heightAnchor.constraint(equalToConstant: 16),
+                
+                headlineView.leadingAnchor.constraint(equalTo: badgeView.trailingAnchor, constant: 4),
+                headlineView.centerYAnchor.constraint(equalTo: badgeView.centerYAnchor),
+                headlineView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
+                
+                bodyView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
+                bodyView.topAnchor.constraint(equalTo: headlineView.bottomAnchor, constant: 4),
+                bodyView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
+                
+                advertiserView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
+                advertiserView.topAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: 4),
+                advertiserView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
+                advertiserView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
+                
+                ratingView.leadingAnchor.constraint(equalTo: advertiserView.trailingAnchor, constant: 4),
+                ratingView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
+                ratingView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
+                ratingView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
+                
+                bodyView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding)
+            ])
+            
+        } else if type == "small2" {
             // To prevent overlap/hidden issues, we must embed everything carefully.
             // Action button size
             actionButton.setContentHuggingPriority(.required, for: .horizontal)
@@ -273,6 +374,13 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
             ratingView.isHidden = true
             adView.advertiserView = nil
             adView.starRatingView = nil
+        }
+        
+        if let priceText = nativeAd.price {
+            (adView.priceView as? UILabel)?.text = priceText
+        } else {
+            priceView.isHidden = true
+            adView.priceView = nil
         }
         
         if type == "small2" {
