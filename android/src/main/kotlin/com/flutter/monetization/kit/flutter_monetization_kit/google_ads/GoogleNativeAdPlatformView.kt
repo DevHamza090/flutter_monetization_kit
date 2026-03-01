@@ -66,7 +66,15 @@ class GoogleNativeAdPlatformView(
 
     private fun buildNativeAdView(nativeAd: NativeAd, options: Map<String, Any?>?): NativeAdView {
         val type = options?.get("nativeType") as? String ?: "small1"
-        val layoutRes = if (type == "small4") {
+        val layoutRes = if (type == "small8") {
+            R.layout.native_ad_small_8
+        } else if (type == "small7") {
+            R.layout.native_ad_small_7
+        } else if (type == "small6") {
+            R.layout.native_ad_small_6
+        } else if (type == "small5") {
+            R.layout.native_ad_small_5
+        } else if (type == "small4") {
             R.layout.native_ad_small_4
         } else if (type == "small3") {
             R.layout.native_ad_small_3
@@ -82,8 +90,8 @@ class GoogleNativeAdPlatformView(
         val iconView = view.findViewById<ImageView>(R.id.ad_app_icon)
         val headlineView = view.findViewById<TextView>(R.id.ad_headline)
         val bodyView = view.findViewById<TextView>(R.id.ad_body)
-        val advertiserView = view.findViewById<TextView>(R.id.ad_advertiser)
-        val ratingBar = view.findViewById<RatingBar>(R.id.ad_stars)
+        val advertiserView = view.findViewById<TextView?>(R.id.ad_advertiser)
+        val ratingBar = view.findViewById<RatingBar?>(R.id.ad_stars)
         val callToActionView = view.findViewById<Button>(R.id.ad_call_to_action)
         val adBadgeView = view.findViewById<TextView>(R.id.ad_badge)
 
@@ -120,19 +128,19 @@ class GoogleNativeAdPlatformView(
         }
 
         if (nativeAd.advertiser == null) {
-            advertiserView.visibility = View.GONE
+            advertiserView?.visibility = View.GONE
         } else {
-            advertiserView.visibility = View.VISIBLE
-            advertiserView.text = nativeAd.advertiser
-            ratingBar.visibility = View.GONE 
+            advertiserView?.visibility = View.VISIBLE
+            advertiserView?.text = nativeAd.advertiser
+            ratingBar?.visibility = View.GONE 
         }
 
         if (nativeAd.starRating == null) {
-            ratingBar.visibility = View.GONE
+            ratingBar?.visibility = View.GONE
         } else {
-            ratingBar.visibility = View.VISIBLE
-            ratingBar.rating = nativeAd.starRating!!.toFloat()
-            advertiserView.visibility = View.GONE
+            ratingBar?.visibility = View.VISIBLE
+            ratingBar?.rating = nativeAd.starRating!!.toFloat()
+            advertiserView?.visibility = View.GONE
         }
         
         if (nativeAd.price == null) {
@@ -156,8 +164,8 @@ class GoogleNativeAdPlatformView(
         headlineView: TextView,
         bodyView: TextView,
         callToActionView: Button,
-        ratingBar: RatingBar,
-        advertiserView: TextView,
+        ratingBar: RatingBar?,
+        advertiserView: TextView?,
         priceView: TextView?
     ) {
         if (options == null) return
@@ -183,7 +191,7 @@ class GoogleNativeAdPlatformView(
             val btnCorner = (options["buttonCornerRadius"] as? Double)?.toFloat() ?: 4f
 
             val btnDrawable = GradientDrawable()
-            if (type == "small3" || type == "small4") {
+            if (type == "small3" || type == "small4" || type == "small6" || type == "small7") {
                 val cr = bgCorner * context.resources.displayMetrics.density
                 btnDrawable.cornerRadii = floatArrayOf(
                     0f, 0f, // Top-Left
@@ -223,7 +231,7 @@ class GoogleNativeAdPlatformView(
 
             val advertiserColorStr = options["advertiserColor"] as? String
             if (!advertiserColorStr.isNullOrEmpty() && advertiserColorStr.length >= 7) {
-                advertiserView.setTextColor(Color.parseColor(advertiserColorStr))
+                advertiserView?.setTextColor(Color.parseColor(advertiserColorStr))
             }
             
             val priceColorStr = options["priceColor"] as? String
@@ -235,10 +243,10 @@ class GoogleNativeAdPlatformView(
             val ratingColorStr = options["ratingColor"] as? String
             val ratingBgColorStr = options["ratingBgColor"] as? String
             if (!ratingColorStr.isNullOrEmpty() && ratingColorStr.length >= 7) {
-                ratingBar.progressTintList = ColorStateList.valueOf(Color.parseColor(ratingColorStr))
+                ratingBar?.progressTintList = ColorStateList.valueOf(Color.parseColor(ratingColorStr))
             }
             if (!ratingBgColorStr.isNullOrEmpty() && ratingBgColorStr.length >= 7) {
-                ratingBar.progressBackgroundTintList = ColorStateList.valueOf(Color.parseColor(ratingBgColorStr))
+                ratingBar?.progressBackgroundTintList = ColorStateList.valueOf(Color.parseColor(ratingBgColorStr))
             }
 
             // Ad Badge
@@ -268,7 +276,7 @@ class GoogleNativeAdPlatformView(
                      headlineView.typeface = customTypeface
                      bodyView.typeface = customTypeface
                      callToActionView.typeface = customTypeface
-                     advertiserView.typeface = customTypeface
+                     advertiserView?.typeface = customTypeface
                      adBadgeView.typeface = customTypeface
                 } catch (e: Exception) {
                      // Fallback to manual placing inside main project
@@ -277,7 +285,7 @@ class GoogleNativeAdPlatformView(
                          headlineView.typeface = fallbackTypeface
                          bodyView.typeface = fallbackTypeface
                          callToActionView.typeface = fallbackTypeface
-                         advertiserView.typeface = fallbackTypeface
+                         advertiserView?.typeface = fallbackTypeface
                          adBadgeView.typeface = fallbackTypeface
                      } catch (e2: Exception) {
                          // Fallback silently if asset font doesn't match name exactly

@@ -21,7 +21,7 @@ class _NativesScreenState extends State<NativesScreen> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 9, vsync: this);
   }
 
   @override
@@ -38,11 +38,16 @@ class _NativesScreenState extends State<NativesScreen> with SingleTickerProvider
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.white,
+          isScrollable: true,
           tabs: const [
             Tab(text: 'Small 1'),
             Tab(text: 'Small 2'),
             Tab(text: 'Small 3'),
             Tab(text: 'Small 4'),
+            Tab(text: 'Small 5'),
+            Tab(text: 'Small 6'),
+            Tab(text: 'Small 7'),
+            Tab(text: 'Small 8'),
             Tab(text: 'Custom Style'),
           ],
         ),
@@ -77,6 +82,26 @@ class _NativesScreenState extends State<NativesScreen> with SingleTickerProvider
               maxBodyLines: 1,
               priceColor: Colors.blue, // Explicitly assign a color to see if it triggers correctly natively
             ),
+          ),
+          _buildNativeDemo(
+            title: 'Native Ad - Small 5',
+            type: NativeType.small5,
+            screenRemote: false,
+          ),
+          _buildNativeDemo(
+            title: 'Native Ad - Small 6',
+            type: NativeType.small6,
+            screenRemote: false,
+          ),
+          _buildNativeDemo(
+            title: 'Native Ad - Small 7',
+            type: NativeType.small7,
+            screenRemote: false,
+          ),
+          _buildNativeDemo(
+            title: 'Native Ad - Small 8',
+            type: NativeType.small8,
+            screenRemote: false,
           ),
           _buildNativeDemo(
             title: 'Native Ad - Custom Dark Style',

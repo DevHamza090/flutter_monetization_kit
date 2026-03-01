@@ -162,6 +162,14 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
         
         let type = customOptions["nativeType"] as? String ?? "small1"
         
+        let excludeAdvertiserAndRating = ["small5", "small6", "small7", "small8"].contains(type)
+        if excludeAdvertiserAndRating {
+            advertiserView.isHidden = true
+            ratingView.isHidden = true
+            adView.advertiserView = nil
+            adView.starRatingView = nil
+        }
+        
         if type == "small4" {
             iconView.isHidden = true
             
@@ -176,7 +184,7 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
                 actionButton.layer.cornerRadius = CGFloat(bgCorner)
             }
             
-            NSLayoutConstraint.activate([
+            var constraints = [
                 actionButton.trailingAnchor.constraint(equalTo: adView.trailingAnchor),
                 actionButton.topAnchor.constraint(equalTo: adView.topAnchor),
                 actionButton.bottomAnchor.constraint(equalTo: adView.bottomAnchor),
@@ -193,24 +201,32 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
                 
                 bodyView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
                 bodyView.topAnchor.constraint(equalTo: headlineView.bottomAnchor, constant: 4),
-                bodyView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
-                
-                advertiserView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
-                advertiserView.topAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: 4),
-                advertiserView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
-                
-                ratingView.leadingAnchor.constraint(equalTo: advertiserView.trailingAnchor, constant: 4),
-                ratingView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
-                ratingView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
-                
-                priceView.leadingAnchor.constraint(greaterThanOrEqualTo: ratingView.trailingAnchor, constant: 4),
-                priceView.trailingAnchor.constraint(equalTo: actionButton.leadingAnchor, constant: -padding),
-                priceView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
-                
-                bodyView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding)
-            ])
+                bodyView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding)
+            ]
             
-        } else if type == "small3" {
+            if excludeAdvertiserAndRating {
+                constraints.append(bodyView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding))
+            } else {
+                constraints.append(contentsOf: [
+                    advertiserView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
+                    advertiserView.topAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: 4),
+                    advertiserView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
+                    
+                    ratingView.leadingAnchor.constraint(equalTo: advertiserView.trailingAnchor, constant: 4),
+                    ratingView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
+                    ratingView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
+                    
+                    priceView.leadingAnchor.constraint(greaterThanOrEqualTo: ratingView.trailingAnchor, constant: 4),
+                    priceView.trailingAnchor.constraint(equalTo: actionButton.leadingAnchor, constant: -padding),
+                    priceView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
+                    
+                    bodyView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding)
+                ])
+            }
+            
+            NSLayoutConstraint.activate(constraints)
+            
+        } else if type == "small3" || type == "small6" {
             actionButton.setContentHuggingPriority(.required, for: .horizontal)
             actionButton.setContentCompressionResistancePriority(.required, for: .horizontal)
             
@@ -219,7 +235,7 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
                 actionButton.layer.cornerRadius = CGFloat(bgCorner)
             }
             
-            NSLayoutConstraint.activate([
+            var constraints = [
                 actionButton.trailingAnchor.constraint(equalTo: adView.trailingAnchor),
                 actionButton.topAnchor.constraint(equalTo: adView.topAnchor),
                 actionButton.bottomAnchor.constraint(equalTo: adView.bottomAnchor),
@@ -241,28 +257,85 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
                 
                 bodyView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
                 bodyView.topAnchor.constraint(equalTo: headlineView.bottomAnchor, constant: 4),
-                bodyView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
-                
-                advertiserView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
-                advertiserView.topAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: 4),
-                advertiserView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
-                advertiserView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
-                
-                ratingView.leadingAnchor.constraint(equalTo: advertiserView.trailingAnchor, constant: 4),
-                ratingView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
-                ratingView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
-                ratingView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
-                
-                bodyView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding)
-            ])
+                bodyView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding)
+            ]
             
-        } else if type == "small2" {
+            if excludeAdvertiserAndRating {
+                constraints.append(bodyView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding))
+            } else {
+                constraints.append(contentsOf: [
+                    advertiserView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
+                    advertiserView.topAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: 4),
+                    advertiserView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
+                    advertiserView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
+                    
+                    ratingView.leadingAnchor.constraint(equalTo: advertiserView.trailingAnchor, constant: 4),
+                    ratingView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
+                    ratingView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
+                    ratingView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
+                    
+                    bodyView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding)
+                ])
+            }
+            
+            NSLayoutConstraint.activate(constraints)
+            
+        } else if type == "small7" {
+            actionButton.setContentHuggingPriority(.required, for: .horizontal)
+            actionButton.setContentCompressionResistancePriority(.required, for: .horizontal)
+            
+            if #available(iOS 11.0, *) {
+                actionButton.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
+                actionButton.layer.cornerRadius = CGFloat(bgCorner)
+            }
+            
+            var constraints = [
+                actionButton.trailingAnchor.constraint(equalTo: adView.trailingAnchor),
+                actionButton.topAnchor.constraint(equalTo: adView.topAnchor),
+                actionButton.bottomAnchor.constraint(equalTo: adView.bottomAnchor),
+                actionButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 100),
+                
+                badgeView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
+                badgeView.topAnchor.constraint(equalTo: adView.topAnchor, constant: padding),
+                badgeView.widthAnchor.constraint(equalToConstant: 24),
+                badgeView.heightAnchor.constraint(equalToConstant: 16),
+                
+                headlineView.leadingAnchor.constraint(equalTo: badgeView.trailingAnchor, constant: 4),
+                headlineView.centerYAnchor.constraint(equalTo: badgeView.centerYAnchor),
+                headlineView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
+                
+                bodyView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
+                bodyView.topAnchor.constraint(equalTo: headlineView.bottomAnchor, constant: 4),
+                bodyView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding)
+            ]
+            
+            if excludeAdvertiserAndRating {
+                constraints.append(bodyView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding))
+            } else {
+                constraints.append(contentsOf: [
+                    advertiserView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
+                    advertiserView.topAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: 4),
+                    advertiserView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
+                    advertiserView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
+                    
+                    ratingView.leadingAnchor.constraint(equalTo: advertiserView.trailingAnchor, constant: 4),
+                    ratingView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
+                    ratingView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
+                    ratingView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
+                    
+                    bodyView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding)
+                ])
+            }
+            
+            NSLayoutConstraint.activate(constraints)
+            
+        } else if type == "small2" || type == "small8" {
             // To prevent overlap/hidden issues, we must embed everything carefully.
             // Action button size
             actionButton.setContentHuggingPriority(.required, for: .horizontal)
             actionButton.setContentCompressionResistancePriority(.required, for: .horizontal)
             
-            NSLayoutConstraint.activate([
+            var constraints = [
                 // CTA Action Button (Far Right, Vertically Centered with entire View)
                 actionButton.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -padding),
                 actionButton.centerYAnchor.constraint(equalTo: adView.centerYAnchor),
@@ -282,28 +355,36 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
                 // Body Stack: Body
                 bodyView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
                 bodyView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
-                bodyView.topAnchor.constraint(equalTo: headlineView.bottomAnchor, constant: 4),
-                
-                // Bottom Stack: Advertiser/Rating
-                advertiserView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
-                advertiserView.topAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: 4),
-                advertiserView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
-                advertiserView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
-                
-                ratingView.leadingAnchor.constraint(equalTo: advertiserView.trailingAnchor, constant: 4),
-                ratingView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
-                ratingView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
-                ratingView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
-                
-                // Extra boundary constraint for body if no advertiser is present
-                bodyView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding)
-            ])
+                bodyView.topAnchor.constraint(equalTo: headlineView.bottomAnchor, constant: 4)
+            ]
+            
+            if excludeAdvertiserAndRating {
+                constraints.append(bodyView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding))
+            } else {
+                constraints.append(contentsOf: [
+                    // Bottom Stack: Advertiser/Rating
+                    advertiserView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
+                    advertiserView.topAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: 4),
+                    advertiserView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
+                    advertiserView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
+                    
+                    ratingView.leadingAnchor.constraint(equalTo: advertiserView.trailingAnchor, constant: 4),
+                    ratingView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
+                    ratingView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
+                    ratingView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
+                    
+                    // Extra boundary constraint for body if no advertiser is present
+                    bodyView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding)
+                ])
+            }
+            
+            NSLayoutConstraint.activate(constraints)
             
         } else {
             actionButton.setContentHuggingPriority(.required, for: .horizontal)
             actionButton.setContentCompressionResistancePriority(.required, for: .horizontal)
             
-            NSLayoutConstraint.activate([
+            var constraints = [
                 iconView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
                 iconView.centerYAnchor.constraint(equalTo: adView.centerYAnchor),
                 iconView.topAnchor.constraint(greaterThanOrEqualTo: adView.topAnchor, constant: padding),
@@ -324,24 +405,32 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
                 bodyView.topAnchor.constraint(equalTo: headlineView.bottomAnchor, constant: 2),
                 bodyView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
                 
-                advertiserView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
-                advertiserView.topAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: 2),
-                advertiserView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
-                advertiserView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
-                
-                ratingView.leadingAnchor.constraint(equalTo: advertiserView.trailingAnchor, constant: 4),
-                ratingView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
-                ratingView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
-                ratingView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
-                
                 actionButton.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -padding),
                 actionButton.centerYAnchor.constraint(equalTo: adView.centerYAnchor),
                 actionButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 80),
-                actionButton.heightAnchor.constraint(equalToConstant: 36),
-                
-                // Additional boundary enforcement
-                bodyView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding)
-            ])
+                actionButton.heightAnchor.constraint(equalToConstant: 36)
+            ]
+            
+            if excludeAdvertiserAndRating {
+                constraints.append(bodyView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding))
+            } else {
+                constraints.append(contentsOf: [
+                    advertiserView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
+                    advertiserView.topAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: 2),
+                    advertiserView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
+                    advertiserView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
+                    
+                    ratingView.leadingAnchor.constraint(equalTo: advertiserView.trailingAnchor, constant: 4),
+                    ratingView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
+                    ratingView.trailingAnchor.constraint(lessThanOrEqualTo: actionButton.leadingAnchor, constant: -padding),
+                    ratingView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
+                    
+                    // Additional boundary enforcement
+                    bodyView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding)
+                ])
+            }
+
+            NSLayoutConstraint.activate(constraints)
         }
         
         // Populate Data
@@ -361,19 +450,21 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
             adView.callToActionView = nil
         }
         
-        if let adv = nativeAd.advertiser {
-            (adView.advertiserView as? UILabel)?.text = adv
-            ratingView.isHidden = true
-            adView.starRatingView = nil
-        } else if let stars = nativeAd.starRating {
-            (adView.starRatingView as? UILabel)?.text = "★ \(stars)"
-            advertiserView.isHidden = true
-            adView.advertiserView = nil
-        } else {
-            advertiserView.isHidden = true
-            ratingView.isHidden = true
-            adView.advertiserView = nil
-            adView.starRatingView = nil
+        if !excludeAdvertiserAndRating {
+            if let adv = nativeAd.advertiser {
+                (adView.advertiserView as? UILabel)?.text = adv
+                ratingView.isHidden = true
+                adView.starRatingView = nil
+            } else if let stars = nativeAd.starRating {
+                (adView.starRatingView as? UILabel)?.text = "★ \(stars)"
+                advertiserView.isHidden = true
+                adView.advertiserView = nil
+            } else {
+                advertiserView.isHidden = true
+                ratingView.isHidden = true
+                adView.advertiserView = nil
+                adView.starRatingView = nil
+            }
         }
         
         if let priceText = nativeAd.price {
@@ -383,7 +474,7 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
             adView.priceView = nil
         }
         
-        if type == "small2" {
+        if type == "small2" || type == "small4" || type == "small7" || type == "small8" {
             iconView.isHidden = true
             adView.iconView = nil
         } else if let icon = nativeAd.icon {

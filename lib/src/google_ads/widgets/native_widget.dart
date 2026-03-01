@@ -224,6 +224,10 @@ class _NativeWidgetState extends State<NativeWidget> {
     if (type == NativeType.small2) return 90.0;
     if (type == NativeType.small3) return 90.0;
     if (type == NativeType.small4) return 80.0;
+    if (type == NativeType.small5) return 100.0;
+    if (type == NativeType.small6) return 90.0;
+    if (type == NativeType.small7) return 90.0;
+    if (type == NativeType.small8) return 90.0;
     if (type.name.startsWith('small')) return 100.0;
     if (type.name.startsWith('medium')) return 250.0;
     if (type.name.startsWith('large')) return 350.0;
