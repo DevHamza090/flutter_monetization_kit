@@ -21,7 +21,7 @@ class _NativesScreenState extends State<NativesScreen> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 9, vsync: this);
+    _tabController = TabController(length: 15, vsync: this);
   }
 
   @override
@@ -48,6 +48,12 @@ class _NativesScreenState extends State<NativesScreen> with SingleTickerProvider
             Tab(text: 'Small 6'),
             Tab(text: 'Small 7'),
             Tab(text: 'Small 8'),
+            Tab(text: 'Medium 1'),
+            Tab(text: 'Medium 2'),
+            Tab(text: 'Medium 3'),
+            Tab(text: 'Medium 4'),
+            Tab(text: 'Medium 5'),
+            Tab(text: 'Medium 6'),
             Tab(text: 'Custom Style'),
           ],
         ),
@@ -101,6 +107,36 @@ class _NativesScreenState extends State<NativesScreen> with SingleTickerProvider
           _buildNativeDemo(
             title: 'Native Ad - Small 8',
             type: NativeType.small8,
+            screenRemote: false,
+          ),
+          _buildNativeDemo(
+            title: 'Native Ad - Medium 1',
+            type: NativeType.medium1,
+            screenRemote: false,
+          ),
+          _buildNativeDemo(
+            title: 'Native Ad - Medium 2',
+            type: NativeType.medium2,
+            screenRemote: false,
+          ),
+          _buildNativeDemo(
+            title: 'Native Ad - Medium 3',
+            type: NativeType.medium3,
+            screenRemote: false,
+          ),
+          _buildNativeDemo(
+            title: 'Native Ad - Medium 4',
+            type: NativeType.medium4,
+            screenRemote: false,
+          ),
+          _buildNativeDemo(
+            title: 'Native Ad - Medium 5',
+            type: NativeType.medium5,
+            screenRemote: false,
+          ),
+          _buildNativeDemo(
+            title: 'Native Ad - Medium 6',
+            type: NativeType.medium6,
             screenRemote: false,
           ),
           _buildNativeDemo(

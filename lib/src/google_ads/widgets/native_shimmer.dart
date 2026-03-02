@@ -57,8 +57,20 @@ class NativeShimmer extends StatelessWidget {
       case NativeType.small2:
         return _buildSmall2Shimmer();
       case NativeType.small1:
-      default:
         return _buildSmall1Shimmer();
+      case NativeType.medium6:
+        return _buildMedium6Shimmer();
+      case NativeType.medium5:
+        return _buildMedium5Shimmer();
+      case NativeType.medium4:
+        return _buildMedium4Shimmer();
+      case NativeType.medium3:
+        return _buildMedium3Shimmer();
+      case NativeType.medium2:
+        return _buildMedium2Shimmer();
+      case NativeType.medium1:
+      default:
+        return _buildMedium1Shimmer();
     }
   }
 
@@ -469,6 +481,269 @@ class NativeShimmer extends StatelessWidget {
           decoration: BoxDecoration(
             color: shimmerStyle.onBgColor,
             borderRadius: BorderRadius.horizontal(right: Radius.circular(shimmerStyle.bgCorner)),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMedium1Shimmer() {
+    return Row(
+      children: [
+        // Media (Left)
+        Expanded(
+          flex: 45,
+          child: Container(
+            color: shimmerStyle.onBgColor,
+          ),
+        ),
+        const SizedBox(width: 8),
+        // Details (Right)
+        Expanded(
+          flex: 55,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Container(width: 40, height: 40, color: shimmerStyle.onBgColor),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(width: 24, height: 16, color: shimmerStyle.adTextBgColor ?? Colors.amber),
+                            const SizedBox(width: 4),
+                            Expanded(child: Container(height: 14, color: shimmerStyle.onBgColor)),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Container(height: 12, color: shimmerStyle.onBgColor),
+              const SizedBox(height: 4),
+              Container(height: 12, color: shimmerStyle.onBgColor),
+              const Spacer(),
+              Container(height: 36, decoration: BoxDecoration(color: shimmerStyle.onBgColor, borderRadius: BorderRadius.circular(style.buttonCornerRadius))),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMedium2Shimmer() {
+    return Row(
+      children: [
+        // Details (Left)
+        Expanded(
+          flex: 55,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Container(width: 40, height: 40, color: shimmerStyle.onBgColor),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(width: 24, height: 16, color: shimmerStyle.adTextBgColor ?? Colors.amber),
+                            const SizedBox(width: 4),
+                            Expanded(child: Container(height: 14, color: shimmerStyle.onBgColor)),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Container(height: 12, color: shimmerStyle.onBgColor),
+              const SizedBox(height: 4),
+              Container(height: 12, color: shimmerStyle.onBgColor),
+              const Spacer(),
+              Container(height: 36, decoration: BoxDecoration(color: shimmerStyle.onBgColor, borderRadius: BorderRadius.circular(style.buttonCornerRadius))),
+            ],
+          ),
+        ),
+        const SizedBox(width: 8),
+        // Media (Right)
+        Expanded(
+          flex: 45,
+          child: Container(
+            color: shimmerStyle.onBgColor,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMedium3Shimmer() {
+    return Column(
+      children: [
+        Expanded(
+          child: Row(
+            children: [
+              Container(width: 80, height: 80, color: shimmerStyle.onBgColor),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: [
+                        Container(width: 24, height: 16, color: shimmerStyle.adTextBgColor ?? Colors.amber),
+                        const SizedBox(width: 4),
+                        Expanded(child: Container(height: 16, color: shimmerStyle.onBgColor)),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Container(height: 12, color: shimmerStyle.onBgColor),
+                    const SizedBox(height: 4),
+                    Container(height: 12, width: 100, color: shimmerStyle.onBgColor),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Container(width: 60, height: 10, color: shimmerStyle.onBgColor),
+                        const SizedBox(width: 8),
+                        Container(width: 80, height: 10, color: shimmerStyle.onBgColor),
+                        const Spacer(),
+                        Container(width: 40, height: 14, color: shimmerStyle.onBgColor),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        Container(height: 48, decoration: BoxDecoration(color: shimmerStyle.onBgColor, borderRadius: BorderRadius.circular(style.buttonCornerRadius))),
+      ],
+    );
+  }
+
+  Widget _buildMedium4Shimmer() {
+    return Column(
+      children: [
+        Container(height: 48, decoration: BoxDecoration(color: shimmerStyle.onBgColor, borderRadius: BorderRadius.circular(style.buttonCornerRadius))),
+        const SizedBox(height: 12),
+        Expanded(
+          child: Row(
+            children: [
+              Container(width: 80, height: 80, color: shimmerStyle.onBgColor),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: [
+                        Container(width: 24, height: 16, color: shimmerStyle.adTextBgColor ?? Colors.amber),
+                        const SizedBox(width: 4),
+                        Expanded(child: Container(height: 16, color: shimmerStyle.onBgColor)),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Container(height: 12, color: shimmerStyle.onBgColor),
+                    const SizedBox(height: 4),
+                    Container(height: 12, width: 100, color: shimmerStyle.onBgColor),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Container(width: 60, height: 10, color: shimmerStyle.onBgColor),
+                        const SizedBox(width: 8),
+                        Container(width: 80, height: 10, color: shimmerStyle.onBgColor),
+                        const Spacer(),
+                        Container(width: 40, height: 14, color: shimmerStyle.onBgColor),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+  Widget _buildMedium5Shimmer() {
+    return Column(
+      children: [
+        Expanded(
+          child: Row(
+            children: [
+              Container(width: 80, height: 80, color: shimmerStyle.onBgColor),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: [
+                        Container(width: 24, height: 16, color: shimmerStyle.adTextBgColor ?? Colors.amber),
+                        const SizedBox(width: 4),
+                        Expanded(child: Container(height: 16, color: shimmerStyle.onBgColor)),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Container(height: 12, color: shimmerStyle.onBgColor),
+                    const SizedBox(height: 4),
+                    Container(height: 12, width: 100, color: shimmerStyle.onBgColor),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        Container(height: 48, decoration: BoxDecoration(color: shimmerStyle.onBgColor, borderRadius: BorderRadius.circular(style.buttonCornerRadius))),
+      ],
+    );
+  }
+
+  Widget _buildMedium6Shimmer() {
+    return Column(
+      children: [
+        Container(height: 48, decoration: BoxDecoration(color: shimmerStyle.onBgColor, borderRadius: BorderRadius.circular(style.buttonCornerRadius))),
+        const SizedBox(height: 12),
+        Expanded(
+          child: Row(
+            children: [
+              Container(width: 80, height: 80, color: shimmerStyle.onBgColor),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: [
+                        Container(width: 24, height: 16, color: shimmerStyle.adTextBgColor ?? Colors.amber),
+                        const SizedBox(width: 4),
+                        Expanded(child: Container(height: 16, color: shimmerStyle.onBgColor)),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Container(height: 12, color: shimmerStyle.onBgColor),
+                    const SizedBox(height: 4),
+                    Container(height: 12, width: 100, color: shimmerStyle.onBgColor),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ],

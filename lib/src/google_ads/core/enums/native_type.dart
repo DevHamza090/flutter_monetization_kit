@@ -12,6 +12,7 @@ enum NativeType {
   medium3,
   medium4,
   medium5,
+  medium6,
   large1,
   large2,
   large3,

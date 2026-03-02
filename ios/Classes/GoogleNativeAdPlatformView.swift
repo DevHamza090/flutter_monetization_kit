@@ -162,7 +162,7 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
         
         let type = customOptions["nativeType"] as? String ?? "small1"
         
-        let excludeAdvertiserAndRating = ["small5", "small6", "small7", "small8"].contains(type)
+        let excludeAdvertiserAndRating = ["small5", "small6", "small7", "small8", "medium1", "medium2", "medium5", "medium6"].contains(type)
         if excludeAdvertiserAndRating {
             advertiserView.isHidden = true
             ratingView.isHidden = true
@@ -170,7 +170,261 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
             adView.starRatingView = nil
         }
         
-        if type == "small4" {
+        if type == "medium1" {
+            // Media Left, Details Right
+            if excludeAdvertiserAndRating {
+                priceView.isHidden = true
+                adView.priceView = nil
+            }
+            
+            let mediaView = GADMediaView()
+            mediaView.translatesAutoresizingMaskIntoConstraints = false
+            adView.addSubview(mediaView)
+            adView.mediaView = mediaView
+            
+            var constraints = [
+                mediaView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
+                mediaView.topAnchor.constraint(equalTo: adView.topAnchor, constant: padding),
+                mediaView.bottomAnchor.constraint(equalTo: adView.bottomAnchor, constant: -padding),
+                mediaView.widthAnchor.constraint(equalTo: adView.widthAnchor, multiplier: 0.45),
+                
+                iconView.leadingAnchor.constraint(equalTo: mediaView.trailingAnchor, constant: padding),
+                iconView.topAnchor.constraint(equalTo: adView.topAnchor, constant: padding),
+                iconView.widthAnchor.constraint(equalToConstant: 40),
+                iconView.heightAnchor.constraint(equalToConstant: 40),
+                
+                badgeView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
+                badgeView.topAnchor.constraint(equalTo: iconView.topAnchor),
+                badgeView.widthAnchor.constraint(equalToConstant: 24),
+                badgeView.heightAnchor.constraint(equalToConstant: 16),
+                
+                headlineView.leadingAnchor.constraint(equalTo: badgeView.trailingAnchor, constant: 4),
+                headlineView.centerYAnchor.constraint(equalTo: badgeView.centerYAnchor),
+                headlineView.trailingAnchor.constraint(lessThanOrEqualTo: adView.trailingAnchor, constant: -padding),
+                
+                bodyView.leadingAnchor.constraint(equalTo: mediaView.trailingAnchor, constant: padding),
+                bodyView.topAnchor.constraint(equalTo: headlineView.bottomAnchor, constant: 4),
+                bodyView.trailingAnchor.constraint(lessThanOrEqualTo: adView.trailingAnchor, constant: -padding),
+                
+                actionButton.leadingAnchor.constraint(equalTo: mediaView.trailingAnchor, constant: padding),
+                actionButton.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -padding),
+                actionButton.bottomAnchor.constraint(equalTo: adView.bottomAnchor, constant: -padding),
+                actionButton.heightAnchor.constraint(equalToConstant: 36),
+                
+                bodyView.bottomAnchor.constraint(lessThanOrEqualTo: actionButton.topAnchor, constant: -4)
+            ]
+            NSLayoutConstraint.activate(constraints)
+            
+        } else if type == "medium2" {
+            // Details Left, Media Right
+            if excludeAdvertiserAndRating {
+                priceView.isHidden = true
+                adView.priceView = nil
+            }
+            
+            let mediaView = GADMediaView()
+            mediaView.translatesAutoresizingMaskIntoConstraints = false
+            adView.addSubview(mediaView)
+            adView.mediaView = mediaView
+            
+            var constraints = [
+                mediaView.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -padding),
+                mediaView.topAnchor.constraint(equalTo: adView.topAnchor, constant: padding),
+                mediaView.bottomAnchor.constraint(equalTo: adView.bottomAnchor, constant: -padding),
+                mediaView.widthAnchor.constraint(equalTo: adView.widthAnchor, multiplier: 0.45),
+                
+                iconView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
+                iconView.topAnchor.constraint(equalTo: adView.topAnchor, constant: padding),
+                iconView.widthAnchor.constraint(equalToConstant: 40),
+                iconView.heightAnchor.constraint(equalToConstant: 40),
+                
+                badgeView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
+                badgeView.topAnchor.constraint(equalTo: iconView.topAnchor),
+                badgeView.widthAnchor.constraint(equalToConstant: 24),
+                badgeView.heightAnchor.constraint(equalToConstant: 16),
+                
+                headlineView.leadingAnchor.constraint(equalTo: badgeView.trailingAnchor, constant: 4),
+                headlineView.centerYAnchor.constraint(equalTo: badgeView.centerYAnchor),
+                headlineView.trailingAnchor.constraint(lessThanOrEqualTo: mediaView.leadingAnchor, constant: -padding),
+                
+                bodyView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
+                bodyView.topAnchor.constraint(equalTo: headlineView.bottomAnchor, constant: 4),
+                bodyView.trailingAnchor.constraint(lessThanOrEqualTo: mediaView.leadingAnchor, constant: -padding),
+                
+                actionButton.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
+                actionButton.trailingAnchor.constraint(equalTo: mediaView.leadingAnchor, constant: -padding),
+                actionButton.bottomAnchor.constraint(equalTo: adView.bottomAnchor, constant: -padding),
+                actionButton.heightAnchor.constraint(equalToConstant: 36),
+                
+                bodyView.bottomAnchor.constraint(lessThanOrEqualTo: actionButton.topAnchor, constant: -4)
+            ]
+            NSLayoutConstraint.activate(constraints)
+            
+        } else if type == "medium3" {
+            // No Media, Full Button Bottom, 80dp Icon Left
+            
+            headlineView.font = UIFont.boldSystemFont(ofSize: 16)
+            
+            var constraints = [
+                iconView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: 12),
+                iconView.centerYAnchor.constraint(equalTo: adView.centerYAnchor, constant: -24), // Approx centering above button
+                iconView.widthAnchor.constraint(equalToConstant: 80),
+                iconView.heightAnchor.constraint(equalToConstant: 80),
+                
+                badgeView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 12),
+                badgeView.topAnchor.constraint(equalTo: iconView.topAnchor),
+                badgeView.widthAnchor.constraint(equalToConstant: 24),
+                badgeView.heightAnchor.constraint(equalToConstant: 16),
+                
+                headlineView.leadingAnchor.constraint(equalTo: badgeView.trailingAnchor, constant: 4),
+                headlineView.centerYAnchor.constraint(equalTo: badgeView.centerYAnchor),
+                headlineView.trailingAnchor.constraint(lessThanOrEqualTo: adView.trailingAnchor, constant: -12),
+                
+                bodyView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 12),
+                bodyView.topAnchor.constraint(equalTo: headlineView.bottomAnchor, constant: 4),
+                bodyView.trailingAnchor.constraint(lessThanOrEqualTo: adView.trailingAnchor, constant: -12),
+                
+                advertiserView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 12),
+                advertiserView.topAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: 6),
+                
+                ratingView.leadingAnchor.constraint(equalTo: advertiserView.trailingAnchor, constant: 4),
+                ratingView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
+                
+                priceView.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -12),
+                priceView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
+                
+                actionButton.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: 12),
+                actionButton.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -12),
+                actionButton.bottomAnchor.constraint(equalTo: adView.bottomAnchor, constant: -12),
+                actionButton.heightAnchor.constraint(equalToConstant: 48),
+                
+                iconView.bottomAnchor.constraint(lessThanOrEqualTo: actionButton.topAnchor, constant: -12)
+            ]
+            NSLayoutConstraint.activate(constraints)
+            
+        } else if type == "medium4" {
+            // No Media, Full Button Top, 80dp Icon Left
+            
+            headlineView.font = UIFont.boldSystemFont(ofSize: 16)
+            
+            var constraints = [
+                actionButton.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: 12),
+                actionButton.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -12),
+                actionButton.topAnchor.constraint(equalTo: adView.topAnchor, constant: 12),
+                actionButton.heightAnchor.constraint(equalToConstant: 48),
+                
+                iconView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: 12),
+                iconView.centerYAnchor.constraint(equalTo: adView.centerYAnchor, constant: 24), // Center below button
+                iconView.widthAnchor.constraint(equalToConstant: 80),
+                iconView.heightAnchor.constraint(equalToConstant: 80),
+                
+                badgeView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 12),
+                badgeView.topAnchor.constraint(equalTo: iconView.topAnchor),
+                badgeView.widthAnchor.constraint(equalToConstant: 24),
+                badgeView.heightAnchor.constraint(equalToConstant: 16),
+                
+                headlineView.leadingAnchor.constraint(equalTo: badgeView.trailingAnchor, constant: 4),
+                headlineView.centerYAnchor.constraint(equalTo: badgeView.centerYAnchor),
+                headlineView.trailingAnchor.constraint(lessThanOrEqualTo: adView.trailingAnchor, constant: -12),
+                
+                bodyView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 12),
+                bodyView.topAnchor.constraint(equalTo: headlineView.bottomAnchor, constant: 4),
+                bodyView.trailingAnchor.constraint(lessThanOrEqualTo: adView.trailingAnchor, constant: -12),
+                
+                advertiserView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 12),
+                advertiserView.topAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: 6),
+                
+                ratingView.leadingAnchor.constraint(equalTo: advertiserView.trailingAnchor, constant: 4),
+                ratingView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
+                
+                priceView.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -12),
+                priceView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
+                
+                iconView.topAnchor.constraint(greaterThanOrEqualTo: actionButton.bottomAnchor, constant: 12)
+            ]
+            NSLayoutConstraint.activate(constraints)
+            
+        } else if type == "medium5" {
+            // No Media, No Adv/Rating/Price, Full Button Bottom, 80dp Icon Left
+            
+            headlineView.font = UIFont.boldSystemFont(ofSize: 16)
+            
+            advertiserView.removeFromSuperview()
+            ratingView.removeFromSuperview()
+            priceView.removeFromSuperview()
+            adView.advertiserView = nil
+            adView.starRatingView = nil
+            adView.priceView = nil
+            
+            var constraints = [
+                iconView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: 12),
+                iconView.centerYAnchor.constraint(equalTo: adView.centerYAnchor, constant: -24), // Approx centering above button
+                iconView.widthAnchor.constraint(equalToConstant: 80),
+                iconView.heightAnchor.constraint(equalToConstant: 80),
+                
+                badgeView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 12),
+                badgeView.topAnchor.constraint(equalTo: iconView.topAnchor),
+                badgeView.widthAnchor.constraint(equalToConstant: 24),
+                badgeView.heightAnchor.constraint(equalToConstant: 16),
+                
+                headlineView.leadingAnchor.constraint(equalTo: badgeView.trailingAnchor, constant: 4),
+                headlineView.centerYAnchor.constraint(equalTo: badgeView.centerYAnchor),
+                headlineView.trailingAnchor.constraint(lessThanOrEqualTo: adView.trailingAnchor, constant: -12),
+                
+                bodyView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 12),
+                bodyView.topAnchor.constraint(equalTo: headlineView.bottomAnchor, constant: 4),
+                bodyView.trailingAnchor.constraint(lessThanOrEqualTo: adView.trailingAnchor, constant: -12),
+                
+                actionButton.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: 12),
+                actionButton.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -12),
+                actionButton.bottomAnchor.constraint(equalTo: adView.bottomAnchor, constant: -12),
+                actionButton.heightAnchor.constraint(equalToConstant: 48),
+                
+                iconView.bottomAnchor.constraint(lessThanOrEqualTo: actionButton.topAnchor, constant: -12)
+            ]
+            NSLayoutConstraint.activate(constraints)
+            
+        } else if type == "medium6" {
+            // No Media, No Adv/Rating/Price, Full Button Top, 80dp Icon Left
+            
+            headlineView.font = UIFont.boldSystemFont(ofSize: 16)
+            
+            advertiserView.removeFromSuperview()
+            ratingView.removeFromSuperview()
+            priceView.removeFromSuperview()
+            adView.advertiserView = nil
+            adView.starRatingView = nil
+            adView.priceView = nil
+            
+            var constraints = [
+                actionButton.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: 12),
+                actionButton.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -12),
+                actionButton.topAnchor.constraint(equalTo: adView.topAnchor, constant: 12),
+                actionButton.heightAnchor.constraint(equalToConstant: 48),
+                
+                iconView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: 12),
+                iconView.centerYAnchor.constraint(equalTo: adView.centerYAnchor, constant: 24), // Center below button
+                iconView.widthAnchor.constraint(equalToConstant: 80),
+                iconView.heightAnchor.constraint(equalToConstant: 80),
+                
+                badgeView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 12),
+                badgeView.topAnchor.constraint(equalTo: iconView.topAnchor),
+                badgeView.widthAnchor.constraint(equalToConstant: 24),
+                badgeView.heightAnchor.constraint(equalToConstant: 16),
+                
+                headlineView.leadingAnchor.constraint(equalTo: badgeView.trailingAnchor, constant: 4),
+                headlineView.centerYAnchor.constraint(equalTo: badgeView.centerYAnchor),
+                headlineView.trailingAnchor.constraint(lessThanOrEqualTo: adView.trailingAnchor, constant: -12),
+                
+                bodyView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 12),
+                bodyView.topAnchor.constraint(equalTo: headlineView.bottomAnchor, constant: 4),
+                bodyView.trailingAnchor.constraint(lessThanOrEqualTo: adView.trailingAnchor, constant: -12),
+                
+                iconView.topAnchor.constraint(greaterThanOrEqualTo: actionButton.bottomAnchor, constant: 12)
+            ]
+            NSLayoutConstraint.activate(constraints)
+            
+        } else if type == "small4" {
             iconView.isHidden = true
             
             actionButton.setContentHuggingPriority(.required, for: .horizontal)

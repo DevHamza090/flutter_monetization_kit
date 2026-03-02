@@ -66,22 +66,21 @@ class GoogleNativeAdPlatformView(
 
     private fun buildNativeAdView(nativeAd: NativeAd, options: Map<String, Any?>?): NativeAdView {
         val type = options?.get("nativeType") as? String ?: "small1"
-        val layoutRes = if (type == "small8") {
-            R.layout.native_ad_small_8
-        } else if (type == "small7") {
-            R.layout.native_ad_small_7
-        } else if (type == "small6") {
-            R.layout.native_ad_small_6
-        } else if (type == "small5") {
-            R.layout.native_ad_small_5
-        } else if (type == "small4") {
-            R.layout.native_ad_small_4
-        } else if (type == "small3") {
-            R.layout.native_ad_small_3
-        } else if (type == "small2") {
-            R.layout.native_ad_small_2
-        } else {
-            R.layout.native_ad_small
+        val layoutRes = when (type) {
+            "small8" -> R.layout.native_ad_small_8
+            "small7" -> R.layout.native_ad_small_7
+            "small6" -> R.layout.native_ad_small_6
+            "small5" -> R.layout.native_ad_small_5
+            "small4" -> R.layout.native_ad_small_4
+            "small3" -> R.layout.native_ad_small_3
+            "small2" -> R.layout.native_ad_small_2
+            "medium6" -> R.layout.native_ad_medium_6
+            "medium5" -> R.layout.native_ad_medium_5
+            "medium4" -> R.layout.native_ad_medium_4
+            "medium3" -> R.layout.native_ad_medium_3
+            "medium2" -> R.layout.native_ad_medium_2
+            "medium1" -> R.layout.native_ad_medium_1
+            else -> R.layout.native_ad_small
         }
         val view = LayoutInflater.from(context).inflate(layoutRes, null) as NativeAdView
 
@@ -102,6 +101,11 @@ class GoogleNativeAdPlatformView(
         view.starRatingView = ratingBar
         val priceView = view.findViewById<TextView>(R.id.ad_price)
         view.priceView = priceView
+
+        val mediaView = view.findViewById<com.google.android.gms.ads.nativead.MediaView>(R.id.ad_media)
+        if (mediaView != null) {
+            view.mediaView = mediaView
+        }
 
         // 2. Populate data
         headlineView.text = nativeAd.headline
