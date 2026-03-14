@@ -6,6 +6,7 @@ enum AdValidationReason {
   adAlreadyLoading,
   adAlreadyReady,
   adNotAvailable,
-  interstitialMaxCountReached,
-  interstitialIntervalNotReached,
+  anotherFullScreenShowing,
+  maxCountReached,
+  iIntervalNotReached,
 }

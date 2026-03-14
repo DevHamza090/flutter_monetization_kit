@@ -27,7 +27,8 @@ class AdsSettings {
 
   /// Current count of interstitials shown in this session/section
   int _interstitialCurrentCountInSection = 0;
-  int get interstitialCurrentCountInSection => _interstitialCurrentCountInSection;
+  int get interstitialCurrentCountInSection =>
+      _interstitialCurrentCountInSection;
 
   /// Enable or disable logs for debugging
   bool isDebugMode = kDebugMode;
@@ -67,14 +68,14 @@ class AdsSettings {
     // 1. Max Count Check
     if (interstitialMaxCountInSection != null &&
         _interstitialCurrentCountInSection >= interstitialMaxCountInSection!) {
-      return AdValidationReason.interstitialMaxCountReached;
+      return AdValidationReason.maxCountReached;
     }
 
     // 2. Interval Check
     if (_lastInterstitialShowTime != null) {
       final difference = DateTime.now().difference(_lastInterstitialShowTime!);
       if (difference < interstitialInterval) {
-        return AdValidationReason.interstitialIntervalNotReached;
+        return AdValidationReason.iIntervalNotReached;
       }
     }
 

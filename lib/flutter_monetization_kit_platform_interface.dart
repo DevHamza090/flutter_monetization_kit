@@ -8,7 +8,8 @@ abstract class FlutterMonetizationKitPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static FlutterMonetizationKitPlatform _instance = MethodChannelFlutterMonetizationKit();
+  static FlutterMonetizationKitPlatform _instance =
+      MethodChannelFlutterMonetizationKit();
 
   /// The default instance of [FlutterMonetizationKitPlatform] to use.
   ///

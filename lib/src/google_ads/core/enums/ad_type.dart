@@ -1,1 +1,10 @@
-enum AdType { banner, adaptiveBanner, interstitial, rewarded, rewardedInterstitial, native, nativeVideo, appOpen }
+enum AdType {
+  banner,
+  adaptiveBanner,
+  interstitial,
+  rewarded,
+  rewardedInterstitial,
+  native,
+  nativeVideo,
+  appOpen,
+}

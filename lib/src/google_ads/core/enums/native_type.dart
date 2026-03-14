@@ -18,6 +18,7 @@ enum NativeType {
   large3,
   large4,
   large5,
+  large6,
   fullscreen1,
   fullscreen2,
   fullscreen3,

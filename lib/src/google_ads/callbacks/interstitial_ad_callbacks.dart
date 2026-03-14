@@ -5,12 +5,12 @@ class InterstitialAdCallbacks {
   /// Triggered when the package blocks an ad request (Internet, Premium, etc.)
   final Function(AdValidationReason reason)? onAdValidated;
 
-
   final Function(InterstitialAd ad)? onAdLoaded;
   final Function(LoadAdError error)? onAdFailedToLoad;
   final Function(InterstitialAd ad)? onAdShowedFullScreenContent;
   final Function(InterstitialAd ad)? onAdDismissedFullScreenContent;
-  final Function(InterstitialAd ad, AdError error)? onAdFailedToShowFullScreenContent;
+  final Function(InterstitialAd ad, AdError error)?
+  onAdFailedToShowFullScreenContent;
   final Function(InterstitialAd ad)? onAdClicked;
 
   const InterstitialAdCallbacks({

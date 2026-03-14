@@ -5,12 +5,13 @@ class NetworkInfo {
   final Connectivity _connectivity;
 
   NetworkInfo([Connectivity? connectivity])
-      : _connectivity = connectivity ?? Connectivity();
+    : _connectivity = connectivity ?? Connectivity();
 
   /// Returns true if the device is connected to Mobile, Wi-Fi, or Ethernet.
   /// Use this before calling your Load functions.
   Future<bool> get isConnected async {
-    final List<ConnectivityResult> results = await _connectivity.checkConnectivity();
+    final List<ConnectivityResult> results = await _connectivity
+        .checkConnectivity();
     return _isValidConnection(results);
   }
 
@@ -27,9 +28,11 @@ class NetworkInfo {
     // connectivity_plus 6.0+ returns a List
     if (results.isEmpty) return false;
 
-    return results.any((result) =>
-    result == ConnectivityResult.mobile ||
-        result == ConnectivityResult.wifi ||
-        result == ConnectivityResult.ethernet);
+    return results.any(
+      (result) =>
+          result == ConnectivityResult.mobile ||
+          result == ConnectivityResult.wifi ||
+          result == ConnectivityResult.ethernet,
+    );
   }
 }

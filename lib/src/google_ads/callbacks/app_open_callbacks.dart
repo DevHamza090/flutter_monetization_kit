@@ -9,7 +9,8 @@ class AppOpenAdCallbacks {
   // Show Listeners
   final Function(AppOpenAd ad)? onAdShowedFullScreenContent;
   final Function(AppOpenAd ad)? onAdDismissedFullScreenContent;
-  final Function(AppOpenAd ad, AdError error)? onAdFailedToShowFullScreenContent;
+  final Function(AppOpenAd ad, AdError error)?
+  onAdFailedToShowFullScreenContent;
   final Function(AppOpenAd ad)? onAdClicked;
 
   const AppOpenAdCallbacks({

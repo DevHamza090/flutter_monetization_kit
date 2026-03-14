@@ -1,6 +1,5 @@
 import 'dart:io';
 
-
 class AdConstants {
   // Private constructor to prevent instantiation
   AdConstants._();
@@ -18,7 +17,10 @@ class AdConstants {
   static const String prefix = "[EasyAds]";
 
   // --- Static Error Messages ---
-  static const String errorNoInternet = "$prefix ❌ No internet connection. Ad load cancelled.";
-  static const String errorPremiumUser = "$prefix 💎 User is Premium. Ads are disabled.";
-  static const String msgAdLoading = "$prefix ⏳ Ad is already loading. Skipping duplicate request.";
+  static const String errorNoInternet =
+      "$prefix ❌ No internet connection. Ad load cancelled.";
+  static const String errorPremiumUser =
+      "$prefix 💎 User is Premium. Ads are disabled.";
+  static const String msgAdLoading =
+      "$prefix ⏳ Ad is already loading. Skipping duplicate request.";
 }

@@ -27,13 +27,17 @@ class InterstitialAdManager {
     // 1. Validation Logic (Premium, Internet)
     final validationReason = await AdUtils.validateAdProcess();
     if (validationReason != null) {
-      debugPrint("InterstitialAdManager: Ad request blocked ($validationReason)");
+      debugPrint(
+        "InterstitialAdManager: Ad request blocked ($validationReason)",
+      );
       callbacks?.onAdValidated?.call(validationReason);
       return;
     }
 
     if (!AdsSettings.instance.enableInterstitialAds) {
-      debugPrint("InterstitialAdManager: Interstitial ads are disabled in settings");
+      debugPrint(
+        "InterstitialAdManager: Interstitial ads are disabled in settings",
+      );
       callbacks?.onAdValidated?.call(AdValidationReason.adDisabled);
       return;
     }
@@ -43,7 +47,9 @@ class InterstitialAdManager {
 
     // [REQ] when loading does not load extra
     if (AdRegistry.instance.isAdLoading(registryKey)) {
-      debugPrint(AdUtils.logAlreadyLoading(AdType.interstitial, adUnitId, screenName));
+      debugPrint(
+        AdUtils.logAlreadyLoading(AdType.interstitial, adUnitId, screenName),
+      );
       callbacks?.onAdValidated?.call(AdValidationReason.adAlreadyLoading);
       return;
     }
@@ -52,7 +58,9 @@ class InterstitialAdManager {
     if (AdRegistry.instance.isAdReady(registryKey)) {
       debugPrint("InterstitialAdManager: Ad already loaded for $registryKey");
       callbacks?.onAdValidated?.call(AdValidationReason.adAlreadyReady);
-      callbacks?.onAdLoaded?.call(AdRegistry.instance.getAd<InterstitialAd>(registryKey)!);
+      callbacks?.onAdLoaded?.call(
+        AdRegistry.instance.getAd<InterstitialAd>(registryKey)!,
+      );
       return;
     }
 
@@ -70,7 +78,9 @@ class InterstitialAdManager {
           callbacks?.onAdLoaded?.call(ad);
         },
         onAdFailedToLoad: (error) {
-          debugPrint(AdUtils.logFailed(AdType.interstitial, screenName, error.message));
+          debugPrint(
+            AdUtils.logFailed(AdType.interstitial, screenName, error.message),
+          );
           AdRegistry.instance.removeAd(registryKey);
           callbacks?.onAdFailedToLoad?.call(error);
         },
@@ -98,8 +108,20 @@ class InterstitialAdManager {
     // 1. Core Logic & Validation
     final validationReason = AdsSettings.instance.validateInterstitialShow();
     if (validationReason != null) {
-      debugPrint("InterstitialAdManager: Cannot show interstitial ($validationReason)");
+      debugPrint(
+        "InterstitialAdManager: Cannot show interstitial ($validationReason)",
+      );
       callbacks?.onAdValidated?.call(validationReason);
+      return;
+    }
+
+    if (AdRegistry.instance.isFullScreenAdShowing) {
+      debugPrint(
+        "InterstitialAdManager: Another full screen ad is already showing.",
+      );
+      callbacks?.onAdValidated?.call(
+        AdValidationReason.anotherFullScreenShowing,
+      );
       return;
     }
 
@@ -115,9 +137,11 @@ class InterstitialAdManager {
     }
 
     if (ad == null) {
-      debugPrint("InterstitialAdManager: No preloaded ad found for adUnit:$adUnitId, screen:$screenName");
+      debugPrint(
+        "InterstitialAdManager: No preloaded ad found for adUnit:$adUnitId, screen:$screenName",
+      );
       callbacks?.onAdValidated?.call(AdValidationReason.adNotAvailable);
-      
+
       // Professional: If not ready, load one for next time
       if (!AdRegistry.instance.isAdLoading(registryKey)) {
         load(
@@ -133,24 +157,29 @@ class InterstitialAdManager {
     // 3. Show Loading Dialog (if requested)
     if (loadingDialog) {
       _showLoadingDialog(context);
-      await Future.delayed(const Duration(milliseconds: 500)); // Minimal delay for smoother transition
+      await Future.delayed(
+        const Duration(milliseconds: 500),
+      ); // Minimal delay for smoother transition
     }
 
     // 4. Actual Show Logic
     ad.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent: (ad) {
+        AdRegistry.instance.isFullScreenAdShowing = true;
         if (loadingDialog && context.mounted) {
-           Navigator.of(context, rootNavigator: true).pop();
+          Navigator.of(context, rootNavigator: true).pop();
         }
         AdsSettings.instance.incrementInterstitialCount();
         debugPrint(AdUtils.logShowing(AdType.interstitial, screenName));
         callbacks?.onAdShowedFullScreenContent?.call(ad);
       },
       onAdDismissedFullScreenContent: (ad) {
+        AdRegistry.instance.isFullScreenAdShowing = false;
+        AdRegistry.instance.lastDismissedTime = DateTime.now();
         ad.dispose();
         AdRegistry.instance.removeAd(registryKey);
         callbacks?.onAdDismissedFullScreenContent?.call(ad);
-        
+
         if (reloadAfterShow) {
           load(
             screenName: screenName,
@@ -161,15 +190,22 @@ class InterstitialAdManager {
         }
       },
       onAdFailedToShowFullScreenContent: (ad, error) {
+        AdRegistry.instance.isFullScreenAdShowing = false;
+        AdRegistry.instance.lastDismissedTime = DateTime.now();
         if (loadingDialog && context.mounted) {
           Navigator.of(context, rootNavigator: true).pop();
         }
         ad.dispose();
         AdRegistry.instance.removeAd(registryKey);
-        debugPrint("InterstitialAdManager: Failed to show ad. Error: ${error.message}");
+        debugPrint(
+          "InterstitialAdManager: Failed to show ad. Error: ${error.message}",
+        );
         callbacks?.onAdFailedToShowFullScreenContent?.call(ad, error);
       },
-      onAdClicked: (ad) => callbacks?.onAdClicked?.call(ad),
+      onAdClicked: (ad) {
+        AdRegistry.instance.wasAdClickedRecently = true;
+        callbacks?.onAdClicked?.call(ad);
+      },
     );
 
     await ad.show();

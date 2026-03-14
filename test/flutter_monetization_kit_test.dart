@@ -7,21 +7,26 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 class MockFlutterMonetizationKitPlatform
     with MockPlatformInterfaceMixin
     implements FlutterMonetizationKitPlatform {
-
   @override
   Future<String?> getPlatformVersion() => Future.value('42');
 }
 
 void main() {
-  final FlutterMonetizationKitPlatform initialPlatform = FlutterMonetizationKitPlatform.instance;
+  final FlutterMonetizationKitPlatform initialPlatform =
+      FlutterMonetizationKitPlatform.instance;
 
   test('$MethodChannelFlutterMonetizationKit is the default instance', () {
-    expect(initialPlatform, isInstanceOf<MethodChannelFlutterMonetizationKit>());
+    expect(
+      initialPlatform,
+      isInstanceOf<MethodChannelFlutterMonetizationKit>(),
+    );
   });
 
   test('getPlatformVersion', () async {
-    FlutterMonetizationKit flutterMonetizationKitPlugin = FlutterMonetizationKit();
-    MockFlutterMonetizationKitPlatform fakePlatform = MockFlutterMonetizationKitPlatform();
+    FlutterMonetizationKit flutterMonetizationKitPlugin =
+        FlutterMonetizationKit();
+    MockFlutterMonetizationKitPlatform fakePlatform =
+        MockFlutterMonetizationKitPlatform();
     FlutterMonetizationKitPlatform.instance = fakePlatform;
 
     expect(await flutterMonetizationKitPlugin.getPlatformVersion(), '42');

@@ -16,7 +16,7 @@ class _RewardedsScreenState extends State<RewardedsScreen> {
 
   void _showAd(String screenName) async {
     setState(() => _isLoading = true);
-    
+
     await RewardedAdManager.instance.show(
       context: context,
       screenName: screenName,
@@ -26,7 +26,9 @@ class _RewardedsScreenState extends State<RewardedsScreen> {
       reloadAfterShow: true,
       callbacks: RewardedAdCallbacks(
         onUserEarnedReward: (ad, reward) {
-          debugPrint('Rewarded Demo: User earned reward: ${reward.amount} ${reward.type}');
+          debugPrint(
+            'Rewarded Demo: User earned reward: ${reward.amount} ${reward.type}',
+          );
           setState(() => _coins += reward.amount.toInt());
         },
         onAdShowedFullScreenContent: (ad) {
@@ -37,35 +39,44 @@ class _RewardedsScreenState extends State<RewardedsScreen> {
           setState(() => _isLoading = false);
         },
         onAdFailedToShowFullScreenContent: (ad, error) {
-          debugPrint('Rewarded Demo: Ad failed to show for $screenName. Error: ${error.message}');
+          debugPrint(
+            'Rewarded Demo: Ad failed to show for $screenName. Error: ${error.message}',
+          );
           setState(() => _isLoading = false);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Failed to show ad: ${error.message}')),
           );
         },
         onAdValidated: (reason) {
-           debugPrint('Rewarded Demo: Ad blocked for $screenName. Reason: $reason');
-           setState(() => _isLoading = false);
-           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Ad blocked: $reason')),
+          debugPrint(
+            'Rewarded Demo: Ad blocked for $screenName. Reason: $reason',
           );
-        }
+          setState(() => _isLoading = false);
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Ad blocked: $reason')));
+        },
       ),
     );
   }
 
   void _preloadAd(String screenName) async {
     ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Preloading ad for $screenName...'), duration: const Duration(milliseconds: 500)),
+      SnackBar(
+        content: Text('Preloading ad for $screenName...'),
+        duration: const Duration(milliseconds: 500),
+      ),
     );
-    
+
     await RewardedAdManager.instance.load(
       screenName: screenName,
       screenRemote: true,
       adUnitId: _adUnitId,
       callbacks: RewardedAdCallbacks(
         onAdLoaded: (ad) {
-          debugPrint('Rewarded Demo: Ad preloaded successfully for $screenName');
+          debugPrint(
+            'Rewarded Demo: Ad preloaded successfully for $screenName',
+          );
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Ad preloaded for $screenName')),
@@ -73,13 +84,15 @@ class _RewardedsScreenState extends State<RewardedsScreen> {
           }
         },
         onAdFailedToLoad: (error) {
-           debugPrint('Rewarded Demo: Ad preload failed for $screenName. Error: ${error.message}');
-           if (mounted) {
-             ScaffoldMessenger.of(context).showSnackBar(
+          debugPrint(
+            'Rewarded Demo: Ad preload failed for $screenName. Error: ${error.message}',
+          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Ad preload failed: ${error.message}')),
             );
-           }
-        }
+          }
+        },
       ),
     );
   }
@@ -95,10 +108,13 @@ class _RewardedsScreenState extends State<RewardedsScreen> {
             child: Center(
               child: Text(
                 'Coins: $_coins',
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          )
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -138,7 +154,9 @@ class _RewardedsScreenState extends State<RewardedsScreen> {
             ListTile(
               leading: const Icon(Icons.star, color: Colors.amber),
               title: const Text('Toggle Premium Status'),
-              subtitle: Text('Current: ${AdsSettings.instance.isPremium ? "Premium" : "Free"}'),
+              subtitle: Text(
+                'Current: ${AdsSettings.instance.isPremium ? "Premium" : "Free"}',
+              ),
               trailing: Switch(
                 value: AdsSettings.instance.isPremium,
                 onChanged: (val) {
@@ -177,7 +195,10 @@ class _RewardedsScreenState extends State<RewardedsScreen> {
           children: [
             ListTile(
               leading: Icon(icon, color: Colors.green, size: 32),
-              title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+              title: Text(
+                title,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
               subtitle: Text(subtitle),
             ),
             Row(

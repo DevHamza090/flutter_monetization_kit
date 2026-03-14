@@ -5,20 +5,20 @@ import 'package:flutter_monetization_kit/flutter_monetization_kit_method_channel
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  MethodChannelFlutterMonetizationKit platform = MethodChannelFlutterMonetizationKit();
+  MethodChannelFlutterMonetizationKit platform =
+      MethodChannelFlutterMonetizationKit();
   const MethodChannel channel = MethodChannel('flutter_monetization_kit');
 
   setUp(() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
-      channel,
-      (MethodCall methodCall) async {
-        return '42';
-      },
-    );
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+          return '42';
+        });
   });
 
   tearDown(() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(channel, null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
   });
 
   test('getPlatformVersion', () async {

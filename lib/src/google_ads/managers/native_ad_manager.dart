@@ -16,7 +16,9 @@ class NativeAdManager {
   }
   static final NativeAdManager instance = NativeAdManager._();
 
-  static const MethodChannel _channel = MethodChannel('flutter_monetization_kit/native_ads');
+  static const MethodChannel _channel = MethodChannel(
+    'flutter_monetization_kit/native_ads',
+  );
 
   final Map<String, NativeAdCallbacks> _loadCallbacks = {};
 
@@ -37,7 +39,10 @@ class NativeAdManager {
         final String error = args['error'] as String? ?? 'Unknown error';
         debugPrint(AdUtils.logFailed(AdType.native, screenName, error));
         AdRegistry.instance.removeAd(cacheId);
-        _loadCallbacks[cacheId]?.onAdFailedToLoad?.call(adUnitId, LoadAdError(0, error, '', null));
+        _loadCallbacks[cacheId]?.onAdFailedToLoad?.call(
+          adUnitId,
+          LoadAdError(0, error, '', null),
+        );
         break;
     }
   }
@@ -65,7 +70,9 @@ class NativeAdManager {
     final cacheId = getRegistryKey(screenName);
 
     if (AdRegistry.instance.isAdLoading(cacheId)) {
-      debugPrint(AdUtils.logAlreadyLoading(AdType.native, adUnitId, screenName));
+      debugPrint(
+        AdUtils.logAlreadyLoading(AdType.native, adUnitId, screenName),
+      );
       callbacks?.onAdValidated?.call(AdValidationReason.adAlreadyLoading);
       return;
     }
@@ -92,38 +99,41 @@ class NativeAdManager {
       });
     } catch (e) {
       AdRegistry.instance.removeAd(cacheId);
-      callbacks?.onAdFailedToLoad?.call(adUnitId, LoadAdError(0, e.toString(), '', null));
+      callbacks?.onAdFailedToLoad?.call(
+        adUnitId,
+        LoadAdError(0, e.toString(), '', null),
+      );
     }
   }
 
   bool isAdPreloaded(String? screenName, String adUnitId) {
     bool ready = AdRegistry.instance.isAdReady(getRegistryKey(screenName));
     if (!ready && screenName != null) {
-      ready = AdRegistry.instance.isAdReady(getRegistryKey(null)); // Fallback to Universal
+      ready = AdRegistry.instance.isAdReady(
+        getRegistryKey(null),
+      ); // Fallback to Universal
     }
     return ready;
   }
 
   String getTargetCacheId(String? screenName, String adUnitId) {
-    bool screenReady = AdRegistry.instance.isAdReady(getRegistryKey(screenName));
+    bool screenReady = AdRegistry.instance.isAdReady(
+      getRegistryKey(screenName),
+    );
     if (screenReady) return getRegistryKey(screenName);
-    return getRegistryKey(null); 
+    return getRegistryKey(null);
   }
 
   void removeAd(String? screenName) {
     String cacheId = getRegistryKey(screenName);
     AdRegistry.instance.removeAd(cacheId);
-    _channel.invokeMethod('disposeAd', {
-      'cacheId': cacheId,
-    });
+    _channel.invokeMethod('disposeAd', {'cacheId': cacheId});
   }
 
   void consumeAd(String? screenName) {
     String cacheId = getRegistryKey(screenName);
     AdRegistry.instance.removeAd(cacheId);
-    _channel.invokeMethod('consumeAd', {
-      'cacheId': cacheId,
-    });
+    _channel.invokeMethod('consumeAd', {'cacheId': cacheId});
   }
 
   String getRegistryKey(String? screenName) {

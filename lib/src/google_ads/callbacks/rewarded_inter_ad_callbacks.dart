@@ -8,12 +8,13 @@ class RewardedInterAdCallbacks {
   final Function(LoadAdError error)? onAdFailedToLoad;
 
   // Show Listeners
-  final Function(RewardedInterstitialAd ad, RewardItem reward)? onUserEarnedReward;
+  final Function(RewardedInterstitialAd ad, RewardItem reward)?
+  onUserEarnedReward;
   final Function(RewardedInterstitialAd ad)? onAdShowedFullScreenContent;
   final Function(RewardedInterstitialAd ad)? onAdDismissedFullScreenContent;
-  final Function(RewardedInterstitialAd ad, AdError error)? onAdFailedToShowFullScreenContent;
+  final Function(RewardedInterstitialAd ad, AdError error)?
+  onAdFailedToShowFullScreenContent;
   final Function(RewardedInterstitialAd ad)? onAdClicked;
-
 
   const RewardedInterAdCallbacks({
     this.onAdValidated,

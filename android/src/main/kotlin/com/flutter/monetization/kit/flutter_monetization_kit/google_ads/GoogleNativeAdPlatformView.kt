@@ -74,6 +74,12 @@ class GoogleNativeAdPlatformView(
             "small4" -> R.layout.native_ad_small_4
             "small3" -> R.layout.native_ad_small_3
             "small2" -> R.layout.native_ad_small_2
+            "large6" -> R.layout.native_ad_large_6
+            "large5" -> R.layout.native_ad_large_5
+            "large4" -> R.layout.native_ad_large_4
+            "large3" -> R.layout.native_ad_large_3
+            "large2" -> R.layout.native_ad_large_2
+            "large1" -> R.layout.native_ad_large_1
             "medium6" -> R.layout.native_ad_medium_6
             "medium5" -> R.layout.native_ad_medium_5
             "medium4" -> R.layout.native_ad_medium_4

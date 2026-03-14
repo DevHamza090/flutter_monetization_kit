@@ -11,7 +11,8 @@ class RewardedAdCallbacks {
   final Function(RewardedAd ad, RewardItem reward)? onUserEarnedReward;
   final Function(RewardedAd ad)? onAdShowedFullScreenContent;
   final Function(RewardedAd ad)? onAdDismissedFullScreenContent;
-  final Function(RewardedAd ad, AdError error)? onAdFailedToShowFullScreenContent;
+  final Function(RewardedAd ad, AdError error)?
+  onAdFailedToShowFullScreenContent;
   final Function(RewardedAd ad)? onAdClicked;
 
   const RewardedAdCallbacks({

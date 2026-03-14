@@ -15,7 +15,7 @@ class NativeAdShimmerStyle {
   // Highlight/Base colors for the shimmer effect
   final Color? baseColor;
   final Color? highlightColor;
-  
+
   // Element placeholder color (blocks inside the shimmer)
   final Color? onBgColor;
 

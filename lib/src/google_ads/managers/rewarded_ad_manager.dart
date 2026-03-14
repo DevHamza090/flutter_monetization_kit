@@ -42,7 +42,9 @@ class RewardedAdManager {
     final registryKey = _getRegistryKey(screenName);
 
     if (AdRegistry.instance.isAdLoading(registryKey)) {
-      debugPrint(AdUtils.logAlreadyLoading(AdType.rewarded, adUnitId, screenName));
+      debugPrint(
+        AdUtils.logAlreadyLoading(AdType.rewarded, adUnitId, screenName),
+      );
       callbacks?.onAdValidated?.call(AdValidationReason.adAlreadyLoading);
       return;
     }
@@ -50,7 +52,9 @@ class RewardedAdManager {
     if (AdRegistry.instance.isAdReady(registryKey)) {
       debugPrint("RewardedAdManager: Ad already loaded for $registryKey");
       callbacks?.onAdValidated?.call(AdValidationReason.adAlreadyReady);
-      callbacks?.onAdLoaded?.call(AdRegistry.instance.getAd<RewardedAd>(registryKey)!);
+      callbacks?.onAdLoaded?.call(
+        AdRegistry.instance.getAd<RewardedAd>(registryKey)!,
+      );
       return;
     }
 
@@ -68,7 +72,9 @@ class RewardedAdManager {
           callbacks?.onAdLoaded?.call(ad);
         },
         onAdFailedToLoad: (error) {
-          debugPrint(AdUtils.logFailed(AdType.rewarded, screenName, error.message));
+          debugPrint(
+            AdUtils.logFailed(AdType.rewarded, screenName, error.message),
+          );
           AdRegistry.instance.removeAd(registryKey);
           callbacks?.onAdFailedToLoad?.call(error);
         },
@@ -96,8 +102,20 @@ class RewardedAdManager {
     // 1. Core Logic & Validation
     final validationReason = AdsSettings.instance.validateRewardedShow();
     if (validationReason != null) {
-      debugPrint("RewardedAdManager: Cannot show rewarded ad ($validationReason)");
+      debugPrint(
+        "RewardedAdManager: Cannot show rewarded ad ($validationReason)",
+      );
       callbacks?.onAdValidated?.call(validationReason);
+      return;
+    }
+
+    if (AdRegistry.instance.isFullScreenAdShowing) {
+      debugPrint(
+        "RewardedAdManager: Another full screen ad is already showing.",
+      );
+      callbacks?.onAdValidated?.call(
+        AdValidationReason.anotherFullScreenShowing,
+      );
       return;
     }
 
@@ -111,9 +129,11 @@ class RewardedAdManager {
     }
 
     if (ad == null) {
-      debugPrint("RewardedAdManager: No preloaded ad found for adUnit:$adUnitId, screen:$screenName");
+      debugPrint(
+        "RewardedAdManager: No preloaded ad found for adUnit:$adUnitId, screen:$screenName",
+      );
       callbacks?.onAdValidated?.call(AdValidationReason.adNotAvailable);
-      
+
       if (!AdRegistry.instance.isAdLoading(registryKey)) {
         load(
           screenName: screenName,
@@ -134,17 +154,20 @@ class RewardedAdManager {
     // 4. Actual Show Logic
     ad.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent: (ad) {
+        AdRegistry.instance.isFullScreenAdShowing = true;
         if (loadingDialog && context.mounted) {
-           Navigator.of(context, rootNavigator: true).pop();
+          Navigator.of(context, rootNavigator: true).pop();
         }
         debugPrint(AdUtils.logShowing(AdType.rewarded, screenName));
-        callbacks?.onAdShowedFullScreenContent?.call(ad as RewardedAd);
+        callbacks?.onAdShowedFullScreenContent?.call(ad);
       },
       onAdDismissedFullScreenContent: (ad) {
+        AdRegistry.instance.isFullScreenAdShowing = false;
+        AdRegistry.instance.lastDismissedTime = DateTime.now();
         ad.dispose();
         AdRegistry.instance.removeAd(registryKey);
-        callbacks?.onAdDismissedFullScreenContent?.call(ad as RewardedAd);
-        
+        callbacks?.onAdDismissedFullScreenContent?.call(ad);
+
         if (reloadAfterShow) {
           load(
             screenName: screenName,
@@ -155,20 +178,29 @@ class RewardedAdManager {
         }
       },
       onAdFailedToShowFullScreenContent: (ad, error) {
+        AdRegistry.instance.isFullScreenAdShowing = false;
+        AdRegistry.instance.lastDismissedTime = DateTime.now();
         if (loadingDialog && context.mounted) {
           Navigator.of(context, rootNavigator: true).pop();
         }
         ad.dispose();
         AdRegistry.instance.removeAd(registryKey);
-        debugPrint("RewardedAdManager: Failed to show ad. Error: ${error.message}");
+        debugPrint(
+          "RewardedAdManager: Failed to show ad. Error: ${error.message}",
+        );
         callbacks?.onAdFailedToShowFullScreenContent?.call(ad, error);
       },
-      onAdClicked: (ad) => callbacks?.onAdClicked?.call(ad),
+      onAdClicked: (ad) {
+        AdRegistry.instance.wasAdClickedRecently = true;
+        callbacks?.onAdClicked?.call(ad);
+      },
     );
 
-    await ad.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
-      callbacks?.onUserEarnedReward?.call(ad as RewardedAd, reward);
-    });
+    await ad.show(
+      onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+        callbacks?.onUserEarnedReward?.call(ad as RewardedAd, reward);
+      },
+    );
   }
 
   String _getRegistryKey(String? screenName) {

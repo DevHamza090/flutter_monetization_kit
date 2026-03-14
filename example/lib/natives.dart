@@ -10,18 +10,19 @@ class NativesScreen extends StatefulWidget {
   State<NativesScreen> createState() => _NativesScreenState();
 }
 
-class _NativesScreenState extends State<NativesScreen> with SingleTickerProviderStateMixin {
+class _NativesScreenState extends State<NativesScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   // Google Test IDs for Native Ads
-  String get _testAdUnitId => Platform.isAndroid 
-      ? 'ca-app-pub-3940256099942544/2247696110' 
+  String get _testAdUnitId => Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/2247696110'
       : 'ca-app-pub-3940256099942544/3986624511';
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 15, vsync: this);
+    _tabController = TabController(length: 21, vsync: this);
   }
 
   @override
@@ -54,6 +55,12 @@ class _NativesScreenState extends State<NativesScreen> with SingleTickerProvider
             Tab(text: 'Medium 4'),
             Tab(text: 'Medium 5'),
             Tab(text: 'Medium 6'),
+            Tab(text: 'Large 1'),
+            Tab(text: 'Large 2'),
+            Tab(text: 'Large 3'),
+            Tab(text: 'Large 4'),
+            Tab(text: 'Large 5'),
+            Tab(text: 'Large 6'),
             Tab(text: 'Custom Style'),
           ],
         ),
@@ -61,7 +68,6 @@ class _NativesScreenState extends State<NativesScreen> with SingleTickerProvider
       body: TabBarView(
         controller: _tabController,
         children: [
-
           _buildNativeDemo(
             title: 'Native Ad - Small 1',
             screenRemote: true,
@@ -70,15 +76,13 @@ class _NativesScreenState extends State<NativesScreen> with SingleTickerProvider
           _buildNativeDemo(
             title: 'Native Ad - Small 2',
             type: NativeType.small2,
-            screenRemote: false
+            screenRemote: false,
           ),
           _buildNativeDemo(
             title: 'Native Ad - Small 3',
             type: NativeType.small3,
             screenRemote: false,
-            style: const NativeAdStyle(
-              maxBodyLines: 1,
-            ),
+            style: const NativeAdStyle(maxBodyLines: 1),
           ),
           _buildNativeDemo(
             title: 'Native Ad - Small 4',
@@ -86,7 +90,8 @@ class _NativesScreenState extends State<NativesScreen> with SingleTickerProvider
             screenRemote: false,
             style: const NativeAdStyle(
               maxBodyLines: 1,
-              priceColor: Colors.blue, // Explicitly assign a color to see if it triggers correctly natively
+              priceColor: Colors
+                  .blue, // Explicitly assign a color to see if it triggers correctly natively
             ),
           ),
           _buildNativeDemo(
@@ -140,6 +145,36 @@ class _NativesScreenState extends State<NativesScreen> with SingleTickerProvider
             screenRemote: false,
           ),
           _buildNativeDemo(
+            title: 'Native Ad - Large 1',
+            type: NativeType.large1,
+            screenRemote: false,
+          ),
+          _buildNativeDemo(
+            title: 'Native Ad - Large 2',
+            type: NativeType.large2,
+            screenRemote: false,
+          ),
+          _buildNativeDemo(
+            title: 'Native Ad - Large 3',
+            type: NativeType.large3,
+            screenRemote: false,
+          ),
+          _buildNativeDemo(
+            title: 'Native Ad - Large 4',
+            type: NativeType.large4,
+            screenRemote: false,
+          ),
+          _buildNativeDemo(
+            title: 'Native Ad - Large 5',
+            type: NativeType.large5,
+            screenRemote: false,
+          ),
+          _buildNativeDemo(
+            title: 'Native Ad - Large 6',
+            type: NativeType.large6,
+            screenRemote: false,
+          ),
+          _buildNativeDemo(
             title: 'Native Ad - Custom Dark Style',
             type: NativeType.small1,
             screenRemote: false,
@@ -163,7 +198,6 @@ class _NativesScreenState extends State<NativesScreen> with SingleTickerProvider
               fontFamily: 'Poppins',
             ),
           ),
-
         ],
       ),
     );
@@ -183,7 +217,11 @@ class _NativesScreenState extends State<NativesScreen> with SingleTickerProvider
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 20),
-            Icon(Icons.amp_stories_rounded, size: 64, color: Colors.blue.withOpacity(0.5)),
+            Icon(
+              Icons.amp_stories_rounded,
+              size: 64,
+              color: Colors.blue.withOpacity(0.5),
+            ),
             const SizedBox(height: 16),
             Text(
               title,
@@ -200,7 +238,9 @@ class _NativesScreenState extends State<NativesScreen> with SingleTickerProvider
             // Wrap in a card/container to demonstrate layout bounds
             Card(
               elevation: 4,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(style.bgCorner)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(style.bgCorner),
+              ),
               child: NativeWidget(
                 screenRemote: screenRemote,
                 adUnit: _testAdUnitId,
@@ -217,7 +257,7 @@ class _NativesScreenState extends State<NativesScreen> with SingleTickerProvider
                 setState(() {});
               },
               child: const Text('Refresh Ad'),
-            )
+            ),
           ],
         ),
       ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../callbacks/native_ad_callbacks.dart';
+import '../core/ads_registry.dart';
 import '../core/enums/native_type.dart';
 import '../core/native_ad_style.dart';
 import '../core/native_ad_shimmer_style.dart';
@@ -48,15 +49,20 @@ class _NativeWidgetState extends State<NativeWidget> {
   @override
   void didUpdateWidget(NativeWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.adUnit != widget.adUnit || oldWidget.screenName != widget.screenName || oldWidget.type != widget.type) {
+    if (oldWidget.adUnit != widget.adUnit ||
+        oldWidget.screenName != widget.screenName ||
+        oldWidget.type != widget.type) {
       _loadOrGetAd();
     }
   }
 
   void _loadOrGetAd() {
     _adFailed = false;
-    bool isPreloaded = NativeAdManager.instance.isAdPreloaded(widget.screenName, widget.adUnit);
-    
+    bool isPreloaded = NativeAdManager.instance.isAdPreloaded(
+      widget.screenName,
+      widget.adUnit,
+    );
+
     if (isPreloaded) {
       setState(() {
         _adLoaded = true;
@@ -72,29 +78,29 @@ class _NativeWidgetState extends State<NativeWidget> {
 
   void _loadAd() {
     final interceptCallback = NativeAdCallbacks(
-        onAdLoaded: (id) {
-            if (mounted) {
-                setState(() {
-                    _adLoaded = true;
-                    _adFailed = false;
-                });
-            }
-            widget.callback?.onAdLoaded?.call(id);
-        },
-        onAdFailedToLoad: (id, error) {
-            if (mounted) {
-                setState(() {
-                    _adLoaded = false;
-                    _adFailed = true;
-                });
-            }
-            widget.callback?.onAdFailedToLoad?.call(id, error);
-        },
-        onAdClicked: widget.callback?.onAdClicked,
-        onAdClosed: widget.callback?.onAdClosed,
-        onAdImpression: widget.callback?.onAdImpression,
-        onAdOpened: widget.callback?.onAdOpened,
-        onAdValidated: widget.callback?.onAdValidated,
+      onAdLoaded: (id) {
+        if (mounted) {
+          setState(() {
+            _adLoaded = true;
+            _adFailed = false;
+          });
+        }
+        widget.callback?.onAdLoaded?.call(id);
+      },
+      onAdFailedToLoad: (id, error) {
+        if (mounted) {
+          setState(() {
+            _adLoaded = false;
+            _adFailed = true;
+          });
+        }
+        widget.callback?.onAdFailedToLoad?.call(id, error);
+      },
+      onAdClicked: widget.callback?.onAdClicked,
+      onAdClosed: widget.callback?.onAdClosed,
+      onAdImpression: widget.callback?.onAdImpression,
+      onAdOpened: widget.callback?.onAdOpened,
+      onAdValidated: widget.callback?.onAdValidated,
     );
 
     NativeAdManager.instance.load(
@@ -108,13 +114,13 @@ class _NativeWidgetState extends State<NativeWidget> {
   @override
   void dispose() {
     if (widget.reloadAfterShow) {
-       NativeAdManager.instance.removeAd(widget.screenName);
-       NativeAdManager.instance.load(
-           adUnitId: widget.adUnit,
-           screenName: widget.screenName,
-           screenRemote: widget.screenRemote,
-           callbacks: null,
-       );
+      NativeAdManager.instance.removeAd(widget.screenName);
+      NativeAdManager.instance.load(
+        adUnitId: widget.adUnit,
+        screenName: widget.screenName,
+        screenRemote: widget.screenRemote,
+        callbacks: null,
+      );
     }
     super.dispose();
   }
@@ -125,10 +131,7 @@ class _NativeWidgetState extends State<NativeWidget> {
 
     if (_adLoaded) {
       return ConstrainedBox(
-        constraints: BoxConstraints(
-          minWidth: 320, 
-          maxHeight: height,
-        ),
+        constraints: BoxConstraints(minWidth: 320, maxHeight: height),
         child: _buildPlatformView(),
       );
     } else if (!_adFailed) {
@@ -145,7 +148,10 @@ class _NativeWidgetState extends State<NativeWidget> {
   }
 
   Widget _buildPlatformView() {
-    final String targetCacheId = NativeAdManager.instance.getTargetCacheId(widget.screenName, widget.adUnit);
+    final String targetCacheId = NativeAdManager.instance.getTargetCacheId(
+      widget.screenName,
+      widget.adUnit,
+    );
 
     String colorToHex(Color? color) {
       if (color == null) return '';
@@ -198,25 +204,31 @@ class _NativeWidgetState extends State<NativeWidget> {
   }
 
   void _onPlatformViewCreated(int id) {
-     NativeAdManager.instance.consumeAd(widget.screenName);
-     
-     final MethodChannel channel = MethodChannel('monetization_native_ad_view_$id');
-     channel.setMethodCallHandler((call) async {
-       switch(call.method) {
-         case 'onAdClicked':
-           widget.callback?.onAdClicked?.call(widget.adUnit);
-           break;
-         case 'onAdImpression':
-           widget.callback?.onAdImpression?.call(widget.adUnit);
-           break;
-         case 'onAdClosed':
-           widget.callback?.onAdClosed?.call(widget.adUnit);
-           break;
-         case 'onAdOpened':
-           widget.callback?.onAdOpened?.call(widget.adUnit);
-           break;
-       }
-     });
+    NativeAdManager.instance.consumeAd(widget.screenName);
+
+    final MethodChannel channel = MethodChannel(
+      'monetization_native_ad_view_$id',
+    );
+    channel.setMethodCallHandler((call) async {
+      switch (call.method) {
+        case 'onAdClicked':
+          AdRegistry.instance.wasAdClickedRecently = true;
+          AdRegistry.instance.lastDismissedTime = DateTime.now();
+          widget.callback?.onAdClicked?.call(widget.adUnit);
+          break;
+        case 'onAdImpression':
+          widget.callback?.onAdImpression?.call(widget.adUnit);
+          break;
+        case 'onAdClosed':
+          widget.callback?.onAdClosed?.call(widget.adUnit);
+          break;
+        case 'onAdOpened':
+          AdRegistry.instance.wasAdClickedRecently = true;
+          AdRegistry.instance.lastDismissedTime = DateTime.now();
+          widget.callback?.onAdOpened?.call(widget.adUnit);
+          break;
+      }
+    });
   }
 
   double _getHeightForType(NativeType type) {
@@ -234,6 +246,12 @@ class _NativeWidgetState extends State<NativeWidget> {
     if (type == NativeType.medium4) return 180.0;
     if (type == NativeType.medium5) return 160.0;
     if (type == NativeType.medium6) return 160.0;
+    if (type == NativeType.large1) return 300.0;
+    if (type == NativeType.large2) return 300.0;
+    if (type == NativeType.large3) return 300.0;
+    if (type == NativeType.large4) return 300.0;
+    if (type == NativeType.large5) return 300.0;
+    if (type == NativeType.large6) return 300.0;
     if (type.name.startsWith('small')) return 100.0;
     if (type.name.startsWith('medium')) return 250.0;
     if (type.name.startsWith('large')) return 350.0;

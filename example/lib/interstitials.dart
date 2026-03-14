@@ -11,12 +11,12 @@ class InterstitialsScreen extends StatefulWidget {
 class _InterstitialsScreenState extends State<InterstitialsScreen> {
   // Use professional test ID
   final String _adUnitId = AdUtils.testId(AdType.interstitial);
-  
+
   bool _isLoading = false;
 
   void _showAd(String screenName) async {
     setState(() => _isLoading = true);
-    
+
     await InterstitialAdManager.instance.show(
       context: context,
       screenName: screenName,
@@ -33,35 +33,44 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
           setState(() => _isLoading = false);
         },
         onAdFailedToShowFullScreenContent: (ad, error) {
-          debugPrint('Interstitial Demo: Ad failed to show for $screenName. Error: ${error.message}');
+          debugPrint(
+            'Interstitial Demo: Ad failed to show for $screenName. Error: ${error.message}',
+          );
           setState(() => _isLoading = false);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Failed to show ad: ${error.message}')),
           );
         },
         onAdValidated: (reason) {
-           debugPrint('Interstitial Demo: Ad blocked for $screenName. Reason: $reason');
-           setState(() => _isLoading = false);
-           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Ad blocked: $reason')),
+          debugPrint(
+            'Interstitial Demo: Ad blocked for $screenName. Reason: $reason',
           );
-        }
+          setState(() => _isLoading = false);
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Ad blocked: $reason')));
+        },
       ),
     );
   }
 
   void _preloadAd(String screenName) async {
     ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Preloading ad for $screenName...'), duration: const Duration(milliseconds: 500)),
+      SnackBar(
+        content: Text('Preloading ad for $screenName...'),
+        duration: const Duration(milliseconds: 500),
+      ),
     );
-    
+
     await InterstitialAdManager.instance.load(
       screenName: screenName,
       screenRemote: true,
       adUnitId: _adUnitId,
       callbacks: InterstitialAdCallbacks(
         onAdLoaded: (ad) {
-          debugPrint('Interstitial Demo: Ad preloaded successfully for $screenName');
+          debugPrint(
+            'Interstitial Demo: Ad preloaded successfully for $screenName',
+          );
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Ad preloaded for $screenName')),
@@ -69,13 +78,15 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
           }
         },
         onAdFailedToLoad: (error) {
-           debugPrint('Interstitial Demo: Ad preload failed for $screenName. Error: ${error.message}');
-           if (mounted) {
-             ScaffoldMessenger.of(context).showSnackBar(
+          debugPrint(
+            'Interstitial Demo: Ad preload failed for $screenName. Error: ${error.message}',
+          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Ad preload failed: ${error.message}')),
             );
-           }
-        }
+          }
+        },
       ),
     );
   }
@@ -83,9 +94,7 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Interstitial Ads Demo'),
-      ),
+      appBar: AppBar(title: const Text('Interstitial Ads Demo')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -123,7 +132,9 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
             ListTile(
               leading: const Icon(Icons.star, color: Colors.amber),
               title: const Text('Toggle Premium Status'),
-              subtitle: Text('Current: ${AdsSettings.instance.isPremium ? "Premium" : "Free"}'),
+              subtitle: Text(
+                'Current: ${AdsSettings.instance.isPremium ? "Premium" : "Free"}',
+              ),
               trailing: Switch(
                 value: AdsSettings.instance.isPremium,
                 onChanged: (val) {
@@ -144,7 +155,11 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
             const Text(
               'Check debug console to see logs for "Already Loading" or "Ad already loaded" prevention.',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12, color: Colors.grey, fontStyle: FontStyle.italic),
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+                fontStyle: FontStyle.italic,
+              ),
             ),
           ],
         ),
@@ -177,7 +192,10 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
           children: [
             ListTile(
               leading: Icon(icon, color: Colors.orange, size: 32),
-              title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+              title: Text(
+                title,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
               subtitle: Text(subtitle),
             ),
             Row(

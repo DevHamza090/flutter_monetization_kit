@@ -8,6 +8,15 @@ class AdRegistry {
   // Tracks loading status for ANY ad type
   final Set<String> _loadingIds = {};
 
+  // Tracks if a full screen ad is currently being shown
+  bool isFullScreenAdShowing = false;
+
+  // Tracks the last time a full screen ad was dismissed
+  DateTime? lastDismissedTime;
+
+  // Tracks if an ad was clicked recently to suppress App Open ad on resume
+  bool wasAdClickedRecently = false;
+
   bool isAdLoading(String id) => _loadingIds.contains(id);
   bool isAdReady(String id) => _loadedAds.containsKey(id);
 

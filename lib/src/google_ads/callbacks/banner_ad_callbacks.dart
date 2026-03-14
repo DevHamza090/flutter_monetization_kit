@@ -27,8 +27,13 @@ class BannerAdCallbacks {
   final Function(Ad ad)? onAdImpression;
 
   /// Triggered when the ad records a paid event
-  final void Function(Ad ad, double valueMicros, PrecisionType precision,
-      String currencyCode)? onPaidEvent;
+  final void Function(
+    Ad ad,
+    double valueMicros,
+    PrecisionType precision,
+    String currencyCode,
+  )?
+  onPaidEvent;
 
   const BannerAdCallbacks({
     this.onAdValidated,

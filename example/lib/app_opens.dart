@@ -11,12 +11,9 @@ class AppOpensScreen extends StatefulWidget {
 class _AppOpensScreenState extends State<AppOpensScreen> {
   // Use professional test ID
   final String _adUnitId = AdUtils.testId(AdType.appOpen);
-  
-  bool _isLoading = false;
 
   void _showAd(String? screenName) async {
-    setState(() => _isLoading = true);
-    
+
     await AppOpenManager.instance.show(
       context: context,
       screenName: screenName,
@@ -30,38 +27,44 @@ class _AppOpensScreenState extends State<AppOpensScreen> {
         },
         onAdDismissedFullScreenContent: (ad) {
           debugPrint('App Open Demo: Ad dismissed for $screenName');
-          setState(() => _isLoading = false);
         },
         onAdFailedToShowFullScreenContent: (ad, error) {
-          debugPrint('App Open Demo: Ad failed to show for $screenName. Error: ${error.message}');
-          setState(() => _isLoading = false);
+          debugPrint(
+            'App Open Demo: Ad failed to show for $screenName. Error: ${error.message}',
+          );
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Failed to show ad: ${error.message}')),
           );
         },
         onAdValidated: (reason) {
-           debugPrint('App Open Demo: Ad blocked for $screenName. Reason: $reason');
-           setState(() => _isLoading = false);
-           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Ad blocked: $reason')),
+          debugPrint(
+            'App Open Demo: Ad blocked for $screenName. Reason: $reason',
           );
-        }
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Ad blocked: $reason')));
+        },
       ),
     );
   }
 
   void _preloadAd(String? screenName) async {
     ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Preloading ad for $screenName...'), duration: const Duration(milliseconds: 500)),
+      SnackBar(
+        content: Text('Preloading ad for $screenName...'),
+        duration: const Duration(milliseconds: 500),
+      ),
     );
-    
+
     await AppOpenManager.instance.load(
       screenName: screenName,
       screenRemote: true,
       adUnitId: _adUnitId,
       callbacks: AppOpenAdCallbacks(
         onAdLoaded: (ad) {
-          debugPrint('App Open Demo: Ad preloaded successfully for $screenName');
+          debugPrint(
+            'App Open Demo: Ad preloaded successfully for $screenName',
+          );
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Ad preloaded for $screenName')),
@@ -69,13 +72,15 @@ class _AppOpensScreenState extends State<AppOpensScreen> {
           }
         },
         onAdFailedToLoad: (error) {
-           debugPrint('App Open Demo: Ad preload failed for $screenName. Error: ${error.message}');
-           if (mounted) {
-             ScaffoldMessenger.of(context).showSnackBar(
+          debugPrint(
+            'App Open Demo: Ad preload failed for $screenName. Error: ${error.message}',
+          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Ad preload failed: ${error.message}')),
             );
-           }
-        }
+          }
+        },
       ),
     );
   }
@@ -83,9 +88,7 @@ class _AppOpensScreenState extends State<AppOpensScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('App Open Ads Demo'),
-      ),
+      appBar: AppBar(title: const Text('App Open Ads Demo')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -116,7 +119,9 @@ class _AppOpensScreenState extends State<AppOpensScreen> {
             ListTile(
               leading: const Icon(Icons.star, color: Colors.amber),
               title: const Text('Toggle Premium Status'),
-              subtitle: Text('Current: ${AdsSettings.instance.isPremium ? "Premium" : "Free"}'),
+              subtitle: Text(
+                'Current: ${AdsSettings.instance.isPremium ? "Premium" : "Free"}',
+              ),
               trailing: Switch(
                 value: AdsSettings.instance.isPremium,
                 onChanged: (val) {
@@ -164,7 +169,10 @@ class _AppOpensScreenState extends State<AppOpensScreen> {
           children: [
             ListTile(
               leading: Icon(icon, color: Colors.blue, size: 32),
-              title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+              title: Text(
+                title,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
               subtitle: Text(subtitle),
             ),
             Row(

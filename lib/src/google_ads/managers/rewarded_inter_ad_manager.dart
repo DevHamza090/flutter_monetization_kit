@@ -11,7 +11,8 @@ import '../core/enums/ad_validation_reason.dart';
 /// Handles preloading, validation (Premium, Internet), and professional display logic.
 class RewardedInterstitialAdManager {
   RewardedInterstitialAdManager._();
-  static final RewardedInterstitialAdManager instance = RewardedInterstitialAdManager._();
+  static final RewardedInterstitialAdManager instance =
+      RewardedInterstitialAdManager._();
 
   /// Loads a Rewarded Interstitial Ad.
   Future<void> load({
@@ -23,13 +24,17 @@ class RewardedInterstitialAdManager {
     // 1. Validation Logic
     final validationReason = await AdUtils.validateAdProcess();
     if (validationReason != null) {
-      debugPrint("RewardedInterAdManager: Ad request blocked ($validationReason)");
+      debugPrint(
+        "RewardedInterAdManager: Ad request blocked ($validationReason)",
+      );
       callbacks?.onAdValidated?.call(validationReason);
       return;
     }
 
     if (!AdsSettings.instance.enableRewardedAds) {
-      debugPrint("RewardedInterAdManager: Rewarded ads are disabled in settings");
+      debugPrint(
+        "RewardedInterAdManager: Rewarded ads are disabled in settings",
+      );
       callbacks?.onAdValidated?.call(AdValidationReason.adDisabled);
       return;
     }
@@ -38,7 +43,13 @@ class RewardedInterstitialAdManager {
     final registryKey = _getRegistryKey(screenName);
 
     if (AdRegistry.instance.isAdLoading(registryKey)) {
-      debugPrint(AdUtils.logAlreadyLoading(AdType.rewardedInterstitial, adUnitId, screenName));
+      debugPrint(
+        AdUtils.logAlreadyLoading(
+          AdType.rewardedInterstitial,
+          adUnitId,
+          screenName,
+        ),
+      );
       callbacks?.onAdValidated?.call(AdValidationReason.adAlreadyLoading);
       return;
     }
@@ -46,25 +57,37 @@ class RewardedInterstitialAdManager {
     if (AdRegistry.instance.isAdReady(registryKey)) {
       debugPrint("RewardedInterAdManager: Ad already loaded for $registryKey");
       callbacks?.onAdValidated?.call(AdValidationReason.adAlreadyReady);
-      callbacks?.onAdLoaded?.call(AdRegistry.instance.getAd<RewardedInterstitialAd>(registryKey)!);
+      callbacks?.onAdLoaded?.call(
+        AdRegistry.instance.getAd<RewardedInterstitialAd>(registryKey)!,
+      );
       return;
     }
 
     // 3. Requesting the Ad
     AdRegistry.instance.markLoading(registryKey);
-    debugPrint(AdUtils.logLoading(AdType.rewardedInterstitial, adUnitId, screenName));
+    debugPrint(
+      AdUtils.logLoading(AdType.rewardedInterstitial, adUnitId, screenName),
+    );
 
     await RewardedInterstitialAd.load(
       adUnitId: adUnitId,
       request: const AdRequest(),
       rewardedInterstitialAdLoadCallback: RewardedInterstitialAdLoadCallback(
         onAdLoaded: (ad) {
-          debugPrint(AdUtils.logLoaded(AdType.rewardedInterstitial, screenName));
+          debugPrint(
+            AdUtils.logLoaded(AdType.rewardedInterstitial, screenName),
+          );
           AdRegistry.instance.setAd(registryKey, ad);
           callbacks?.onAdLoaded?.call(ad);
         },
         onAdFailedToLoad: (error) {
-          debugPrint(AdUtils.logFailed(AdType.rewardedInterstitial, screenName, error.message));
+          debugPrint(
+            AdUtils.logFailed(
+              AdType.rewardedInterstitial,
+              screenName,
+              error.message,
+            ),
+          );
           AdRegistry.instance.removeAd(registryKey);
           callbacks?.onAdFailedToLoad?.call(error);
         },
@@ -85,14 +108,27 @@ class RewardedInterstitialAdManager {
     // 1. Core Logic & Validation
     final validationReason = AdsSettings.instance.validateRewardedShow();
     if (validationReason != null) {
-      debugPrint("RewardedInterAdManager: Cannot show rewarded inter ad ($validationReason)");
+      debugPrint(
+        "RewardedInterAdManager: Cannot show rewarded inter ad ($validationReason)",
+      );
       callbacks?.onAdValidated?.call(validationReason);
+      return;
+    }
+
+    if (AdRegistry.instance.isFullScreenAdShowing) {
+      debugPrint(
+        "RewardedInterAdManager: Another full screen ad is already showing.",
+      );
+      callbacks?.onAdValidated?.call(
+        AdValidationReason.anotherFullScreenShowing,
+      );
       return;
     }
 
     // 2. Fetch Ad
     String registryKey = _getRegistryKey(screenName);
-    RewardedInterstitialAd? ad = AdRegistry.instance.getAd<RewardedInterstitialAd>(registryKey);
+    RewardedInterstitialAd? ad = AdRegistry.instance
+        .getAd<RewardedInterstitialAd>(registryKey);
 
     if (ad == null && screenName != null) {
       registryKey = adUnitId;
@@ -100,9 +136,11 @@ class RewardedInterstitialAdManager {
     }
 
     if (ad == null) {
-      debugPrint("RewardedInterAdManager: No preloaded ad found for adUnit:$adUnitId, screen:$screenName");
+      debugPrint(
+        "RewardedInterAdManager: No preloaded ad found for adUnit:$adUnitId, screen:$screenName",
+      );
       callbacks?.onAdValidated?.call(AdValidationReason.adNotAvailable);
-      
+
       if (!AdRegistry.instance.isAdLoading(registryKey)) {
         load(
           screenName: screenName,
@@ -123,17 +161,20 @@ class RewardedInterstitialAdManager {
     // 4. Actual Show Logic
     ad.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent: (ad) {
+        AdRegistry.instance.isFullScreenAdShowing = true;
         if (loadingDialog && context.mounted) {
-           Navigator.of(context, rootNavigator: true).pop();
+          Navigator.of(context, rootNavigator: true).pop();
         }
         debugPrint(AdUtils.logShowing(AdType.rewardedInterstitial, screenName));
         callbacks?.onAdShowedFullScreenContent?.call(ad);
       },
       onAdDismissedFullScreenContent: (ad) {
+        AdRegistry.instance.isFullScreenAdShowing = false;
+        AdRegistry.instance.lastDismissedTime = DateTime.now();
         ad.dispose();
         AdRegistry.instance.removeAd(registryKey);
         callbacks?.onAdDismissedFullScreenContent?.call(ad);
-        
+
         if (reloadAfterShow) {
           load(
             screenName: screenName,
@@ -144,20 +185,32 @@ class RewardedInterstitialAdManager {
         }
       },
       onAdFailedToShowFullScreenContent: (ad, error) {
+        AdRegistry.instance.isFullScreenAdShowing = false;
+        AdRegistry.instance.lastDismissedTime = DateTime.now();
         if (loadingDialog && context.mounted) {
           Navigator.of(context, rootNavigator: true).pop();
         }
         ad.dispose();
         AdRegistry.instance.removeAd(registryKey);
-        debugPrint("RewardedInterAdManager: Failed to show ad. Error: ${error.message}");
+        debugPrint(
+          "RewardedInterAdManager: Failed to show ad. Error: ${error.message}",
+        );
         callbacks?.onAdFailedToShowFullScreenContent?.call(ad, error);
       },
-      onAdClicked: (ad) => callbacks?.onAdClicked?.call(ad),
+      onAdClicked: (ad) {
+        AdRegistry.instance.wasAdClickedRecently = true;
+        callbacks?.onAdClicked?.call(ad);
+      },
     );
 
-    await ad.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
-      callbacks?.onUserEarnedReward?.call(ad as RewardedInterstitialAd, reward);
-    });
+    await ad.show(
+      onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+        callbacks?.onUserEarnedReward?.call(
+          ad as RewardedInterstitialAd,
+          reward,
+        );
+      },
+    );
   }
 
   String _getRegistryKey(String? screenName) {

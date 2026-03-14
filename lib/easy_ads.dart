@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_monetization_kit/src/google_ads/core/ads_settings.dart';
 import 'package:flutter_monetization_kit/src/shared_preferences/share_pref_helper.dart';
@@ -8,6 +9,7 @@ export 'src/google_ads/core/enums/ad_type.dart';
 export 'src/google_ads/core/enums/ad_validation_reason.dart';
 export 'src/google_ads/core/enums/native_type.dart';
 export 'src/google_ads/core/ads_utils.dart';
+export 'src/google_ads/core/ads_registry.dart';
 export 'src/google_ads/core/ads_settings.dart';
 export 'src/google_ads/callbacks/banner_ad_callbacks.dart';
 export 'src/google_ads/callbacks/interstitial_ad_callbacks.dart';
@@ -23,10 +25,14 @@ export 'src/google_ads/widgets/native_widget.dart';
 export 'src/google_ads/managers/native_ad_manager.dart';
 export 'src/google_ads/core/native_ad_style.dart';
 export 'src/google_ads/callbacks/native_ad_callbacks.dart';
+export 'src/google_ads/core/app_open_observer.dart';
 
 class EasyAds {
   EasyAds._();
   static final EasyAds instance = EasyAds._();
+
+  /// Global navigator key to access context globally (e.g., for full-screen ad overlays)
+  GlobalKey<NavigatorState>? navigatorKey;
 
   /// Initialize the package and global settings
   Future<void> initialize({
@@ -39,10 +45,11 @@ class EasyAds {
     bool enableInterstitialAds = true,
     bool enableRewardedAds = true,
     bool enableNativeAds = true,
+    GlobalKey<NavigatorState>? navigatorKey,
   }) async {
+    this.navigatorKey = navigatorKey;
     // Priority: parameter if provided, else SharedPrefHelper, else default (false)
-    final bool initialPremium =
-        isPremium ?? SharedPrefHelper().isPremium();
+    final bool initialPremium = isPremium ?? SharedPrefHelper().isPremium();
 
     AdsSettings.instance.isPremium = initialPremium;
     AdsSettings.instance.isDebugMode = isDebug;

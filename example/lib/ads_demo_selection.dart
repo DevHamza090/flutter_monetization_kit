@@ -24,16 +24,19 @@ class _AdsDemoSelectionState extends State<AdsDemoSelection> {
       : 'ca-app-pub-3940256099942544/3986624511';
   @override
   void initState() {
-    NativeAdManager.instance.load(screenRemote: true,adUnitId: _testAdUnitId, screenName: "custom");
-    
+    NativeAdManager.instance.load(
+      screenRemote: true,
+      adUnitId: _testAdUnitId,
+      screenName: "custom",
+    );
+
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Flutter Monetization Demo'),
-      ),
+      appBar: AppBar(title: const Text('Flutter Monetization Demo')),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [

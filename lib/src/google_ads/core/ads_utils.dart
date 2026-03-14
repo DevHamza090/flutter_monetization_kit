@@ -104,7 +104,11 @@ class AdUtils {
   }
 
   /// Example: [EasyAds] 🔄 Already Loading INTERSTITIAL for screen: Dashboard (ID: ca-app-pub...)
-  static String logAlreadyLoading(AdType type, String adUnitId, String? screen) {
+  static String logAlreadyLoading(
+    AdType type,
+    String adUnitId,
+    String? screen,
+  ) {
     final screenInfo = screen != null ? "for screen: $screen" : "";
     return "${AdConstants.prefix} 🔄 Already Loading ${type.name.toUpperCase()} $screenInfo (ID: $adUnitId)";
   }
@@ -144,15 +148,23 @@ extension BannerTypeExtension on BannerType {
                   ) ??
                   AdSize.banner
             : AdSize.banner,
-      CustomHeightBanner(height: var h) => AdSize(width: width?.truncate() ?? -1, height: h),
-      CustomSizeBanner(width: var w, height: var h) => AdSize(width: w, height: h),
+      CustomHeightBanner(height: var h) => AdSize(
+        width: width?.truncate() ?? -1,
+        height: h,
+      ),
+      CustomSizeBanner(width: var w, height: var h) => AdSize(
+        width: w,
+        height: h,
+      ),
     };
   }
 
   /// Generates the extras needed for Collapsible banners
   Map<String, String> getExtras() {
     if (this is CollapsibleBanner) {
-      return {'collapsible': (this as CollapsibleBanner).isTop ? 'top' : 'bottom'};
+      return {
+        'collapsible': (this as CollapsibleBanner).isTop ? 'top' : 'bottom',
+      };
     }
     return {};
   }
