@@ -17,7 +17,7 @@ class _RewardedsScreenState extends State<RewardedsScreen> {
   void _showAd(String screenName) async {
     setState(() => _isLoading = true);
 
-    await RewardedAdManager.instance.show(
+    await EasyAds.instance.rewarded.loadNShow(
       context: context,
       screenName: screenName,
       screenRemote: true,
@@ -68,7 +68,7 @@ class _RewardedsScreenState extends State<RewardedsScreen> {
       ),
     );
 
-    await RewardedAdManager.instance.load(
+    await EasyAds.instance.rewarded.load(
       screenName: screenName,
       screenRemote: true,
       adUnitId: _adUnitId,

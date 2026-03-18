@@ -5,6 +5,10 @@ import '../core/ads_utils.dart';
 import '../core/enums/ad_validation_reason.dart';
 
 class BannerAdManager {
+
+  BannerAdManager._();
+  static final BannerAdManager instance = BannerAdManager._();
+
   BannerAd? _bannerAd;
   bool _isLoaded = false;
 

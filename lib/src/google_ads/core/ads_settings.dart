@@ -13,6 +13,7 @@ class AdsSettings {
 
   // Specific toggles
   bool enableAppOpen = true;
+  bool enableAppOpenOnResume = true;
   bool enableBannerAds = true;
   bool enableInterstitialAds = true;
   bool enableRewardedAds = true;
@@ -44,6 +45,14 @@ class AdsSettings {
       if (isDebugMode) {
         print("AdsSettings: Premium enabled. Ads will be disabled.");
       }
+    }
+  }
+  
+  /// Set the app open on resume status directly
+  void setAppOpenOnResume(bool status) {
+    enableAppOpenOnResume = status;
+    if (isDebugMode) {
+      print("AdsSettings: App Open on Resume ${status ? 'enabled' : 'disabled'}.");
     }
   }
 

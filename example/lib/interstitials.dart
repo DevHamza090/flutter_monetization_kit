@@ -17,7 +17,8 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
   void _showAd(String screenName) async {
     setState(() => _isLoading = true);
 
-    await InterstitialAdManager.instance.show(
+
+    await EasyAds.instance.interstitial.loadNShow(
       context: context,
       screenName: screenName,
       screenRemote: true,
@@ -62,7 +63,7 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
       ),
     );
 
-    await InterstitialAdManager.instance.load(
+    await EasyAds.instance.interstitial.load(
       screenName: screenName,
       screenRemote: true,
       adUnitId: _adUnitId,

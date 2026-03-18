@@ -14,7 +14,7 @@ class _AppOpensScreenState extends State<AppOpensScreen> {
 
   void _showAd(String? screenName) async {
 
-    await AppOpenManager.instance.show(
+    await EasyAds.instance.appOpen.show(
       context: context,
       screenName: screenName,
       screenRemote: true,
@@ -56,7 +56,7 @@ class _AppOpensScreenState extends State<AppOpensScreen> {
       ),
     );
 
-    await AppOpenManager.instance.load(
+    await EasyAds.instance.appOpen.load(
       screenName: screenName,
       screenRemote: true,
       adUnitId: _adUnitId,

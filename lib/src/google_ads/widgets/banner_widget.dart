@@ -42,7 +42,7 @@ class BannerAdWidget extends StatefulWidget {
 }
 
 class _BannerAdWidgetState extends State<BannerAdWidget> {
-  final BannerAdManager _manager = BannerAdManager();
+  final BannerAdManager _manager = BannerAdManager.instance;
   bool _isLoading = true;
   bool _canShowAd = false;
   AdSize? _currentAdSize;

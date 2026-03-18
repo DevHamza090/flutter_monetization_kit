@@ -24,7 +24,7 @@ class _AdsDemoSelectionState extends State<AdsDemoSelection> {
       : 'ca-app-pub-3940256099942544/3986624511';
   @override
   void initState() {
-    NativeAdManager.instance.load(
+    EasyAds.instance.native.load(
       screenRemote: true,
       adUnitId: _testAdUnitId,
       screenName: "custom",

@@ -95,6 +95,10 @@ class InterstitialAdManager {
   /// [adUnitId] (String): The AdMob Ad Unit ID.
   /// [callbacks] (InterstitialAdCallbacks?): Callbacks for ad events.
   /// [loadingDialog] (bool): Whether to show a loading dialog before showing the ad.
+  /// [fullScreenDialog] (bool): Whether to show the loading dialog in full screen.
+  /// [customLoadingWidget] (Widget?): Optional custom widget for the loading dialog.
+  /// [loadingDelay] (Duration): Initial delay before checking/showing the ad.
+  /// [isDialogShowing] (bool): Whether the loading dialog is already showing.
   /// [reloadAfterShow] (bool): Whether to automatically start loading a new ad after dismissal.
   Future<void> show({
     required BuildContext context,
@@ -103,6 +107,10 @@ class InterstitialAdManager {
     required String adUnitId,
     InterstitialAdCallbacks? callbacks,
     bool loadingDialog = true,
+    bool fullScreenDialog = true,
+    Widget? customLoadingWidget,
+    Duration loadingDelay = const Duration(milliseconds: 500),
+    bool isDialogShowing = false,
     bool reloadAfterShow = true,
   }) async {
     // 1. Core Logic & Validation
@@ -155,11 +163,16 @@ class InterstitialAdManager {
     }
 
     // 3. Show Loading Dialog (if requested)
-    if (loadingDialog) {
-      _showLoadingDialog(context);
-      await Future.delayed(
-        const Duration(milliseconds: 500),
-      ); // Minimal delay for smoother transition
+    if (loadingDialog && !isDialogShowing) {
+      _showLoadingDialog(
+        context: context,
+        fullScreen: fullScreenDialog,
+        customWidget: customLoadingWidget,
+      );
+    }
+
+    if (loadingDialog || loadingDelay > Duration.zero) {
+      await Future.delayed(loadingDelay);
     }
 
     // 4. Actual Show Logic
@@ -211,6 +224,88 @@ class InterstitialAdManager {
     await ad.show();
   }
 
+  /// Loads and Shows an Interstitial Ad in one go.
+  /// If the ad is already ready, it shows it immediately.
+  /// If not, it loads the ad first and then shows it.
+  Future<void> loadNShow({
+    required BuildContext context,
+    String? screenName,
+    required bool screenRemote,
+    required String adUnitId,
+    InterstitialAdCallbacks? callbacks,
+    bool loadingDialog = true,
+    bool fullScreenDialog = true,
+    Widget? customLoadingWidget,
+    bool reloadAfterShow = true,
+  }) async {
+    final registryKey = _getRegistryKey(screenName);
+
+    if (AdRegistry.instance.isAdReady(registryKey)) {
+      debugPrint("InterstitialAdManager: Ad already ready, showing now.");
+      return show(
+        context: context,
+        screenName: screenName,
+        screenRemote: screenRemote,
+        adUnitId: adUnitId,
+        callbacks: callbacks,
+        loadingDialog: loadingDialog,
+        fullScreenDialog: fullScreenDialog,
+        customLoadingWidget: customLoadingWidget,
+        loadingDelay: const Duration(seconds: 2),
+        reloadAfterShow: reloadAfterShow,
+      );
+    }
+
+    if (loadingDialog) {
+      _showLoadingDialog(
+        context: context,
+        fullScreen: fullScreenDialog,
+        customWidget: customLoadingWidget,
+      );
+    }
+
+    await load(
+      screenName: screenName,
+      screenRemote: screenRemote,
+      adUnitId: adUnitId,
+      callbacks: InterstitialAdCallbacks(
+        onAdLoaded: (ad) async {
+          callbacks?.onAdLoaded?.call(ad);
+          await show(
+            context: context,
+            screenName: screenName,
+            screenRemote: screenRemote,
+            adUnitId: adUnitId,
+            callbacks: callbacks,
+            loadingDialog: loadingDialog,
+            fullScreenDialog: fullScreenDialog,
+            customLoadingWidget: customLoadingWidget,
+            isDialogShowing: loadingDialog,
+            loadingDelay: Duration.zero,
+            reloadAfterShow: reloadAfterShow,
+          );
+        },
+        onAdFailedToLoad: (error) {
+          if (loadingDialog && context.mounted) {
+            Navigator.of(context, rootNavigator: true).pop();
+          }
+          callbacks?.onAdFailedToLoad?.call(error);
+        },
+        onAdValidated: (reason) {
+          if (loadingDialog && context.mounted) {
+            Navigator.of(context, rootNavigator: true).pop();
+          }
+          callbacks?.onAdValidated?.call(reason);
+        },
+        onAdShowedFullScreenContent: callbacks?.onAdShowedFullScreenContent,
+        onAdDismissedFullScreenContent: callbacks?.onAdDismissedFullScreenContent,
+        onAdFailedToShowFullScreenContent:
+            callbacks?.onAdFailedToShowFullScreenContent,
+        onAdClicked: callbacks?.onAdClicked,
+      ),
+    );
+  }
+
   /// Generates a key for the [AdRegistry].
   String _getRegistryKey(String? screenName) {
     if (screenName != null && screenName.isNotEmpty) {
@@ -223,20 +318,29 @@ class InterstitialAdManager {
     // Internal handling or specific callback if needed
   }
 
-  void _showLoadingDialog(BuildContext context) {
+  void _showLoadingDialog({
+    required BuildContext context,
+    required bool fullScreen,
+    Widget? customWidget,
+  }) {
     showDialog(
       context: context,
       barrierDismissible: false,
+      useSafeArea: !fullScreen,
       builder: (_) => PopScope(
         canPop: false,
-        child: Center(
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const CircularProgressIndicator(),
+        child: Material(
+          type: MaterialType.transparency,
+          child: Center(
+            child: customWidget ??
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const CircularProgressIndicator(),
+                ),
           ),
         ),
       ),

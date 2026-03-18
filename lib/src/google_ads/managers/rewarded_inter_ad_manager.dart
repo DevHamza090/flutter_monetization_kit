@@ -96,6 +96,17 @@ class RewardedInterstitialAdManager {
   }
 
   /// Shows a Rewarded Interstitial Ad.
+  /// [context] (BuildContext): The context to show the ad and loading dialog.
+  /// [screenName] (String?): Optional name of the screen.
+  /// [screenRemote] (bool): Whether to check remote config for this screen.
+  /// [adUnitId] (String): The AdMob Ad Unit ID.
+  /// [callbacks] (RewardedInterAdCallbacks?): Callbacks for ad events.
+  /// [loadingDialog] (bool): Whether to show a loading dialog before showing the ad.
+  /// [fullScreenDialog] (bool): Whether to show the loading dialog in full screen.
+  /// [customLoadingWidget] (Widget?): Optional custom widget for the loading dialog.
+  /// [loadingDelay] (Duration): Initial delay before checking/showing the ad.
+  /// [isDialogShowing] (bool): Whether the loading dialog is already showing.
+  /// [reloadAfterShow] (bool): Whether to automatically start loading a new ad after dismissal.
   Future<void> show({
     required BuildContext context,
     String? screenName,
@@ -103,6 +114,10 @@ class RewardedInterstitialAdManager {
     required String adUnitId,
     RewardedInterAdCallbacks? callbacks,
     bool loadingDialog = true,
+    bool fullScreenDialog = true,
+    Widget? customLoadingWidget,
+    Duration loadingDelay = const Duration(milliseconds: 500),
+    bool isDialogShowing = false,
     bool reloadAfterShow = true,
   }) async {
     // 1. Core Logic & Validation
@@ -153,9 +168,16 @@ class RewardedInterstitialAdManager {
     }
 
     // 3. Show Loading Dialog
-    if (loadingDialog) {
-      _showLoadingDialog(context);
-      await Future.delayed(const Duration(milliseconds: 500));
+    if (loadingDialog && !isDialogShowing) {
+      _showLoadingDialog(
+        context: context,
+        fullScreen: fullScreenDialog,
+        customWidget: customLoadingWidget,
+      );
+    }
+
+    if (loadingDialog || loadingDelay > Duration.zero) {
+      await Future.delayed(loadingDelay);
     }
 
     // 4. Actual Show Logic
@@ -213,6 +235,89 @@ class RewardedInterstitialAdManager {
     );
   }
 
+  /// Loads and Shows a Rewarded Interstitial Ad in one go.
+  /// If the ad is already ready, it shows it immediately.
+  /// If not, it loads the ad first and then shows it.
+  Future<void> loadNShow({
+    required BuildContext context,
+    String? screenName,
+    required bool screenRemote,
+    required String adUnitId,
+    RewardedInterAdCallbacks? callbacks,
+    bool loadingDialog = true,
+    bool fullScreenDialog = true,
+    Widget? customLoadingWidget,
+    bool reloadAfterShow = true,
+  }) async {
+    final registryKey = _getRegistryKey(screenName);
+
+    if (AdRegistry.instance.isAdReady(registryKey)) {
+      debugPrint("RewardedInterAdManager: Ad already ready, showing now.");
+      return show(
+        context: context,
+        screenName: screenName,
+        screenRemote: screenRemote,
+        adUnitId: adUnitId,
+        callbacks: callbacks,
+        loadingDialog: loadingDialog,
+        fullScreenDialog: fullScreenDialog,
+        customLoadingWidget: customLoadingWidget,
+        loadingDelay: const Duration(seconds: 2),
+        reloadAfterShow: reloadAfterShow,
+      );
+    }
+
+    if (loadingDialog) {
+      _showLoadingDialog(
+        context: context,
+        fullScreen: fullScreenDialog,
+        customWidget: customLoadingWidget,
+      );
+    }
+
+    await load(
+      screenName: screenName,
+      screenRemote: screenRemote,
+      adUnitId: adUnitId,
+      callbacks: RewardedInterAdCallbacks(
+        onAdLoaded: (ad) async {
+          callbacks?.onAdLoaded?.call(ad);
+          await show(
+            context: context,
+            screenName: screenName,
+            screenRemote: screenRemote,
+            adUnitId: adUnitId,
+            callbacks: callbacks,
+            loadingDialog: loadingDialog,
+            fullScreenDialog: fullScreenDialog,
+            customLoadingWidget: customLoadingWidget,
+            isDialogShowing: loadingDialog,
+            loadingDelay: Duration.zero,
+            reloadAfterShow: reloadAfterShow,
+          );
+        },
+        onAdFailedToLoad: (error) {
+          if (loadingDialog && context.mounted) {
+            Navigator.of(context, rootNavigator: true).pop();
+          }
+          callbacks?.onAdFailedToLoad?.call(error);
+        },
+        onAdValidated: (reason) {
+          if (loadingDialog && context.mounted) {
+            Navigator.of(context, rootNavigator: true).pop();
+          }
+          callbacks?.onAdValidated?.call(reason);
+        },
+        onAdShowedFullScreenContent: callbacks?.onAdShowedFullScreenContent,
+        onAdDismissedFullScreenContent: callbacks?.onAdDismissedFullScreenContent,
+        onAdFailedToShowFullScreenContent:
+            callbacks?.onAdFailedToShowFullScreenContent,
+        onAdClicked: callbacks?.onAdClicked,
+        onUserEarnedReward: callbacks?.onUserEarnedReward,
+      ),
+    );
+  }
+
   String _getRegistryKey(String? screenName) {
     if (screenName != null && screenName.isNotEmpty) {
       return "${screenName}_rewarded_inter";
@@ -220,20 +325,29 @@ class RewardedInterstitialAdManager {
     return "universal_rewarded_inter";
   }
 
-  void _showLoadingDialog(BuildContext context) {
+  void _showLoadingDialog({
+    required BuildContext context,
+    required bool fullScreen,
+    Widget? customWidget,
+  }) {
     showDialog(
       context: context,
       barrierDismissible: false,
+      useSafeArea: !fullScreen,
       builder: (_) => PopScope(
         canPop: false,
-        child: Center(
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const CircularProgressIndicator(),
+        child: Material(
+          type: MaterialType.transparency,
+          child: Center(
+            child: customWidget ??
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const CircularProgressIndicator(),
+                ),
           ),
         ),
       ),

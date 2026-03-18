@@ -3,7 +3,7 @@ import 'package:flutter_monetization_kit/easy_ads.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class RewardedIntersScreen extends StatefulWidget {
-  const RewardedIntersScreen({Key? key}) : super(key: key);
+  const RewardedIntersScreen({super.key});
 
   @override
   State<RewardedIntersScreen> createState() => _RewardedIntersScreenState();
@@ -17,7 +17,7 @@ class _RewardedIntersScreenState extends State<RewardedIntersScreen> {
   void _showAd(String screenName) async {
     setState(() => _isLoading = true);
 
-    await RewardedInterstitialAdManager.instance.show(
+    await EasyAds.instance.rewardedInterstitial.loadNShow(
       context: context,
       screenName: screenName,
       screenRemote: true,
@@ -68,7 +68,7 @@ class _RewardedIntersScreenState extends State<RewardedIntersScreen> {
       ),
     );
 
-    await RewardedInterstitialAdManager.instance.load(
+    await EasyAds.instance.rewardedInterstitial.load(
       screenName: screenName,
       screenRemote: true,
       adUnitId: _adUnitId,

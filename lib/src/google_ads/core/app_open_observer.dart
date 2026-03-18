@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_monetization_kit/easy_ads.dart';
 
+import '../managers/app_open_manager.dart';
+
 /// AppOpenObserver listens to app lifecycle changes
 /// and automatically requests an App Open Ad to show when the app resumes.
 class AppOpenObserver extends WidgetsBindingObserver {
@@ -27,6 +29,12 @@ class AppOpenObserver extends WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
+      // 0. Check if App Open on Resume is enabled
+      if (!AdsSettings.instance.enableAppOpenOnResume) {
+        debugPrint("AppOpenObserver: Skipping app open ad because it is disabled in settings.");
+        return;
+      }
+
       // 1. Check if an ad was clicked recently (e.g., user clicked a banner and is now back)
       // This persists even if the user spent a long time in the browser.
       if (AdRegistry.instance.wasAdClickedRecently) {
