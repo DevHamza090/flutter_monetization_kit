@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_monetization_kit/easy_ads.dart';
+import 'package:flutter_monetization_kit/monetization_kit.dart';
 
 class BannersScreen extends StatefulWidget {
-  const BannersScreen({Key? key}) : super(key: key);
+  const BannersScreen({super.key});
 
   @override
   State<BannersScreen> createState() => _BannersScreenState();

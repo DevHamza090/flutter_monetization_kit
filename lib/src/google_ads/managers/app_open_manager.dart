@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:flutter_monetization_kit/easy_ads.dart';
+import 'package:flutter_monetization_kit/monetization_kit.dart';
 
 /// Manages App Open Ads for the package.
 /// Handles preloading, validation (Premium, Internet), and professional display logic.
@@ -137,7 +137,7 @@ class AppOpenManager {
     }
 
     // 3. Show Loading Dialog
-    final effectiveContext = context ?? EasyAds.instance.navigatorKey?.currentContext;
+    final effectiveContext = context ?? MonetizationKit.instance.navigatorKey?.currentContext;
     if (loadingDialog && effectiveContext != null) {
       _showLoadingDialog(effectiveContext);
       await Future.delayed(const Duration(milliseconds: 500));

@@ -97,13 +97,13 @@ class AdUtils {
     }
   }
 
-  /// Example: [EasyAds] 🔄 Loading INTERSTITIAL for screen: Dashboard (ID: ca-app-pub...)
+  /// Example: [MonetizationKit] 🔄 Loading INTERSTITIAL for screen: Dashboard (ID: ca-app-pub...)
   static String logLoading(AdType type, String adUnitId, String? screen) {
     final screenInfo = screen != null ? "for screen: $screen" : "";
     return "${AdConstants.prefix} 🔄 Loading ${type.name.toUpperCase()} $screenInfo (ID: $adUnitId)";
   }
 
-  /// Example: [EasyAds] 🔄 Already Loading INTERSTITIAL for screen: Dashboard (ID: ca-app-pub...)
+  /// Example: [MonetizationKit] 🔄 Already Loading INTERSTITIAL for screen: Dashboard (ID: ca-app-pub...)
   static String logAlreadyLoading(
     AdType type,
     String adUnitId,
@@ -113,19 +113,19 @@ class AdUtils {
     return "${AdConstants.prefix} 🔄 Already Loading ${type.name.toUpperCase()} $screenInfo (ID: $adUnitId)";
   }
 
-  /// Example: [EasyAds] ✅ INTERSTITIAL Loaded successfully for screen: Dashboard
+  /// Example: [MonetizationKit] ✅ INTERSTITIAL Loaded successfully for screen: Dashboard
   static String logLoaded(AdType type, String? screen) {
     final screenInfo = screen != null ? "for screen: $screen" : "";
     return "${AdConstants.prefix} ✅ ${type.name.toUpperCase()} Loaded successfully $screenInfo";
   }
 
-  /// Example: [EasyAds] ⚠️ INTERSTITIAL Failed to load for screen: Dashboard. Error: No Fill
+  /// Example: [MonetizationKit] ⚠️ INTERSTITIAL Failed to load for screen: Dashboard. Error: No Fill
   static String logFailed(AdType type, String? screen, String error) {
     final screenInfo = screen != null ? "for screen: $screen" : "";
     return "${AdConstants.prefix} ⚠️ ${type.name.toUpperCase()} Failed to load $screenInfo. Error: $error";
   }
 
-  /// Example: [EasyAds] 📺 Showing INTERSTITIAL on screen: Dashboard
+  /// Example: [MonetizationKit] 📺 Showing INTERSTITIAL on screen: Dashboard
   static String logShowing(AdType type, String? screen) {
     final screenInfo = screen != null ? "on screen: $screen" : "";
     return "${AdConstants.prefix} 📺 Showing ${type.name.toUpperCase()} $screenInfo";

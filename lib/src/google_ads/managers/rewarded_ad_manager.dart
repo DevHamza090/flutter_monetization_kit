@@ -99,11 +99,11 @@ class RewardedAdManager {
   /// - The `show` method now accepts `isDialogShowing` and `loadingDelay` parameters to ensure smooth transitions when call from `loadNShow`.
   /// - If an ad is failed to load or validated during `loadNShow`, the dialog is automatically dismissed.
   ///
-  /// ### 5. EasyAds Integration
-  /// You can now access all ad managers directly through the `EasyAds` singleton, providing a unified and cleaner entry point for the SDK.
-  /// - Use `EasyAds.instance.interstitial`
-  /// - Use `EasyAds.instance.rewarded`
-  /// - Use `EasyAds.instance.rewardedInterstitial`
+  /// ### 5. MonetizationKit Integration
+  /// You can now access all ad managers directly through the `MonetizationKit` singleton, providing a unified and cleaner entry point for the SDK.
+  /// - Use `MonetizationKit.instance.interstitial`
+  /// - Use `MonetizationKit.instance.rewarded`
+  /// - Use `MonetizationKit.instance.rewardedInterstitial`
   /// - And so on for all major ad types.
   Future<void> show({
     required BuildContext context,

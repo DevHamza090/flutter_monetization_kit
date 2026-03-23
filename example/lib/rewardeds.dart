@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_monetization_kit/easy_ads.dart';
+import 'package:flutter_monetization_kit/monetization_kit.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class RewardedsScreen extends StatefulWidget {
@@ -17,7 +17,7 @@ class _RewardedsScreenState extends State<RewardedsScreen> {
   void _showAd(String screenName) async {
     setState(() => _isLoading = true);
 
-    await EasyAds.instance.rewarded.loadNShow(
+    await MonetizationKit.instance.rewarded.loadNShow(
       context: context,
       screenName: screenName,
       screenRemote: true,
@@ -68,7 +68,7 @@ class _RewardedsScreenState extends State<RewardedsScreen> {
       ),
     );
 
-    await EasyAds.instance.rewarded.load(
+    await MonetizationKit.instance.rewarded.load(
       screenName: screenName,
       screenRemote: true,
       adUnitId: _adUnitId,

@@ -2,14 +2,16 @@ import 'package:flutter/widgets.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_monetization_kit/src/google_ads/core/ads_settings.dart';
 import 'package:flutter_monetization_kit/src/shared_preferences/share_pref_helper.dart';
-
 import 'src/google_ads/managers/app_open_manager.dart';
 import 'src/google_ads/managers/banner_ad_manager.dart';
 import 'src/google_ads/managers/interstitial_ad_manager.dart';
 import 'src/google_ads/managers/native_ad_manager.dart' show NativeAdManager;
 import 'src/google_ads/managers/rewarded_ad_manager.dart';
 import 'src/google_ads/managers/rewarded_inter_ad_manager.dart';
-
+import 'src/google_ads/consent_message/google_consent_manager.dart';
+export 'src/google_ads/consent_message/google_consent_manager.dart';
+export 'src/app_tracking_transparency/app_tracking_transparency.dart';
+export 'src/app_tracking_transparency/app_tracking_status.dart';
 export 'src/google_ads/widgets/banner_widget.dart';
 export 'src/google_ads/core/enums/banner_type.dart';
 export 'src/google_ads/core/enums/ad_type.dart';
@@ -28,9 +30,9 @@ export 'src/google_ads/core/native_ad_style.dart';
 export 'src/google_ads/callbacks/native_ad_callbacks.dart';
 export 'src/google_ads/core/app_open_observer.dart';
 
-class EasyAds {
-  EasyAds._();
-  static final EasyAds instance = EasyAds._();
+class MonetizationKit {
+  MonetizationKit._();
+  static final MonetizationKit instance = MonetizationKit._();
 
   /// Access Point for Interstitial Ads
   InterstitialAdManager get interstitial => InterstitialAdManager.instance;
@@ -50,6 +52,9 @@ class EasyAds {
 
   /// Access Point for Native Ads
   NativeAdManager get native => NativeAdManager.instance;
+
+  /// Access Point for Google Consent Manager
+  GoogleConsentManager get consentManager => GoogleConsentManager.instance;
 
   /// Global navigator key to access context globally (e.g., for full-screen ad overlays)
   GlobalKey<NavigatorState>? navigatorKey;

@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_monetization_kit/easy_ads.dart';
+import 'package:flutter_monetization_kit/monetization_kit.dart';
 
 import '../managers/app_open_manager.dart';
 
@@ -12,16 +12,12 @@ class AppOpenObserver extends WidgetsBindingObserver {
   /// Optional callback to hook into ad events.
   final AppOpenAdCallbacks? callbacks;
 
-  /// Optional generic screen name prefix.
-  final String screenName;
-
   /// Whether to do remove validation.
   final bool screenRemote;
 
   AppOpenObserver({
     required this.adUnitId,
     this.callbacks,
-    this.screenName = 'app_resume',
     this.screenRemote = false,
   });
 
@@ -57,7 +53,6 @@ class AppOpenObserver extends WidgetsBindingObserver {
       debugPrint("AppOpenObserver: App Resumed. Trying to show app open ad...");
       AppOpenManager.instance.show(
         context: null,
-        screenName: screenName,
         screenRemote: screenRemote,
         adUnitId: adUnitId,
         loadingDialog: true,

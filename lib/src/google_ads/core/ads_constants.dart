@@ -1,4 +1,3 @@
-import 'dart:io';
 
 class AdConstants {
   // Private constructor to prevent instantiation
@@ -14,7 +13,7 @@ class AdConstants {
   static const Duration adRequestTimeout = Duration(seconds: 15);
 
   /// --- LOGGING MESSAGES ---
-  static const String prefix = "[EasyAds]";
+  static const String prefix = "[MonetizationKit]";
 
   // --- Static Error Messages ---
   static const String errorNoInternet =

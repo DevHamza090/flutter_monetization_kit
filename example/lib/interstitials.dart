@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_monetization_kit/easy_ads.dart';
+import 'package:flutter_monetization_kit/monetization_kit.dart';
 
 class InterstitialsScreen extends StatefulWidget {
   const InterstitialsScreen({Key? key}) : super(key: key);
@@ -18,7 +18,7 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
     setState(() => _isLoading = true);
 
 
-    await EasyAds.instance.interstitial.loadNShow(
+    await MonetizationKit.instance.interstitial.loadNShow(
       context: context,
       screenName: screenName,
       screenRemote: true,
@@ -63,7 +63,7 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
       ),
     );
 
-    await EasyAds.instance.interstitial.load(
+    await MonetizationKit.instance.interstitial.load(
       screenName: screenName,
       screenRemote: true,
       adUnitId: _adUnitId,

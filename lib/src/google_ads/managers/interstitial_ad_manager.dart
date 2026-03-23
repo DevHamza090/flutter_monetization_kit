@@ -314,9 +314,6 @@ class InterstitialAdManager {
     return "universal_interstitial";
   }
 
-  void _handleFailure(InterstitialAdCallbacks? callbacks, String reason) {
-    // Internal handling or specific callback if needed
-  }
 
   void _showLoadingDialog({
     required BuildContext context,

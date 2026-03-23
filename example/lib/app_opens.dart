@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_monetization_kit/easy_ads.dart';
+import 'package:flutter_monetization_kit/monetization_kit.dart';
 
 class AppOpensScreen extends StatefulWidget {
   const AppOpensScreen({Key? key}) : super(key: key);
@@ -14,7 +14,7 @@ class _AppOpensScreenState extends State<AppOpensScreen> {
 
   void _showAd(String? screenName) async {
 
-    await EasyAds.instance.appOpen.show(
+    await MonetizationKit.instance.appOpen.show(
       context: context,
       screenName: screenName,
       screenRemote: true,
@@ -56,7 +56,7 @@ class _AppOpensScreenState extends State<AppOpensScreen> {
       ),
     );
 
-    await EasyAds.instance.appOpen.load(
+    await MonetizationKit.instance.appOpen.load(
       screenName: screenName,
       screenRemote: true,
       adUnitId: _adUnitId,

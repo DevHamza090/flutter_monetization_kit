@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_monetization_kit/easy_ads.dart';
+import 'package:flutter_monetization_kit/monetization_kit.dart';
 import 'package:flutter_monetization_kit_example/app_opens.dart';
 import 'package:flutter_monetization_kit_example/rewarded_inters.dart';
 import 'package:flutter_monetization_kit_example/rewardeds.dart';
@@ -24,7 +24,7 @@ class _AdsDemoSelectionState extends State<AdsDemoSelection> {
       : 'ca-app-pub-3940256099942544/3986624511';
   @override
   void initState() {
-    EasyAds.instance.native.load(
+    MonetizationKit.instance.native.load(
       screenRemote: true,
       adUnitId: _testAdUnitId,
       screenName: "custom",
@@ -99,6 +99,29 @@ class _AdsDemoSelectionState extends State<AdsDemoSelection> {
               context,
               MaterialPageRoute(builder: (_) => const AppOpensScreen()),
             ),
+          ),
+          const Divider(height: 32),
+          _buildAdButton(
+            context,
+            title: 'Privacy Options (GDPR)',
+            icon: Icons.privacy_tip,
+            color: Colors.blueGrey,
+            onTap: () async {
+              final isRequired = await MonetizationKit.instance.consentManager.isPrivacyOptionsRequired();
+              if (isRequired) {
+                MonetizationKit.instance.consentManager.showPrivacyOptionsForm((error) {
+                  if (error != null) {
+                    debugPrint('Error showing privacy options: $error');
+                  }
+                });
+              } else {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Privacy options are not required for this user.')),
+                  );
+                }
+              }
+            },
           ),
         ],
       ),
