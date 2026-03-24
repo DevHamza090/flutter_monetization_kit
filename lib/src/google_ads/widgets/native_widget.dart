@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -39,6 +41,7 @@ class NativeWidget extends StatefulWidget {
 class _NativeWidgetState extends State<NativeWidget> {
   bool _adLoaded = false;
   bool _adFailed = false;
+  double? _dynamicHeight;
 
   @override
   void initState() {
@@ -127,11 +130,15 @@ class _NativeWidgetState extends State<NativeWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final height = _getHeightForType(widget.type);
+    final height = _dynamicHeight ?? _getHeightForType(widget.type);
 
     if (_adLoaded) {
       return ConstrainedBox(
-        constraints: BoxConstraints(minWidth: 320, maxHeight: height),
+        constraints: BoxConstraints(
+          minWidth: 320, 
+          minHeight: _dynamicHeight != null ? height : 0,
+          maxHeight: height,
+        ),
         child: _buildPlatformView(),
       );
     } else if (!_adFailed) {
@@ -211,6 +218,14 @@ class _NativeWidgetState extends State<NativeWidget> {
     );
     channel.setMethodCallHandler((call) async {
       switch (call.method) {
+        case 'onAdSized':
+          final args = call.arguments as Map;
+          if (mounted) {
+            setState(() {
+              _dynamicHeight = (args['height'] as num).toDouble();
+            });
+          }
+          break;
         case 'onAdClicked':
           AdRegistry.instance.wasAdClickedRecently = true;
           AdRegistry.instance.lastDismissedTime = DateTime.now();
@@ -232,20 +247,20 @@ class _NativeWidgetState extends State<NativeWidget> {
   }
 
   double _getHeightForType(NativeType type) {
-    if (type == NativeType.small1) return 100.0;
-    if (type == NativeType.small2) return 90.0;
-    if (type == NativeType.small3) return 90.0;
-    if (type == NativeType.small4) return 80.0;
-    if (type == NativeType.small5) return 100.0;
-    if (type == NativeType.small6) return 90.0;
-    if (type == NativeType.small7) return 90.0;
-    if (type == NativeType.small8) return 90.0;
-    if (type == NativeType.medium1) return 140.0;
-    if (type == NativeType.medium2) return 140.0;
-    if (type == NativeType.medium3) return 180.0;
-    if (type == NativeType.medium4) return 180.0;
-    if (type == NativeType.medium5) return 160.0;
-    if (type == NativeType.medium6) return 160.0;
+    if (type == NativeType.small1) return Platform.isAndroid ? 90.0 : 75.0;
+    if (type == NativeType.small2) return 70.0;
+    if (type == NativeType.small3) return 70.0;
+    if (type == NativeType.small4) return 70.0;
+    if (type == NativeType.small5) return 70.0;
+    if (type == NativeType.small6) return 70.0;
+    if (type == NativeType.small7) return 70.0;
+    if (type == NativeType.small8) return 70.0;
+    if (type == NativeType.medium1) return 130.0;
+    if (type == NativeType.medium2) return 130.0;
+    if (type == NativeType.medium3) return 130.0;
+    if (type == NativeType.medium4) return 130.0;
+    if (type == NativeType.medium5) return 130.0;
+    if (type == NativeType.medium6) return 130.0;
     if (type == NativeType.large1) return 300.0;
     if (type == NativeType.large2) return 300.0;
     if (type == NativeType.large3) return 300.0;

@@ -42,10 +42,10 @@ class _MyAppState extends State<MyApp> {
         );
 
         // 3. Setup App Open Ads Observer
-        final observer = AppOpenObserver(
-          adUnitId: AdUtils.testId(AdType.appOpen),
-        );
-        WidgetsBinding.instance.addObserver(observer);
+        // final observer = AppOpenObserver(
+        //   adUnitId: AdUtils.testId(AdType.appOpen),
+        // );
+        // WidgetsBinding.instance.addObserver(observer);
 
         // 4. Update UI to show the main app
         if (mounted) {

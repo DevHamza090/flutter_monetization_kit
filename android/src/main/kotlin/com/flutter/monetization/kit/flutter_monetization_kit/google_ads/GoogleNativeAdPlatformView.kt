@@ -111,20 +111,70 @@ class GoogleNativeAdPlatformView(
         val mediaView = view.findViewById<com.google.android.gms.ads.nativead.MediaView>(R.id.ad_media)
         if (mediaView != null) {
             view.mediaView = mediaView
+            
+            // Visual Polish: Rounded corners for MediaView
+            val density = context.resources.displayMetrics.density
+            val cornerRadius = 12f * density
+            mediaView.clipToOutline = true
+            mediaView.outlineProvider = object : android.view.ViewOutlineProvider() {
+                override fun getOutline(view: View, outline: android.graphics.Outline) {
+                    outline.setRoundRect(0, 0, view.width, view.height, cornerRadius)
+                }
+            }
+        }
+        // NOTE: If mediaView is null (small templates), we do NOT register adView.mediaView.
+        // Registering a hidden/GONE MediaView causes SDK volume/site validation warnings.
+
+        // Visual Polish: Rounded corners for Icon
+        if (iconView != null) {
+            val density = context.resources.displayMetrics.density
+            val cornerRadius = 12f * density
+            iconView.clipToOutline = true
+            iconView.outlineProvider = object : android.view.ViewOutlineProvider() {
+                override fun getOutline(view: View, outline: android.graphics.Outline) {
+                    outline.setRoundRect(0, 0, view.width, view.height, cornerRadius)
+                }
+            }
+        }
+
+        if (nativeAd.headline == null) {
+            view.visibility = View.GONE
+            methodChannel.invokeMethod("onAdSized", mapOf("height" to 0.0))
+            return view
+        }
+
+        val isSmallTemplate = type.startsWith("small")
+        val isMediumTemplate = type.startsWith("medium")
+        val isLargeTemplate = type.startsWith("large")
+
+        // Check icon requirement: small2, small4, small7, small8 do NOT have icons in layout
+        val expectsIcon = !(type == "small2" || type == "small5" || type == "small6" || type == "small7" || type == "small8")
+        if (expectsIcon && nativeAd.icon == null) {
+            view.visibility = View.GONE
+            methodChannel.invokeMethod("onAdSized", mapOf("height" to 0.0))
+            return view
+        }
+
+        // Check media requirement: medium and large templates generally expect media
+        // except possibly some specific ones? Most of our medium/large have ad_media.
+        if ((isMediumTemplate || isLargeTemplate) && nativeAd.mediaContent == null) {
+             view.visibility = View.GONE
+             methodChannel.invokeMethod("onAdSized", mapOf("height" to 0.0))
+             return view
         }
 
         // 2. Populate data
         headlineView.text = nativeAd.headline
         
         if (nativeAd.body == null) {
-            bodyView.visibility = View.INVISIBLE
+            bodyView.visibility = View.GONE // Use GONE to collapse space if possible
         } else {
             bodyView.visibility = View.VISIBLE
             bodyView.text = nativeAd.body
         }
 
         if (nativeAd.callToAction == null) {
-            callToActionView.visibility = View.INVISIBLE
+            callToActionView.visibility = View.GONE
         } else {
             callToActionView.visibility = View.VISIBLE
             callToActionView.text = nativeAd.callToAction
@@ -163,6 +213,20 @@ class GoogleNativeAdPlatformView(
         applyStyles(options, type, backgroundView, adBadgeView, headlineView, bodyView, callToActionView, ratingBar, advertiserView, priceView)
 
         view.setNativeAd(nativeAd)
+
+        view.viewTreeObserver.addOnGlobalLayoutListener(object : android.view.ViewTreeObserver.OnGlobalLayoutListener {
+            private var lastHeight = 0
+            override fun onGlobalLayout() {
+                val currentHeight = view.height
+                if (currentHeight > 0 && currentHeight != lastHeight) {
+                    lastHeight = currentHeight
+                    val density = context.resources.displayMetrics.density
+                    val dpHeight = currentHeight / density
+                    methodChannel.invokeMethod("onAdSized", mapOf("height" to dpHeight))
+                }
+            }
+        })
+
         return view
     }
 
