@@ -46,9 +46,18 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
            let cachedAd = NativeAdCache.ads[cacheId] {
 
             let adView = buildNativeAdView(nativeAd: cachedAd, customOptions: params)
-            adView.frame = self._view.bounds
-            adView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            // Use Auto Layout instead of frame-based sizing.
+            // At init time `_view.bounds` is CGRect.zero (Flutter has not yet set a size),
+            // so assigning frame here gives every child a zero frame — which is exactly
+            // what causes the SDK's "asset outside native ad view" validation error.
+            adView.translatesAutoresizingMaskIntoConstraints = false
             self._view.addSubview(adView)
+            NSLayoutConstraint.activate([
+                adView.topAnchor.constraint(equalTo: self._view.topAnchor),
+                adView.leadingAnchor.constraint(equalTo: self._view.leadingAnchor),
+                adView.trailingAnchor.constraint(equalTo: self._view.trailingAnchor),
+                adView.bottomAnchor.constraint(equalTo: self._view.bottomAnchor)
+            ])
         }
     }
 
@@ -329,6 +338,8 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
 
                 advertiserView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 12),
                 advertiserView.topAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: 6),
+                // Floor: prevent advertiserView from going above adView when bodyView is empty
+                advertiserView.topAnchor.constraint(greaterThanOrEqualTo: adView.topAnchor, constant: padding),
 
                 ratingView.leadingAnchor.constraint(equalTo: advertiserView.trailingAnchor, constant: 4),
                 ratingView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
@@ -393,6 +404,8 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
 
                 advertiserView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 12),
                 advertiserView.topAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: 6),
+                // Floor: prevent advertiserView from going above adView when bodyView is empty
+                advertiserView.topAnchor.constraint(greaterThanOrEqualTo: adView.topAnchor, constant: padding),
 
                 ratingView.leadingAnchor.constraint(equalTo: advertiserView.trailingAnchor, constant: 4),
                 ratingView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
@@ -677,6 +690,8 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
 
                 advertiserView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
                 advertiserView.topAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: 6),
+                // Floor: prevent advertiserView from going above adView when bodyView is empty
+                advertiserView.topAnchor.constraint(greaterThanOrEqualTo: adView.topAnchor, constant: padding),
                 advertiserView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
 
                 ratingView.leadingAnchor.constraint(equalTo: advertiserView.trailingAnchor, constant: 4),
@@ -694,6 +709,162 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
 
 
         } else if type == "large1" {
+            // Top: Icon + Text
+            // Middle: Large Media View
+            // Bottom: Action Button full width
+            adView.addSubview(iconView)
+            adView.iconView = iconView
+            adView.addSubview(badgeView)
+            adView.addSubview(headlineView)
+            adView.headlineView = headlineView
+            adView.addSubview(bodyView)
+            adView.bodyView = bodyView
+            adView.addSubview(actionButton)
+            adView.callToActionView = actionButton
+            adView.addSubview(advertiserView)
+            adView.advertiserView = advertiserView
+            adView.addSubview(ratingView)
+            adView.starRatingView = ratingView
+            adView.addSubview(priceView)
+            adView.priceView = priceView
+
+            let mediaView = MediaView()
+            mediaView.translatesAutoresizingMaskIntoConstraints = false
+            adView.addSubview(mediaView)
+            adView.mediaView = mediaView
+
+            headlineView.font = UIFont.boldSystemFont(ofSize: 18)
+            headlineView.numberOfLines = 1
+            bodyView.numberOfLines = 1
+
+            var constraints = [
+                iconView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
+                iconView.topAnchor.constraint(equalTo: adView.topAnchor, constant: padding),
+                iconView.widthAnchor.constraint(equalToConstant: 64),
+                iconView.heightAnchor.constraint(equalToConstant: 64),
+
+                badgeView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
+                badgeView.topAnchor.constraint(equalTo: iconView.topAnchor, constant: 2),
+                badgeView.widthAnchor.constraint(equalToConstant: 24),
+                badgeView.heightAnchor.constraint(equalToConstant: 16),
+
+                headlineView.leadingAnchor.constraint(equalTo: badgeView.trailingAnchor, constant: 4),
+                headlineView.topAnchor.constraint(equalTo: iconView.topAnchor),
+                headlineView.trailingAnchor.constraint(lessThanOrEqualTo: adView.trailingAnchor, constant: -padding),
+
+                bodyView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
+                bodyView.topAnchor.constraint(equalTo: headlineView.bottomAnchor, constant: 2),
+                bodyView.trailingAnchor.constraint(lessThanOrEqualTo: adView.trailingAnchor, constant: -padding),
+
+                advertiserView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
+                advertiserView.topAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: 10),
+
+                ratingView.leadingAnchor.constraint(equalTo: advertiserView.trailingAnchor, constant: 4),
+                ratingView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
+
+                priceView.leadingAnchor.constraint(greaterThanOrEqualTo: ratingView.trailingAnchor, constant: 4),
+                priceView.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -padding),
+                priceView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
+
+                mediaView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
+                mediaView.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -padding),
+                mediaView.topAnchor.constraint(greaterThanOrEqualTo: iconView.bottomAnchor, constant: padding),
+                mediaView.topAnchor.constraint(greaterThanOrEqualTo: advertiserView.bottomAnchor, constant: padding),
+
+                actionButton.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
+                actionButton.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -padding),
+                actionButton.topAnchor.constraint(equalTo: mediaView.bottomAnchor, constant: padding),
+                actionButton.bottomAnchor.constraint(equalTo: adView.bottomAnchor, constant: -padding),
+                actionButton.heightAnchor.constraint(equalToConstant: 40)
+            ]
+            NSLayoutConstraint.activate(constraints)
+
+
+
+
+
+        } else if type == "large2" {
+// Top: Action Button full width
+            // Middle: Icon Left + Text (Badge/Headline/Body/Adv/Stars/Price)
+            // Bottom: Large Media View
+            adView.addSubview(iconView)
+            adView.iconView = iconView
+            adView.addSubview(badgeView)
+            adView.addSubview(headlineView)
+            adView.headlineView = headlineView
+            adView.addSubview(bodyView)
+            adView.bodyView = bodyView
+            adView.addSubview(actionButton)
+            adView.callToActionView = actionButton
+            adView.addSubview(advertiserView)
+            adView.advertiserView = advertiserView
+            adView.addSubview(ratingView)
+            adView.starRatingView = ratingView
+            adView.addSubview(priceView)
+            adView.priceView = priceView
+
+            let mediaView = MediaView()
+            mediaView.translatesAutoresizingMaskIntoConstraints = false
+            adView.addSubview(mediaView)
+            adView.mediaView = mediaView
+
+            headlineView.font = UIFont.boldSystemFont(ofSize: 18)
+            headlineView.numberOfLines = 1
+            bodyView.numberOfLines = 1
+
+            var constraints = [
+                // Button — full width, pinned to top
+                actionButton.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
+                actionButton.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -padding),
+                actionButton.topAnchor.constraint(equalTo: adView.topAnchor, constant: padding),
+                actionButton.heightAnchor.constraint(equalToConstant: 40),
+
+                // Icon — left side, below button
+                iconView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
+                iconView.topAnchor.constraint(equalTo: actionButton.bottomAnchor, constant: padding),
+                iconView.widthAnchor.constraint(equalToConstant: 64),
+                iconView.heightAnchor.constraint(equalToConstant: 64),
+
+                // Badge — right of icon, top-aligned
+                badgeView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
+                badgeView.topAnchor.constraint(equalTo: iconView.topAnchor, constant: 2),
+                badgeView.widthAnchor.constraint(equalToConstant: 24),
+                badgeView.heightAnchor.constraint(equalToConstant: 16),
+
+                // Headline — right of badge
+                headlineView.leadingAnchor.constraint(equalTo: badgeView.trailingAnchor, constant: 4),
+                headlineView.topAnchor.constraint(equalTo: iconView.topAnchor),
+                headlineView.trailingAnchor.constraint(lessThanOrEqualTo: adView.trailingAnchor, constant: -padding),
+
+                // Body — below headline
+                bodyView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
+                bodyView.topAnchor.constraint(equalTo: headlineView.bottomAnchor, constant: 2),
+                bodyView.trailingAnchor.constraint(lessThanOrEqualTo: adView.trailingAnchor, constant: -padding),
+
+                // Advertiser — below body
+                advertiserView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
+                advertiserView.topAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: 10),
+
+                // Rating — right of advertiser
+                ratingView.leadingAnchor.constraint(equalTo: advertiserView.trailingAnchor, constant: 4),
+                ratingView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
+
+                // Price — trailing aligned with advertiser row
+                priceView.leadingAnchor.constraint(greaterThanOrEqualTo: ratingView.trailingAnchor, constant: 4),
+                priceView.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -padding),
+                priceView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
+
+                // MediaView — fills remaining space at bottom
+                mediaView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
+                mediaView.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -padding),
+                mediaView.topAnchor.constraint(greaterThanOrEqualTo: iconView.bottomAnchor, constant: padding),
+                mediaView.topAnchor.constraint(greaterThanOrEqualTo: advertiserView.bottomAnchor, constant: padding),
+                mediaView.bottomAnchor.constraint(equalTo: adView.bottomAnchor, constant: -padding)
+            ]
+            NSLayoutConstraint.activate(constraints)
+
+        } else if type == "large3" {
+
             // Top: Icon + Text (Badge/Headline/Body/Adv/Stars/Price)
             // Middle: Action Button full width
             // Bottom: Large Media View
@@ -720,7 +891,7 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
 
             headlineView.font = UIFont.boldSystemFont(ofSize: 18)
             headlineView.numberOfLines = 1
-            bodyView.numberOfLines = 2
+            bodyView.numberOfLines = 1
 
             var constraints = [
                 iconView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
@@ -764,10 +935,10 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
             ]
             NSLayoutConstraint.activate(constraints)
 
-        } else if type == "large2" {
-            // Top: Icon + Text
-            // Middle: Large Media View
-            // Bottom: Action Button full width
+        } else if type == "large4" {
+            // Top: Action Button full width
+            // Middle: Icon Right + Text (Badge/Headline/Body/Adv/Stars/Price) Left
+            // Bottom: Large Media View
             adView.addSubview(iconView)
             adView.iconView = iconView
             adView.addSubview(badgeView)
@@ -791,51 +962,60 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
 
             headlineView.font = UIFont.boldSystemFont(ofSize: 18)
             headlineView.numberOfLines = 1
-            bodyView.numberOfLines = 2
+            bodyView.numberOfLines = 1
 
             var constraints = [
-                iconView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
-                iconView.topAnchor.constraint(equalTo: adView.topAnchor, constant: padding),
+                // Button — full width, pinned to top
+                actionButton.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
+                actionButton.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -padding),
+                actionButton.topAnchor.constraint(equalTo: adView.topAnchor, constant: padding),
+                actionButton.heightAnchor.constraint(equalToConstant: 40),
+
+                // Icon — right side, below button
+                iconView.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -padding),
+                iconView.topAnchor.constraint(equalTo: actionButton.bottomAnchor, constant: padding),
                 iconView.widthAnchor.constraint(equalToConstant: 64),
                 iconView.heightAnchor.constraint(equalToConstant: 64),
 
-                badgeView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
+                // Badge — left side, aligned to icon top
+                badgeView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
                 badgeView.topAnchor.constraint(equalTo: iconView.topAnchor, constant: 2),
                 badgeView.widthAnchor.constraint(equalToConstant: 24),
                 badgeView.heightAnchor.constraint(equalToConstant: 16),
 
+                // Headline — right of badge
                 headlineView.leadingAnchor.constraint(equalTo: badgeView.trailingAnchor, constant: 4),
                 headlineView.topAnchor.constraint(equalTo: iconView.topAnchor),
-                headlineView.trailingAnchor.constraint(lessThanOrEqualTo: adView.trailingAnchor, constant: -padding),
+                headlineView.trailingAnchor.constraint(lessThanOrEqualTo: iconView.leadingAnchor, constant: -padding),
 
-                bodyView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
+                // Body — below headline
+                bodyView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
                 bodyView.topAnchor.constraint(equalTo: headlineView.bottomAnchor, constant: 2),
-                bodyView.trailingAnchor.constraint(lessThanOrEqualTo: adView.trailingAnchor, constant: -padding),
+                bodyView.trailingAnchor.constraint(lessThanOrEqualTo: iconView.leadingAnchor, constant: -padding),
 
-                advertiserView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
+                // Advertiser — below body
+                advertiserView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
                 advertiserView.topAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: 10),
 
+                // Rating — right of advertiser
                 ratingView.leadingAnchor.constraint(equalTo: advertiserView.trailingAnchor, constant: 4),
                 ratingView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
 
+                // Price — right side aligned with advertiser
                 priceView.leadingAnchor.constraint(greaterThanOrEqualTo: ratingView.trailingAnchor, constant: 4),
-                priceView.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -padding),
+                priceView.trailingAnchor.constraint(equalTo: iconView.leadingAnchor, constant: -padding),
                 priceView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
 
+                // MediaView — fills remaining space at bottom
                 mediaView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
                 mediaView.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -padding),
                 mediaView.topAnchor.constraint(greaterThanOrEqualTo: iconView.bottomAnchor, constant: padding),
                 mediaView.topAnchor.constraint(greaterThanOrEqualTo: advertiserView.bottomAnchor, constant: padding),
-
-                actionButton.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
-                actionButton.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -padding),
-                actionButton.topAnchor.constraint(equalTo: mediaView.bottomAnchor, constant: padding),
-                actionButton.bottomAnchor.constraint(equalTo: adView.bottomAnchor, constant: -padding),
-                actionButton.heightAnchor.constraint(equalToConstant: 40)
+                mediaView.bottomAnchor.constraint(equalTo: adView.bottomAnchor, constant: -padding)
             ]
             NSLayoutConstraint.activate(constraints)
 
-        } else if type == "large3" {
+        } else if type == "large5" {
             // Top: Large Media View
             // Bottom: Horizontal Stack (Icon, Text block in middle, Action Button right)
             adView.addSubview(iconView)
@@ -861,7 +1041,7 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
 
             headlineView.font = UIFont.boldSystemFont(ofSize: 16)
             headlineView.numberOfLines = 1
-            bodyView.numberOfLines = 2
+            bodyView.numberOfLines = 1
 
             actionButton.setContentCompressionResistancePriority(.required, for: .horizontal)
             actionButton.setContentHuggingPriority(.required, for: .horizontal)
@@ -892,140 +1072,18 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
 
                 advertiserView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
                 advertiserView.topAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: 10),
+                advertiserView.bottomAnchor.constraint(lessThanOrEqualTo: adView.bottomAnchor, constant: -padding),
 
                 ratingView.leadingAnchor.constraint(equalTo: advertiserView.trailingAnchor, constant: 4),
                 ratingView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
+
+                priceView.trailingAnchor.constraint(equalTo: actionButton.leadingAnchor, constant: -padding),
+                priceView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
 
                 actionButton.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -padding),
                 actionButton.centerYAnchor.constraint(equalTo: iconView.centerYAnchor),
                 actionButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 80),
                 actionButton.heightAnchor.constraint(equalToConstant: 36)
-            ]
-            NSLayoutConstraint.activate(constraints)
-
-        } else if type == "large4" {
-            // Top: Action Button full width
-            // Middle: Icon + Text block
-            // Bottom: Large Media View
-            adView.addSubview(iconView)
-            adView.iconView = iconView
-            adView.addSubview(badgeView)
-            adView.addSubview(headlineView)
-            adView.headlineView = headlineView
-            adView.addSubview(bodyView)
-            adView.bodyView = bodyView
-            adView.addSubview(actionButton)
-            adView.callToActionView = actionButton
-
-            let mediaView = MediaView()
-            mediaView.translatesAutoresizingMaskIntoConstraints = false
-            adView.addSubview(mediaView)
-            adView.mediaView = mediaView
-
-            headlineView.font = UIFont.boldSystemFont(ofSize: 18)
-            headlineView.numberOfLines = 1
-            bodyView.numberOfLines = 2
-
-            var constraints = [
-                actionButton.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
-                actionButton.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -padding),
-                actionButton.topAnchor.constraint(equalTo: adView.topAnchor),
-                actionButton.heightAnchor.constraint(equalToConstant: 40),
-
-                iconView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
-                iconView.topAnchor.constraint(equalTo: actionButton.bottomAnchor, constant: padding),
-                iconView.widthAnchor.constraint(equalToConstant: 64),
-                iconView.heightAnchor.constraint(equalToConstant: 64),
-
-                badgeView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
-                badgeView.topAnchor.constraint(equalTo: iconView.topAnchor, constant: 2),
-                badgeView.widthAnchor.constraint(equalToConstant: 24),
-                badgeView.heightAnchor.constraint(equalToConstant: 16),
-
-                headlineView.leadingAnchor.constraint(equalTo: badgeView.trailingAnchor, constant: 4),
-                headlineView.topAnchor.constraint(equalTo: iconView.topAnchor),
-                headlineView.trailingAnchor.constraint(lessThanOrEqualTo: adView.trailingAnchor, constant: -padding),
-
-                bodyView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
-                bodyView.topAnchor.constraint(equalTo: headlineView.bottomAnchor, constant: 2),
-                bodyView.trailingAnchor.constraint(lessThanOrEqualTo: adView.trailingAnchor, constant: -padding),
-
-                mediaView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
-                mediaView.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -padding),
-                mediaView.topAnchor.constraint(greaterThanOrEqualTo: iconView.bottomAnchor, constant: padding),
-                mediaView.topAnchor.constraint(greaterThanOrEqualTo: bodyView.bottomAnchor, constant: padding),
-                mediaView.bottomAnchor.constraint(equalTo: adView.bottomAnchor, constant: -padding)
-            ]
-            NSLayoutConstraint.activate(constraints)
-
-        } else if type == "large5" {
-            // Top: Icon Right, Text (Badge/Headline/Body/Adv/Stars/Price) Left
-            // Middle: Large Media View
-            // Bottom: Action Button full width
-            adView.addSubview(iconView)
-            adView.iconView = iconView
-            adView.addSubview(badgeView)
-            adView.addSubview(headlineView)
-            adView.headlineView = headlineView
-            adView.addSubview(bodyView)
-            adView.bodyView = bodyView
-            adView.addSubview(actionButton)
-            adView.callToActionView = actionButton
-            adView.addSubview(advertiserView)
-            adView.advertiserView = advertiserView
-            adView.addSubview(ratingView)
-            adView.starRatingView = ratingView
-            adView.addSubview(priceView)
-            adView.priceView = priceView
-
-            let mediaView = MediaView()
-            mediaView.translatesAutoresizingMaskIntoConstraints = false
-            adView.addSubview(mediaView)
-            adView.mediaView = mediaView
-
-            headlineView.font = UIFont.boldSystemFont(ofSize: 18)
-            headlineView.numberOfLines = 1
-            bodyView.numberOfLines = 2
-
-            var constraints = [
-                iconView.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -padding),
-                iconView.topAnchor.constraint(equalTo: adView.topAnchor, constant: padding),
-                iconView.widthAnchor.constraint(equalToConstant: 64),
-                iconView.heightAnchor.constraint(equalToConstant: 64),
-
-                badgeView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
-                badgeView.topAnchor.constraint(equalTo: iconView.topAnchor, constant: 2),
-                badgeView.widthAnchor.constraint(equalToConstant: 24),
-                badgeView.heightAnchor.constraint(equalToConstant: 16),
-
-                headlineView.leadingAnchor.constraint(equalTo: badgeView.trailingAnchor, constant: 4),
-                headlineView.topAnchor.constraint(equalTo: iconView.topAnchor),
-                headlineView.trailingAnchor.constraint(lessThanOrEqualTo: iconView.leadingAnchor, constant: -padding),
-
-                bodyView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
-                bodyView.topAnchor.constraint(equalTo: headlineView.bottomAnchor, constant: 2),
-                bodyView.trailingAnchor.constraint(lessThanOrEqualTo: iconView.leadingAnchor, constant: -padding),
-
-                advertiserView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
-                advertiserView.topAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: 10),
-
-                ratingView.leadingAnchor.constraint(equalTo: advertiserView.trailingAnchor, constant: 4),
-                ratingView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
-
-                priceView.leadingAnchor.constraint(greaterThanOrEqualTo: ratingView.trailingAnchor, constant: 4),
-                priceView.trailingAnchor.constraint(equalTo: iconView.leadingAnchor, constant: -padding),
-                priceView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
-
-                mediaView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
-                mediaView.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -padding),
-                mediaView.topAnchor.constraint(greaterThanOrEqualTo: iconView.bottomAnchor, constant: padding),
-                mediaView.topAnchor.constraint(greaterThanOrEqualTo: advertiserView.bottomAnchor, constant: padding),
-
-                actionButton.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
-                actionButton.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -padding),
-                actionButton.topAnchor.constraint(equalTo: mediaView.bottomAnchor, constant: padding),
-                actionButton.bottomAnchor.constraint(equalTo: adView.bottomAnchor, constant: -padding),
-                actionButton.heightAnchor.constraint(equalToConstant: 40)
             ]
             NSLayoutConstraint.activate(constraints)
 
@@ -1055,13 +1113,13 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
 
             headlineView.font = UIFont.boldSystemFont(ofSize: 16)
             headlineView.numberOfLines = 1
-            bodyView.numberOfLines = 2
+            bodyView.numberOfLines = 1
 
             actionButton.setContentCompressionResistancePriority(.required, for: .horizontal)
             actionButton.setContentHuggingPriority(.required, for: .horizontal)
 
             var constraints = [
-                iconView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding + 20),
+                iconView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: padding),
                 iconView.topAnchor.constraint(equalTo: adView.topAnchor, constant: padding),
                 iconView.widthAnchor.constraint(equalToConstant: 56),
                 iconView.heightAnchor.constraint(equalToConstant: 56),
@@ -1081,12 +1139,16 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
 
                 advertiserView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: padding),
                 advertiserView.topAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: 10),
+                advertiserView.bottomAnchor.constraint(lessThanOrEqualTo: mediaView.topAnchor, constant: -padding),
 
                 ratingView.leadingAnchor.constraint(equalTo: advertiserView.trailingAnchor, constant: 4),
                 ratingView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
 
+                priceView.trailingAnchor.constraint(equalTo: actionButton.leadingAnchor, constant: -padding),
+                priceView.centerYAnchor.constraint(equalTo: advertiserView.centerYAnchor),
+
                 actionButton.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -padding),
-                actionButton.centerYAnchor.constraint(equalTo: iconView.centerYAnchor, constant: 12),
+                actionButton.centerYAnchor.constraint(equalTo: iconView.centerYAnchor),
                 actionButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 80),
                 actionButton.heightAnchor.constraint(equalToConstant: 40),
 
@@ -1235,6 +1297,18 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
         // block is intentionally a no-op for those too.
 
         adView.callToActionView?.isUserInteractionEnabled = false
+
+        // IMPORTANT: Force a layout pass BEFORE assigning nativeAd.
+        // The Google Mobile Ads SDK validates every registered asset view's frame against
+        // the NativeAdView bounds at the moment nativeAd is set. If Auto Layout has not
+        // run yet (e.g. the view is still CGRect.zero because Flutter hasn't passed a
+        // real size yet), all child frames are zero/wrong and the SDK emits:
+        //   "Advertiser assets outside native ad view —
+        //    All asset boundaries must be inside the native ad view"
+        // layoutIfNeeded() forces constraints to resolve so the SDK sees correct frames.
+        adView.setNeedsLayout()
+        adView.layoutIfNeeded()
+
         adView.nativeAd = nativeAd
         return adView
     }

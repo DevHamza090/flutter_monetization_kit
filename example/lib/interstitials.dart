@@ -17,7 +17,6 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
   void _showAd(String screenName) async {
     setState(() => _isLoading = true);
 
-
     await MonetizationKit.instance.interstitial.loadNShow(
       context: context,
       screenName: screenName,
@@ -38,14 +37,12 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
             'Interstitial Demo: Ad failed to show for $screenName. Error: ${error.message}',
           );
           setState(() => _isLoading = false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to show ad: ${error.message}')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Failed to show ad: ${error.message}')));
         },
         onAdValidated: (reason) {
-          debugPrint(
-            'Interstitial Demo: Ad blocked for $screenName. Reason: $reason',
-          );
+          debugPrint('Interstitial Demo: Ad blocked for $screenName. Reason: $reason');
           setState(() => _isLoading = false);
           ScaffoldMessenger.of(
             context,
@@ -69,13 +66,11 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
       adUnitId: _adUnitId,
       callbacks: InterstitialAdCallbacks(
         onAdLoaded: (ad) {
-          debugPrint(
-            'Interstitial Demo: Ad preloaded successfully for $screenName',
-          );
+          debugPrint('Interstitial Demo: Ad preloaded successfully for $screenName');
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Ad preloaded for $screenName')),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('Ad preloaded for $screenName')));
           }
         },
         onAdFailedToLoad: (error) {
@@ -83,9 +78,9 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
             'Interstitial Demo: Ad preload failed for $screenName. Error: ${error.message}',
           );
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Ad preload failed: ${error.message}')),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('Ad preload failed: ${error.message}')));
           }
         },
       ),
@@ -125,7 +120,8 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
               title: 'Universal Ad',
               subtitle: 'Show ad without screen context',
               icon: Icons.public,
-              onPreload: () => _preloadAd(null.toString()), // Generic load
+              onPreload: () => _preloadAd(null.toString()),
+              // Generic load
               onShow: () => _showAd(null.toString()),
             ),
             const Divider(height: 40),
@@ -133,9 +129,7 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
             ListTile(
               leading: const Icon(Icons.star, color: Colors.amber),
               title: const Text('Toggle Premium Status'),
-              subtitle: Text(
-                'Current: ${AdsSettings.instance.isPremium ? "Premium" : "Free"}',
-              ),
+              subtitle: Text('Current: ${AdsSettings.instance.isPremium ? "Premium" : "Free"}'),
               trailing: Switch(
                 value: AdsSettings.instance.isPremium,
                 onChanged: (val) {
@@ -156,11 +150,7 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
             const Text(
               'Check debug console to see logs for "Already Loading" or "Ad already loaded" prevention.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey,
-                fontStyle: FontStyle.italic,
-              ),
+              style: TextStyle(fontSize: 12, color: Colors.grey, fontStyle: FontStyle.italic),
             ),
           ],
         ),
@@ -171,10 +161,7 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
   Widget _buildSectionHeader(String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: Text(
-        title,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      ),
+      child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
     );
   }
 
@@ -193,10 +180,7 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
           children: [
             ListTile(
               leading: Icon(icon, color: Colors.orange, size: 32),
-              title: Text(
-                title,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
+              title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
               subtitle: Text(subtitle),
             ),
             Row(

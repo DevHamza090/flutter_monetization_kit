@@ -34,7 +34,11 @@ class NativeShimmer extends StatelessWidget {
           width: shimmerStyle.bgStrokeWidth,
         ),
       ),
-      padding: type == NativeType.small3
+      padding: type == NativeType.small3 ||
+              type == NativeType.small4 ||
+              type == NativeType.small5 ||
+              type == NativeType.small6 ||
+              type == NativeType.small7
           ? EdgeInsets.zero
           : const EdgeInsets.all(8.0),
       child: Shimmer.fromColors(
@@ -45,57 +49,88 @@ class NativeShimmer extends StatelessWidget {
     );
   }
 
+  // ──────────────────────────────────────────────────────────────────────────
+  // AD Badge — real styled widget, not a shimmer block (matches native_widget
+  // AD badge colour from user style).
+  // ──────────────────────────────────────────────────────────────────────────
+  Widget _adBadge() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+      decoration: BoxDecoration(
+        color: shimmerStyle.adTextBgColor ?? Colors.amber,
+        borderRadius: BorderRadius.circular(shimmerStyle.adTextBgCorner),
+      ),
+      child: Text(
+        'AD',
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
+          color: shimmerStyle.adTextColor ?? Colors.white,
+        ),
+      ),
+    );
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Dispatcher
+  // ──────────────────────────────────────────────────────────────────────────
   Widget _buildShimmerForType() {
     switch (type) {
-      case NativeType.small8:
-        return _buildSmall8Shimmer();
-      case NativeType.small7:
-        return _buildSmall7Shimmer();
-      case NativeType.small6:
-        return _buildSmall6Shimmer();
-      case NativeType.small5:
-        return _buildSmall5Shimmer();
-      case NativeType.small4:
-        return _buildSmall4Shimmer();
-      case NativeType.small3:
-        return _buildSmall3Shimmer();
-      case NativeType.small2:
-        return _buildSmall2Shimmer();
       case NativeType.small1:
         return _buildSmall1Shimmer();
-      case NativeType.medium6:
-        return _buildMedium6Shimmer();
-      case NativeType.medium5:
-        return _buildMedium5Shimmer();
-      case NativeType.medium4:
-        return _buildMedium4Shimmer();
-      case NativeType.medium3:
-        return _buildMedium3Shimmer();
+      case NativeType.small2:
+        return _buildSmall2Shimmer();
+      case NativeType.small3:
+        return _buildSmall3Shimmer();
+      case NativeType.small4:
+        return _buildSmall4Shimmer();
+      case NativeType.small5:
+        return _buildSmall5Shimmer();
+      case NativeType.small6:
+        return _buildSmall6Shimmer();
+      case NativeType.small7:
+        return _buildSmall7Shimmer();
+      case NativeType.small8:
+        return _buildSmall8Shimmer();
+      case NativeType.medium1:
+        return _buildMedium1Shimmer();
       case NativeType.medium2:
         return _buildMedium2Shimmer();
-      case NativeType.large6:
-        return _buildLarge6Shimmer();
-      case NativeType.large5:
-        return _buildLarge5Shimmer();
-      case NativeType.large4:
-        return _buildLarge4Shimmer();
-      case NativeType.large3:
-        return _buildLarge3Shimmer();
-      case NativeType.large2:
-        return _buildLarge2Shimmer();
+      case NativeType.medium3:
+        return _buildMedium3Shimmer();
+      case NativeType.medium4:
+        return _buildMedium4Shimmer();
+      case NativeType.medium5:
+        return _buildMedium5Shimmer();
+      case NativeType.medium6:
+        return _buildMedium6Shimmer();
       case NativeType.large1:
         return _buildLarge1Shimmer();
-      case NativeType.medium1:
+      case NativeType.large2:
+        return _buildLarge2Shimmer();
+      case NativeType.large3:
+        return _buildLarge3Shimmer();
+      case NativeType.large4:
+        return _buildLarge4Shimmer();
+      case NativeType.large5:
+        return _buildLarge5Shimmer();
+      case NativeType.large6:
+        return _buildLarge6Shimmer();
       default:
-        return _buildMedium1Shimmer();
+        return _buildSmall1Shimmer();
     }
   }
 
+  // ══════════════════════════════════════════════════════════════════════════
+  // SMALL TEMPLATES
+  // ══════════════════════════════════════════════════════════════════════════
+
+  /// small1 — iOS: icon(56) left | [badge+headline / body] middle | button(36h,80w+) right, v-centred
   Widget _buildSmall1Shimmer() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Icon Placeholder
+        // Icon
         Container(
           width: 56,
           height: 56,
@@ -106,133 +141,35 @@ class NativeShimmer extends StatelessWidget {
         ),
         const SizedBox(width: 8),
 
-        // Text Content Placeholder
+        // Text block
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Ad Badge + Headline
+              // Badge + headline row
               Row(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 4,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: shimmerStyle.adTextBgColor ?? Colors.amber,
-                      borderRadius: BorderRadius.circular(
-                        shimmerStyle.adTextBgCorner,
-                      ),
-                    ),
-                    child: Text(
-                      'AD',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: shimmerStyle.adTextColor ?? Colors.white,
-                      ),
-                    ),
-                  ),
+                  _adBadge(),
                   const SizedBox(width: 4),
-                  Container(
-                    width: 120,
-                    height: 14,
-                    color: shimmerStyle.onBgColor,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              // Body Text Lines
-              Container(
-                width: double.infinity,
-                height: 12,
-                color: shimmerStyle.onBgColor,
-              ),
-              const SizedBox(height: 4),
-              Container(width: 150, height: 12, color: shimmerStyle.onBgColor),
-            ],
-          ),
-        ),
-        const SizedBox(width: 8),
-
-        // CTA Button Placeholder
-        Container(
-          width: 80,
-          height: 36,
-          decoration: BoxDecoration(
-            color: shimmerStyle.onBgColor,
-            borderRadius: BorderRadius.circular(style.buttonCornerRadius),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSmall2Shimmer() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 4,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: shimmerStyle.adTextBgColor ?? Colors.amber,
-                      borderRadius: BorderRadius.circular(
-                        shimmerStyle.adTextBgCorner,
-                      ),
-                    ),
-                    child: Text(
-                      'AD',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: shimmerStyle.adTextColor ?? Colors.white,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 6),
                   Expanded(
                     child: Container(height: 14, color: shimmerStyle.onBgColor),
                   ),
                 ],
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 4),
+              // Body line
               Container(
-                width: double.infinity,
                 height: 12,
+                width: double.infinity,
                 color: shimmerStyle.onBgColor,
-              ),
-              const SizedBox(height: 6),
-              Row(
-                children: [
-                  Container(
-                    width: 60,
-                    height: 10,
-                    color: shimmerStyle.onBgColor,
-                  ),
-                  const SizedBox(width: 8),
-                  Container(
-                    width: 80,
-                    height: 10,
-                    color: shimmerStyle.onBgColor,
-                  ),
-                ],
               ),
             ],
           ),
         ),
         const SizedBox(width: 8),
+
+        // CTA button
         Container(
           width: 80,
           height: 36,
@@ -245,84 +182,109 @@ class NativeShimmer extends StatelessWidget {
     );
   }
 
+  /// small2 / small8 — iOS: no icon | [badge+headline / body] left | button(36h,80w+) right, v-centred
+  Widget _buildSmall2Shimmer() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // Text block
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                children: [
+                  _adBadge(),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Container(height: 14, color: shimmerStyle.onBgColor),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Container(
+                height: 12,
+                width: double.infinity,
+                color: shimmerStyle.onBgColor,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 8),
+
+        // CTA button
+        Container(
+          width: 80,
+          height: 36,
+          decoration: BoxDecoration(
+            color: shimmerStyle.onBgColor,
+            borderRadius: BorderRadius.circular(style.buttonCornerRadius),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// small3 — iOS: icon(56) left | [badge+headline / body / adv+rating] | full-height button right (right-rounded only)
   Widget _buildSmall3Shimmer() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // Content side (with internal padding)
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Icon Placeholder
+                // Icon
                 Container(
                   width: 56,
                   height: 56,
                   decoration: BoxDecoration(
                     color: shimmerStyle.onBgColor,
-                    borderRadius: BorderRadius.circular(
-                      16.0,
-                    ), // Rounded corners based on design
+                    borderRadius: BorderRadius.circular(4.0),
                   ),
                 ),
                 const SizedBox(width: 8),
 
-                // Text Content Placeholder
+                // Text block
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Ad Badge + Headline
                       Row(
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 4,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: shimmerStyle.adTextBgColor ?? Colors.amber,
-                              borderRadius: BorderRadius.circular(
-                                shimmerStyle.adTextBgCorner,
-                              ),
-                            ),
-                            child: Text(
-                              'AD',
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: shimmerStyle.adTextColor ?? Colors.white,
-                              ),
-                            ),
-                          ),
+                          _adBadge(),
                           const SizedBox(width: 4),
-                          Container(
-                            width: 100,
-                            height: 14,
-                            color: shimmerStyle.onBgColor,
+                          Expanded(
+                            child: Container(
+                              height: 14,
+                              color: shimmerStyle.onBgColor,
+                            ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 6),
-                      // Body Text Lines
+                      const SizedBox(height: 4),
                       Container(
-                        width: double.infinity,
                         height: 12,
+                        width: double.infinity,
                         color: shimmerStyle.onBgColor,
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 4),
+                      // Advertiser + rating placeholder
                       Row(
                         children: [
                           Container(
-                            width: 60,
+                            width: 56,
                             height: 10,
                             color: shimmerStyle.onBgColor,
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 6),
                           Container(
-                            width: 80,
+                            width: 40,
                             height: 10,
                             color: shimmerStyle.onBgColor,
                           ),
@@ -336,9 +298,9 @@ class NativeShimmer extends StatelessWidget {
           ),
         ),
 
-        // CTA Button Placeholder matches parent height
+        // Full-height CTA (right-rounded corners only)
         Container(
-          width: 100,
+          width: 80,
           decoration: BoxDecoration(
             color: shimmerStyle.onBgColor,
             borderRadius: BorderRadius.horizontal(
@@ -350,90 +312,70 @@ class NativeShimmer extends StatelessWidget {
     );
   }
 
+  /// small4 — iOS: icon(56) left | [badge+headline / body(2-line) ] | full-height button right
   Widget _buildSmall4Shimmer() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // Content side
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Ad Badge + Headline
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 4,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: shimmerStyle.adTextBgColor ?? Colors.amber,
-                        borderRadius: BorderRadius.circular(
-                          shimmerStyle.adTextBgCorner,
-                        ),
-                      ),
-                      child: Text(
-                        'AD',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: shimmerStyle.adTextColor ?? Colors.white,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Container(
-                      width: 100,
-                      height: 14,
-                      color: shimmerStyle.onBgColor,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                // Body Text Lines
+                // Icon
                 Container(
-                  width: double.infinity,
-                  height: 12,
-                  color: shimmerStyle.onBgColor,
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: shimmerStyle.onBgColor,
+                    borderRadius: BorderRadius.circular(4.0),
+                  ),
                 ),
-                const SizedBox(height: 6),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 60,
-                          height: 10,
-                          color: shimmerStyle.onBgColor,
-                        ),
-                        const SizedBox(width: 8),
-                        Container(
-                          width: 80,
-                          height: 10,
-                          color: shimmerStyle.onBgColor,
-                        ),
-                      ],
-                    ),
-                    // Price placeholder
-                    Container(
-                      width: 40,
-                      height: 10,
-                      color: shimmerStyle.onBgColor,
-                    ),
-                  ],
+                const SizedBox(width: 8),
+
+                // Text block
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        children: [
+                          _adBadge(),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Container(
+                              height: 14,
+                              color: shimmerStyle.onBgColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Container(
+                        height: 12,
+                        width: double.infinity,
+                        color: shimmerStyle.onBgColor,
+                      ),
+                      const SizedBox(height: 3),
+                      Container(
+                        height: 12,
+                        width: double.infinity,
+                        color: shimmerStyle.onBgColor,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
         ),
 
-        // CTA Button Placeholder matches parent height
+        // Full-height CTA
         Container(
-          width: 100,
+          width: 80,
           decoration: BoxDecoration(
             color: shimmerStyle.onBgColor,
             borderRadius: BorderRadius.horizontal(
@@ -445,13 +387,8 @@ class NativeShimmer extends StatelessWidget {
     );
   }
 
-  Widget _buildSmall5Shimmer() => _buildSmall1Shimmer();
-
-  Widget _buildSmall6Shimmer() => _buildSmall3Shimmer();
-
-  Widget _buildSmall8Shimmer() => _buildSmall2Shimmer();
-
-  Widget _buildSmall7Shimmer() {
+  /// small5 — iOS: NO icon | [badge+headline / body(1-line)] | full-height button right
+  Widget _buildSmall5Shimmer() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -462,68 +399,32 @@ class NativeShimmer extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Ad Badge + Headline
                 Row(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 4,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: shimmerStyle.adTextBgColor ?? Colors.amber,
-                        borderRadius: BorderRadius.circular(
-                          shimmerStyle.adTextBgCorner,
-                        ),
-                      ),
-                      child: Text(
-                        'AD',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: shimmerStyle.adTextColor ?? Colors.white,
-                        ),
-                      ),
-                    ),
+                    _adBadge(),
                     const SizedBox(width: 4),
-                    Container(
-                      width: 100,
-                      height: 14,
-                      color: shimmerStyle.onBgColor,
+                    Expanded(
+                      child: Container(
+                        height: 14,
+                        color: shimmerStyle.onBgColor,
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 6),
-                // Body Text Lines
+                const SizedBox(height: 4),
                 Container(
-                  width: double.infinity,
                   height: 12,
+                  width: double.infinity,
                   color: shimmerStyle.onBgColor,
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Container(
-                      width: 60,
-                      height: 10,
-                      color: shimmerStyle.onBgColor,
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      width: 80,
-                      height: 10,
-                      color: shimmerStyle.onBgColor,
-                    ),
-                  ],
                 ),
               ],
             ),
           ),
         ),
 
-        // CTA Button Placeholder matches parent height
+        // Full-height CTA
         Container(
-          width: 100,
+          width: 80,
           decoration: BoxDecoration(
             color: shimmerStyle.onBgColor,
             borderRadius: BorderRadius.horizontal(
@@ -535,37 +436,114 @@ class NativeShimmer extends StatelessWidget {
     );
   }
 
+  /// small6 — iOS: NO icon | [badge+headline / body(2-line)] | full-height button right
+  Widget _buildSmall6Shimmer() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  children: [
+                    _adBadge(),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Container(
+                        height: 14,
+                        color: shimmerStyle.onBgColor,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Container(
+                  height: 12,
+                  width: double.infinity,
+                  color: shimmerStyle.onBgColor,
+                ),
+                const SizedBox(height: 3),
+                Container(
+                  height: 12,
+                  width: double.infinity,
+                  color: shimmerStyle.onBgColor,
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        // Full-height CTA
+        Container(
+          width: 80,
+          decoration: BoxDecoration(
+            color: shimmerStyle.onBgColor,
+            borderRadius: BorderRadius.horizontal(
+              right: Radius.circular(shimmerStyle.bgCorner),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// small7 — iOS: NO icon | [badge+headline / body(1-line)] | full-height button right
+  Widget _buildSmall7Shimmer() => _buildSmall5Shimmer();
+
+  /// small8 — same layout as small2 (no icon)
+  Widget _buildSmall8Shimmer() => _buildSmall2Shimmer();
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // MEDIUM TEMPLATES
+  // ══════════════════════════════════════════════════════════════════════════
+
+  /// medium1 — iOS: mediaView left 45% | right 55%: [icon(56)+badge+headline / body / fullBtn(44h)] bottom
   Widget _buildMedium1Shimmer() {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Media (Left)
-        Expanded(flex: 45, child: Container(color: shimmerStyle.onBgColor)),
+        // Media left 45%
+        Expanded(
+          flex: 45,
+          child: Container(
+            decoration: BoxDecoration(
+              color: shimmerStyle.onBgColor,
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+          ),
+        ),
         const SizedBox(width: 8),
-        // Details (Right)
+
+        // Right column 55%
         Expanded(
           flex: 55,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Icon + badge + headline
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    width: 40,
-                    height: 40,
-                    color: shimmerStyle.onBgColor,
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: shimmerStyle.onBgColor,
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 6),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
-                            Container(
-                              width: 24,
-                              height: 16,
-                              color: shimmerStyle.adTextBgColor ?? Colors.amber,
-                            ),
+                            _adBadge(),
                             const SizedBox(width: 4),
                             Expanded(
                               child: Container(
@@ -581,15 +559,20 @@ class NativeShimmer extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 8),
+
+              // Body lines
               Container(height: 12, color: shimmerStyle.onBgColor),
               const SizedBox(height: 4),
               Container(height: 12, color: shimmerStyle.onBgColor),
               const Spacer(),
+
+              // Full-width CTA
               Container(
-                height: 36,
+                height: 44,
                 decoration: BoxDecoration(
                   color: shimmerStyle.onBgColor,
-                  borderRadius: BorderRadius.circular(style.buttonCornerRadius),
+                  borderRadius:
+                      BorderRadius.circular(style.buttonCornerRadius),
                 ),
               ),
             ],
@@ -599,34 +582,37 @@ class NativeShimmer extends StatelessWidget {
     );
   }
 
+  /// medium2 — iOS: mirror of medium1 (media right)
   Widget _buildMedium2Shimmer() {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Details (Left)
+        // Left column 55%
         Expanded(
           flex: 55,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Icon + badge + headline
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    width: 40,
-                    height: 40,
-                    color: shimmerStyle.onBgColor,
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: shimmerStyle.onBgColor,
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 6),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
-                            Container(
-                              width: 24,
-                              height: 16,
-                              color: shimmerStyle.adTextBgColor ?? Colors.amber,
-                            ),
+                            _adBadge(),
                             const SizedBox(width: 4),
                             Expanded(
                               child: Container(
@@ -647,42 +633,60 @@ class NativeShimmer extends StatelessWidget {
               Container(height: 12, color: shimmerStyle.onBgColor),
               const Spacer(),
               Container(
-                height: 36,
+                height: 44,
                 decoration: BoxDecoration(
                   color: shimmerStyle.onBgColor,
-                  borderRadius: BorderRadius.circular(style.buttonCornerRadius),
+                  borderRadius:
+                      BorderRadius.circular(style.buttonCornerRadius),
                 ),
               ),
             ],
           ),
         ),
         const SizedBox(width: 8),
-        // Media (Right)
-        Expanded(flex: 45, child: Container(color: shimmerStyle.onBgColor)),
+
+        // Media right 45%
+        Expanded(
+          flex: 45,
+          child: Container(
+            decoration: BoxDecoration(
+              color: shimmerStyle.onBgColor,
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+          ),
+        ),
       ],
     );
   }
 
+  /// medium3 — iOS: icon(56) left | [badge+headline / body / adv+rating+price] | fullBtn(48h) bottom
   Widget _buildMedium3Shimmer() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // Top content row
         Expanded(
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(width: 80, height: 80, color: shimmerStyle.onBgColor),
+              // Icon
+              Container(
+                width: 56,
+                height: 56,
+                color: shimmerStyle.onBgColor,
+              ),
               const SizedBox(width: 12),
+
+              // Text block
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    // Badge + headline
                     Row(
                       children: [
-                        Container(
-                          width: 24,
-                          height: 16,
-                          color: shimmerStyle.adTextBgColor ?? Colors.amber,
-                        ),
+                        _adBadge(),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Container(
@@ -701,23 +705,24 @@ class NativeShimmer extends StatelessWidget {
                       color: shimmerStyle.onBgColor,
                     ),
                     const SizedBox(height: 6),
+                    // Advertiser + rating + price row
                     Row(
                       children: [
                         Container(
-                          width: 60,
+                          width: 56,
                           height: 10,
                           color: shimmerStyle.onBgColor,
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 6),
                         Container(
-                          width: 80,
+                          width: 36,
                           height: 10,
                           color: shimmerStyle.onBgColor,
                         ),
                         const Spacer(),
                         Container(
-                          width: 40,
-                          height: 14,
+                          width: 36,
+                          height: 10,
                           color: shimmerStyle.onBgColor,
                         ),
                       ],
@@ -729,6 +734,8 @@ class NativeShimmer extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
+
+        // Full-width CTA button at bottom
         Container(
           height: 48,
           decoration: BoxDecoration(
@@ -740,9 +747,12 @@ class NativeShimmer extends StatelessWidget {
     );
   }
 
+  /// medium4 — iOS: fullBtn(48h) top | icon(56) left | [badge+headline / body / adv+rating+price]
   Widget _buildMedium4Shimmer() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // Full-width CTA button at top
         Container(
           height: 48,
           decoration: BoxDecoration(
@@ -751,10 +761,17 @@ class NativeShimmer extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
+
+        // Bottom content row
         Expanded(
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(width: 80, height: 80, color: shimmerStyle.onBgColor),
+              Container(
+                width: 56,
+                height: 56,
+                color: shimmerStyle.onBgColor,
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -763,11 +780,7 @@ class NativeShimmer extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Container(
-                          width: 24,
-                          height: 16,
-                          color: shimmerStyle.adTextBgColor ?? Colors.amber,
-                        ),
+                        _adBadge(),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Container(
@@ -789,20 +802,20 @@ class NativeShimmer extends StatelessWidget {
                     Row(
                       children: [
                         Container(
-                          width: 60,
+                          width: 56,
                           height: 10,
                           color: shimmerStyle.onBgColor,
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 6),
                         Container(
-                          width: 80,
+                          width: 36,
                           height: 10,
                           color: shimmerStyle.onBgColor,
                         ),
                         const Spacer(),
                         Container(
-                          width: 40,
-                          height: 14,
+                          width: 36,
+                          height: 10,
                           color: shimmerStyle.onBgColor,
                         ),
                       ],
@@ -817,13 +830,20 @@ class NativeShimmer extends StatelessWidget {
     );
   }
 
+  /// medium5 — iOS: icon(56) left | [badge+headline / body] | fullBtn(48h) bottom (no adv/rating/price)
   Widget _buildMedium5Shimmer() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(width: 80, height: 80, color: shimmerStyle.onBgColor),
+              Container(
+                width: 56,
+                height: 56,
+                color: shimmerStyle.onBgColor,
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -832,11 +852,7 @@ class NativeShimmer extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Container(
-                          width: 24,
-                          height: 16,
-                          color: shimmerStyle.adTextBgColor ?? Colors.amber,
-                        ),
+                        _adBadge(),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Container(
@@ -872,8 +888,10 @@ class NativeShimmer extends StatelessWidget {
     );
   }
 
+  /// medium6 — iOS: fullBtn(48h) top | icon(56) left | [badge+headline / body] (no adv/rating/price)
   Widget _buildMedium6Shimmer() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Container(
           height: 48,
@@ -885,8 +903,13 @@ class NativeShimmer extends StatelessWidget {
         const SizedBox(height: 12),
         Expanded(
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(width: 80, height: 80, color: shimmerStyle.onBgColor),
+              Container(
+                width: 56,
+                height: 56,
+                color: shimmerStyle.onBgColor,
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -895,11 +918,7 @@ class NativeShimmer extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Container(
-                          width: 24,
-                          height: 16,
-                          color: shimmerStyle.adTextBgColor ?? Colors.amber,
-                        ),
+                        _adBadge(),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Container(
@@ -927,26 +946,32 @@ class NativeShimmer extends StatelessWidget {
     );
   }
 
+  // ══════════════════════════════════════════════════════════════════════════
+  // LARGE TEMPLATES
+  // ══════════════════════════════════════════════════════════════════════════
+
+  /// large1 — iOS: icon(64)+badge+headline / body / adv+price top | mediaView middle | fullBtn(40h) bottom
   Widget _buildLarge1Shimmer() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // Top row: icon + text block
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(width: 64, height: 64, color: shimmerStyle.onBgColor),
+            Container(
+              width: 64,
+              height: 64,
+              color: shimmerStyle.onBgColor,
+            ),
             const SizedBox(width: 8),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Row(
                     children: [
-                      Container(
-                        width: 24,
-                        height: 16,
-                        color: shimmerStyle.adTextBgColor ?? Colors.amber,
-                      ),
+                      _adBadge(),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Container(
@@ -958,121 +983,8 @@ class NativeShimmer extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Container(height: 12, color: shimmerStyle.onBgColor),
-                  const SizedBox(height: 4),
-                  Container(
-                    height: 12,
-                    width: 100,
-                    color: shimmerStyle.onBgColor,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Container(
-          height: 40,
-          decoration: BoxDecoration(
-            color: shimmerStyle.onBgColor,
-            borderRadius: BorderRadius.circular(style.buttonCornerRadius),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Expanded(child: Container(color: shimmerStyle.onBgColor)),
-      ],
-    );
-  }
-
-  Widget _buildLarge2Shimmer() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
-          children: [
-            Container(width: 64, height: 64, color: shimmerStyle.onBgColor),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 24,
-                        height: 16,
-                        color: shimmerStyle.adTextBgColor ?? Colors.amber,
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Container(
-                          height: 18,
-                          color: shimmerStyle.onBgColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Container(height: 12, color: shimmerStyle.onBgColor),
-                  const SizedBox(height: 4),
-                  Container(
-                    height: 12,
-                    width: 100,
-                    color: shimmerStyle.onBgColor,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Expanded(child: Container(color: shimmerStyle.onBgColor)),
-        const SizedBox(height: 8),
-        Container(
-          height: 40,
-          decoration: BoxDecoration(
-            color: shimmerStyle.onBgColor,
-            borderRadius: BorderRadius.circular(style.buttonCornerRadius),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLarge3Shimmer() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Expanded(child: Container(color: shimmerStyle.onBgColor)),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Container(width: 56, height: 56, color: shimmerStyle.onBgColor),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 24,
-                        height: 16,
-                        color: shimmerStyle.adTextBgColor ?? Colors.amber,
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Container(
-                          height: 16,
-                          color: shimmerStyle.onBgColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Container(height: 12, color: shimmerStyle.onBgColor),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 8),
+                  // Advertiser + price row
                   Row(
                     children: [
                       Container(
@@ -1080,9 +992,254 @@ class NativeShimmer extends StatelessWidget {
                         height: 10,
                         color: shimmerStyle.onBgColor,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 6),
                       Container(
-                        width: 80,
+                        width: 36,
+                        height: 10,
+                        color: shimmerStyle.onBgColor,
+                      ),
+                      const Spacer(),
+                      Container(
+                        width: 36,
+                        height: 10,
+                        color: shimmerStyle.onBgColor,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+
+        // MediaView
+        Expanded(
+          child: Container(color: shimmerStyle.onBgColor),
+        ),
+        const SizedBox(height: 8),
+
+        // Full-width CTA button
+        Container(
+          height: 40,
+          decoration: BoxDecoration(
+            color: shimmerStyle.onBgColor,
+            borderRadius: BorderRadius.circular(style.buttonCornerRadius),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// large2 — iOS: fullBtn(40h) top | icon(64)+badge+headline/body/adv+price middle | mediaView bottom
+  Widget _buildLarge2Shimmer() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Full-width CTA button at top
+        Container(
+          height: 40,
+          decoration: BoxDecoration(
+            color: shimmerStyle.onBgColor,
+            borderRadius: BorderRadius.circular(style.buttonCornerRadius),
+          ),
+        ),
+        const SizedBox(height: 8),
+
+        // Icon + text row
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 64,
+              height: 64,
+              color: shimmerStyle.onBgColor,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      _adBadge(),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Container(
+                          height: 18,
+                          color: shimmerStyle.onBgColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Container(height: 12, color: shimmerStyle.onBgColor),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Container(
+                        width: 60,
+                        height: 10,
+                        color: shimmerStyle.onBgColor,
+                      ),
+                      const SizedBox(width: 6),
+                      Container(
+                        width: 36,
+                        height: 10,
+                        color: shimmerStyle.onBgColor,
+                      ),
+                      const Spacer(),
+                      Container(
+                        width: 36,
+                        height: 10,
+                        color: shimmerStyle.onBgColor,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+
+        // MediaView
+        Expanded(
+          child: Container(color: shimmerStyle.onBgColor),
+        ),
+      ],
+    );
+  }
+
+  /// large3 — iOS: icon(64)+text top | fullBtn(40h) middle | mediaView bottom
+  Widget _buildLarge3Shimmer() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Icon + text row
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 64,
+              height: 64,
+              color: shimmerStyle.onBgColor,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      _adBadge(),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Container(
+                          height: 18,
+                          color: shimmerStyle.onBgColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Container(height: 12, color: shimmerStyle.onBgColor),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Container(
+                        width: 60,
+                        height: 10,
+                        color: shimmerStyle.onBgColor,
+                      ),
+                      const SizedBox(width: 6),
+                      Container(
+                        width: 36,
+                        height: 10,
+                        color: shimmerStyle.onBgColor,
+                      ),
+                      const Spacer(),
+                      Container(
+                        width: 36,
+                        height: 10,
+                        color: shimmerStyle.onBgColor,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+
+        // Full-width CTA button
+        Container(
+          height: 40,
+          decoration: BoxDecoration(
+            color: shimmerStyle.onBgColor,
+            borderRadius: BorderRadius.circular(style.buttonCornerRadius),
+          ),
+        ),
+        const SizedBox(height: 8),
+
+        // MediaView
+        Expanded(
+          child: Container(color: shimmerStyle.onBgColor),
+        ),
+      ],
+    );
+  }
+
+  /// large4 — iOS: fullBtn(40h) top | [badge+headline/body/adv left, icon(64) right] | mediaView bottom
+  Widget _buildLarge4Shimmer() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Full-width CTA button at top
+        Container(
+          height: 40,
+          decoration: BoxDecoration(
+            color: shimmerStyle.onBgColor,
+            borderRadius: BorderRadius.circular(style.buttonCornerRadius),
+          ),
+        ),
+        const SizedBox(height: 8),
+
+        // Icon (right) + text (left) row
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Text block (left)
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      _adBadge(),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Container(
+                          height: 18,
+                          color: shimmerStyle.onBgColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Container(height: 12, color: shimmerStyle.onBgColor),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Container(
+                        width: 60,
+                        height: 10,
+                        color: shimmerStyle.onBgColor,
+                      ),
+                      const SizedBox(width: 6),
+                      Container(
+                        width: 36,
                         height: 10,
                         color: shimmerStyle.onBgColor,
                       ),
@@ -1092,12 +1249,98 @@ class NativeShimmer extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
+
+            // Icon on the right
+            Container(
+              width: 64,
+              height: 64,
+              color: shimmerStyle.onBgColor,
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+
+        // MediaView
+        Expanded(
+          child: Container(color: shimmerStyle.onBgColor),
+        ),
+      ],
+    );
+  }
+
+  /// large5 — iOS: mediaView top | icon(56)+badge+headline/body/adv left | button(36h,80w+) right, v-centred
+  Widget _buildLarge5Shimmer() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // MediaView top
+        Expanded(
+          child: Container(color: shimmerStyle.onBgColor),
+        ),
+        const SizedBox(height: 8),
+
+        // Bottom bar: icon + text + button
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Icon
+            Container(
+              width: 56,
+              height: 56,
+              color: shimmerStyle.onBgColor,
+            ),
+            const SizedBox(width: 8),
+
+            // Text block
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    children: [
+                      _adBadge(),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Container(
+                          height: 16,
+                          color: shimmerStyle.onBgColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Container(height: 12, color: shimmerStyle.onBgColor),
+                  const SizedBox(height: 6),
+                  // Advertiser / rating / price row
+                  Row(
+                    children: [
+                      Container(
+                        width: 56,
+                        height: 10,
+                        color: shimmerStyle.onBgColor,
+                      ),
+                      const SizedBox(width: 6),
+                      Container(
+                        width: 36,
+                        height: 10,
+                        color: shimmerStyle.onBgColor,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+
+            // CTA button (right, v-centred to icon)
             Container(
               width: 80,
               height: 36,
               decoration: BoxDecoration(
                 color: shimmerStyle.onBgColor,
-                borderRadius: BorderRadius.circular(style.buttonCornerRadius),
+                borderRadius:
+                    BorderRadius.circular(style.buttonCornerRadius),
               ),
             ),
           ],
@@ -1106,126 +1349,24 @@ class NativeShimmer extends StatelessWidget {
     );
   }
 
-  Widget _buildLarge4Shimmer() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Container(
-          height: 40,
-          decoration: BoxDecoration(
-            color: shimmerStyle.onBgColor,
-            borderRadius: BorderRadius.circular(style.buttonCornerRadius),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Container(width: 64, height: 64, color: shimmerStyle.onBgColor),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 24,
-                        height: 16,
-                        color: shimmerStyle.adTextBgColor ?? Colors.amber,
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Container(
-                          height: 18,
-                          color: shimmerStyle.onBgColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Container(height: 12, color: shimmerStyle.onBgColor),
-                  const SizedBox(height: 4),
-                  Container(
-                    height: 12,
-                    width: 100,
-                    color: shimmerStyle.onBgColor,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Expanded(child: Container(color: shimmerStyle.onBgColor)),
-      ],
-    );
-  }
-
-  Widget _buildLarge5Shimmer() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 24,
-                        height: 16,
-                        color: shimmerStyle.adTextBgColor ?? Colors.amber,
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Container(
-                          height: 18,
-                          color: shimmerStyle.onBgColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Container(height: 12, color: shimmerStyle.onBgColor),
-                  const SizedBox(height: 4),
-                  Container(
-                    height: 12,
-                    width: 100,
-                    color: shimmerStyle.onBgColor,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            Container(width: 64, height: 64, color: shimmerStyle.onBgColor),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Expanded(child: Container(color: shimmerStyle.onBgColor)),
-        const SizedBox(height: 8),
-        Container(
-          height: 40,
-          decoration: BoxDecoration(
-            color: shimmerStyle.onBgColor,
-            borderRadius: BorderRadius.circular(style.buttonCornerRadius),
-          ),
-        ),
-      ],
-    );
-  }
-
+  /// large6 — iOS: [icon(56) left, text middle, button(40h,80w+) right] top | mediaView bottom
   Widget _buildLarge6Shimmer() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // Top bar: icon + text + button
         Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(width: 56, height: 56, color: shimmerStyle.onBgColor),
+            // Icon
+            Container(
+              width: 56,
+              height: 56,
+              color: shimmerStyle.onBgColor,
+            ),
             const SizedBox(width: 8),
+
+            // Text block
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1233,11 +1374,7 @@ class NativeShimmer extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Container(
-                        width: 24,
-                        height: 16,
-                        color: shimmerStyle.adTextBgColor ?? Colors.amber,
-                      ),
+                      _adBadge(),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Container(
@@ -1249,17 +1386,17 @@ class NativeShimmer extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Container(height: 12, color: shimmerStyle.onBgColor),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   Row(
                     children: [
                       Container(
-                        width: 60,
+                        width: 56,
                         height: 10,
                         color: shimmerStyle.onBgColor,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 6),
                       Container(
-                        width: 80,
+                        width: 36,
                         height: 10,
                         color: shimmerStyle.onBgColor,
                       ),
@@ -1269,18 +1406,25 @@ class NativeShimmer extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
+
+            // CTA button (right, v-centred to icon)
             Container(
               width: 80,
               height: 40,
               decoration: BoxDecoration(
                 color: shimmerStyle.onBgColor,
-                borderRadius: BorderRadius.circular(style.buttonCornerRadius),
+                borderRadius:
+                    BorderRadius.circular(style.buttonCornerRadius),
               ),
             ),
           ],
         ),
         const SizedBox(height: 8),
-        Expanded(child: Container(color: shimmerStyle.onBgColor)),
+
+        // MediaView bottom
+        Expanded(
+          child: Container(color: shimmerStyle.onBgColor),
+        ),
       ],
     );
   }
