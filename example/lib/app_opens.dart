@@ -11,39 +11,64 @@ class AppOpensScreen extends StatefulWidget {
 class _AppOpensScreenState extends State<AppOpensScreen> {
   // Use professional test ID
   final String _adUnitId = AdUtils.testId(AdType.appOpen);
+  bool _isLoading = false;
 
-  void _showAd(String? screenName) async {
+  void _loadAndShowAd(String? screenName, {Widget? customWidget}) async {
+    setState(() => _isLoading = true);
 
-    await MonetizationKit.instance.appOpen.show(
+    await MonetizationKit.instance.appOpen.loadAndShow(
       context: context,
       screenName: screenName,
       screenRemote: true,
       androidAdUnit: _adUnitId,
       iosAdUnit: _adUnitId,
       loadingDialog: true,
+      customLoadingWidget: customWidget,
       reloadAfterShow: true,
       callbacks: AppOpenAdCallbacks(
         onAdShowedFullScreenContent: (ad) {
-          debugPrint('App Open Demo: Ad showed for $screenName');
+          debugPrint('App Open Demo: Ad showed via LoadAndShow for $screenName');
         },
         onAdDismissedFullScreenContent: (ad) {
           debugPrint('App Open Demo: Ad dismissed for $screenName');
+          setState(() => _isLoading = false);
         },
         onAdFailedToShowFullScreenContent: (ad, error) {
           debugPrint(
             'App Open Demo: Ad failed to show for $screenName. Error: ${error.message}',
           );
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to show ad: ${error.message}')),
-          );
+          setState(() => _isLoading = false);
         },
         onAdValidated: (reason) {
-          debugPrint(
-            'App Open Demo: Ad blocked for $screenName. Reason: $reason',
-          );
+          debugPrint('App Open Demo: Ad blocked for $screenName. Reason: $reason');
+          setState(() => _isLoading = false);
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text('Ad blocked: $reason')));
+        },
+      ),
+    );
+  }
+
+  void _showAdIfReady(String? screenName) async {
+    await MonetizationKit.instance.appOpen.show(
+      context: context,
+      screenName: screenName,
+      screenRemote: true,
+      androidAdUnit: _adUnitId,
+      iosAdUnit: _adUnitId,
+      loadingDialog: false,
+      callbacks: AppOpenAdCallbacks(
+        onAdShowedFullScreenContent: (ad) {
+          debugPrint('App Open Demo: Ad showed from cache for $screenName');
+        },
+        onAdDismissedFullScreenContent: (ad) {
+          debugPrint('App Open Demo: Ad dismissed for $screenName');
+        },
+        onAdValidated: (reason) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Ad not ready or blocked: $reason')),
+          );
         },
       ),
     );
@@ -64,9 +89,7 @@ class _AppOpensScreenState extends State<AppOpensScreen> {
       iosAdUnit: _adUnitId,
       callbacks: AppOpenAdCallbacks(
         onAdLoaded: (ad) {
-          debugPrint(
-            'App Open Demo: Ad preloaded successfully for $screenName',
-          );
+          debugPrint(AdUtils.logLoaded(AdType.appOpen, screenName));
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Ad preloaded for $screenName')),
@@ -74,9 +97,7 @@ class _AppOpensScreenState extends State<AppOpensScreen> {
           }
         },
         onAdFailedToLoad: (error) {
-          debugPrint(
-            'App Open Demo: Ad preload failed for $screenName. Error: ${error.message}',
-          );
+          debugPrint(AdUtils.logFailed(AdType.appOpen, screenName, error.message));
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Ad preload failed: ${error.message}')),
@@ -98,23 +119,61 @@ class _AppOpensScreenState extends State<AppOpensScreen> {
           children: [
             _buildSectionHeader('Smart Preloading'),
             const Text(
-              'App Open ads are typically shown on app start or backgrounding, but can also be triggered manually.',
+              'App Open ads are typically shown on app start or backgrounding, but can also be triggered manually with LoadAndShow.',
               style: TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 16),
             _buildActionCard(
               title: 'On-Demand App Open',
-              subtitle: 'Preload and show for a specific flow',
+              subtitle: 'Preload or LoadAndShow for specific flow',
               icon: Icons.open_in_new,
               onPreload: () => _preloadAd('on_demand'),
-              onShow: () => _showAd('on_demand'),
+              onShowReady: () => _showAdIfReady('on_demand'),
+              onLoadAndShow: () => _loadAndShowAd('on_demand'),
             ),
             _buildActionCard(
               title: 'Universal Ad',
               subtitle: 'Show ad without screen context',
               icon: Icons.public,
-              onPreload: () => _preloadAd(null), // Generic load
-              onShow: () => _showAd(null),
+              onPreload: () => _preloadAd(null),
+              onShowReady: () => _showAdIfReady(null),
+              onLoadAndShow: () => _loadAndShowAd(null),
+            ),
+            const Divider(height: 40),
+            _buildSectionHeader('Custom Loading UI'),
+            const Text(
+              'You can provide a fallback widget to show while the ad is loading.',
+              style: TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: () => _loadAndShowAd(
+                'custom_ui',
+                customWidget: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const CircularProgressIndicator(color: Colors.orange),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Preparing your experience...',
+                        style: TextStyle(
+                          color: Colors.orange,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              icon: const Icon(Icons.palette),
+              label: const Text('Load & Show with Custom UI'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                backgroundColor: Colors.orange.withValues(alpha: 0.1),
+                foregroundColor: Colors.orange,
+              ),
             ),
             const Divider(height: 40),
             _buildSectionHeader('Validation & Controls'),
@@ -135,7 +194,7 @@ class _AppOpensScreenState extends State<AppOpensScreen> {
             ElevatedButton.icon(
               onPressed: () {
                 _preloadAd('test_screen');
-                _preloadAd('test_screen'); // Intentional duplicate
+                _preloadAd('test_screen');
               },
               icon: const Icon(Icons.copy),
               label: const Text('Test Redundant Load Prevention'),
@@ -161,7 +220,8 @@ class _AppOpensScreenState extends State<AppOpensScreen> {
     required String subtitle,
     required IconData icon,
     required VoidCallback onPreload,
-    required VoidCallback onShow,
+    required VoidCallback onShowReady,
+    required VoidCallback onLoadAndShow,
   }) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
@@ -185,11 +245,20 @@ class _AppOpensScreenState extends State<AppOpensScreen> {
                   icon: const Icon(Icons.download),
                   label: const Text('PRELOAD'),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 4),
+                TextButton.icon(
+                  onPressed: onShowReady,
+                  icon: const Icon(Icons.remove_red_eye),
+                  label: const Text('SHOW'),
+                ),
+                const SizedBox(width: 4),
                 ElevatedButton.icon(
-                  onPressed: onShow,
-                  icon: const Icon(Icons.play_arrow),
-                  label: const Text('SHOW AD'),
+                  onPressed: onLoadAndShow,
+                  icon: const Icon(Icons.flash_on),
+                  label: const Text('L&S'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                  ),
                 ),
               ],
             ),

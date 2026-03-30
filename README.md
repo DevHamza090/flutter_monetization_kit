@@ -150,6 +150,11 @@ class _MyAppState extends State<MyApp> {
 
 All accesses to ads are neatly grouped under the `MonetizationKit.instance` singleton.
 
+The SDK supports three distinct patterns for full-screen ads:
+1. **Preload (`load`)**: Fetch the ad in advance without showing it.
+2. **Show (`show`)**: Display a previously preloaded ad instantly.
+3. **Load & Show (`loadAndShow`)**: A convenience method that handles both loading and showing in one go.
+
 💡 **Universal Ad Caching:** The `screenName` parameter in `load()` and `show()` methods is entirely **optional**. If you do not pass a `screenName`, the ad is loaded and cached **universally** and can be shown from anywhere in your app!
 
 ### 1. Interstitial Ads
@@ -166,10 +171,17 @@ MonetizationKit.instance.interstitial.load(
 
 // Show the ad
 MonetizationKit.instance.interstitial.show(
+  context: context,
   screenName: 'home_screen',
   onAdDismissed: () {
     print("Ad Dismissed - Navigate to next screen");
   },
+);
+
+// Load and show in one go
+MonetizationKit.instance.interstitial.loadAndShow(
+  context: context,
+  screenName: 'home_screen',
 );
 ```
 
@@ -185,26 +197,84 @@ MonetizationKit.instance.rewarded.load(
 );
 
 MonetizationKit.instance.rewarded.show(
+  context: context,
   screenName: 'store_screen',
-  onUserEarnedReward: (amount, type) {
-    print("User earned $amount $type");
+  onUserEarnedReward: (ad, reward) {
+    print("User earned ${reward.amount} ${reward.type}");
   },
   onAdDismissed: () {
     print("Ad was closed");
   },
 );
+
+// Load and show in one go
+MonetizationKit.instance.rewarded.loadAndShow(
+  context: context,
+  screenName: 'store_screen',
+);
 ```
 
-### 3. App Open Ads
+### 3. Rewarded Interstitial Ads
+
+A hybrid ad type that provides a reward without the "choice" to skip, typically used for high-value rewards.
+
+```dart
+MonetizationKit.instance.rewardedInterstitial.load(
+  androidAdUnit: 'YOUR_ANDROID_AD_UNIT_ID',
+  iosAdUnit: 'YOUR_IOS_AD_UNIT_ID',
+  screenName: 'game_over',
+);
+
+MonetizationKit.instance.rewardedInterstitial.show(
+  context: context,
+  screenName: 'game_over',
+  onUserEarnedReward: (ad, reward) {
+    print("User rewarded");
+  },
+);
+
+// Load and show in one go
+MonetizationKit.instance.rewardedInterstitial.loadAndShow(
+  context: context,
+  screenName: 'game_over',
+);
+```
+
+### 4. App Open Ads
 
 Handled via the `AppOpenObserver`. Whenever the user resumes the app, the observer dynamically shows the pre-loaded ad. It's configured automatically during initialization.
 
 ```dart
-// Pause App Open showing dynamically if needed
+// Pause App Open showing manually if needed
 MonetizationKit.instance.setAppOpenOnResume(false);
+
+// Manually show if preloaded
+MonetizationKit.instance.appOpen.show(
+  context: context,
+  screenRemote: true,
+);
+
+// Load and show in one go
+MonetizationKit.instance.appOpen.loadAndShow(
+  context: context,
+  screenRemote: true,
+);
 ```
 
-### 4. Banner Ads
+### 5. Custom Loading UI
+
+All full-screen ads (Interstitial, Rewarded, App Open) support a `customLoadingWidget` parameter. This allows you to show your own professional loading screen while the ad is preparing to show.
+
+```dart
+MonetizationKit.instance.interstitial.loadAndShow(
+  context: context,
+  screenRemote: true,
+  customLoadingWidget: MyCustomLoadingScreen(),
+  fullScreenDialog: true, // Whether the dialog should be full-screen
+);
+```
+
+### 6. Banner Ads
 
 Using the provided `BannerWidget` simplifies rendering standard banner ads.
 

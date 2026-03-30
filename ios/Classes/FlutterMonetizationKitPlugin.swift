@@ -21,9 +21,7 @@ public class FlutterMonetizationKitPlugin: NSObject, FlutterPlugin, NativeAdLoad
     }
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        if call.method == "getPlatformVersion" {
-            result("iOS " + UIDevice.current.systemVersion)
-        } else if call.method == "requestTrackingAuthorization" {
+        if call.method == "requestTrackingAuthorization" {
             ATTManager.requestAuthorization { status in
                 result(status)
             }

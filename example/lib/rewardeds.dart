@@ -14,10 +14,10 @@ class _RewardedsScreenState extends State<RewardedsScreen> {
   bool _isLoading = false;
   int _coins = 0;
 
-  void _showAd(String screenName) async {
+  void _loadAndShowAd(String screenName) async {
     setState(() => _isLoading = true);
 
-    await MonetizationKit.instance.rewarded.loadNShow(
+    await MonetizationKit.instance.rewarded.loadAndShow(
       context: context,
       screenName: screenName,
       screenRemote: true,
@@ -33,7 +33,7 @@ class _RewardedsScreenState extends State<RewardedsScreen> {
           setState(() => _coins += reward.amount.toInt());
         },
         onAdShowedFullScreenContent: (ad) {
-          debugPrint('Rewarded Demo: Ad showed for $screenName');
+          debugPrint('Rewarded Demo: Ad showed via LoadAndShow for $screenName');
         },
         onAdDismissedFullScreenContent: (ad) {
           debugPrint('Rewarded Demo: Ad dismissed for $screenName');
@@ -44,9 +44,6 @@ class _RewardedsScreenState extends State<RewardedsScreen> {
             'Rewarded Demo: Ad failed to show for $screenName. Error: ${error.message}',
           );
           setState(() => _isLoading = false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to show ad: ${error.message}')),
-          );
         },
         onAdValidated: (reason) {
           debugPrint(
@@ -56,6 +53,30 @@ class _RewardedsScreenState extends State<RewardedsScreen> {
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text('Ad blocked: $reason')));
+        },
+      ),
+    );
+  }
+
+  void _showAdIfReady(String screenName) async {
+    await MonetizationKit.instance.rewarded.show(
+      context: context,
+      screenName: screenName,
+      screenRemote: true,
+      androidAdUnit: _adUnitId,
+      iosAdUnit: _adUnitId,
+      loadingDialog: false,
+      callbacks: RewardedAdCallbacks(
+        onUserEarnedReward: (ad, reward) {
+          setState(() => _coins += reward.amount.toInt());
+        },
+        onAdShowedFullScreenContent: (ad) {
+          debugPrint('Rewarded Demo: Ad showed from cache for $screenName');
+        },
+        onAdValidated: (reason) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Ad not ready or blocked: $reason')),
+          );
         },
       ),
     );
@@ -135,21 +156,41 @@ class _RewardedsScreenState extends State<RewardedsScreen> {
               subtitle: 'Preload and show for daily bonus',
               icon: Icons.card_giftcard,
               onPreload: () => _preloadAd('daily_bonus'),
-              onShow: () => _showAd('daily_bonus'),
+              onShowReady: () => _showAdIfReady('daily_bonus'),
+              onLoadAndShow: () => _loadAndShowAd('daily_bonus'),
             ),
             _buildActionCard(
               title: 'Double XP',
               subtitle: 'Preload and show for XP boost',
               icon: Icons.trending_up,
               onPreload: () => _preloadAd('xp_boost'),
-              onShow: () => _showAd('xp_boost'),
+              onShowReady: () => _showAdIfReady('xp_boost'),
+              onLoadAndShow: () => _loadAndShowAd('xp_boost'),
             ),
             _buildActionCard(
               title: 'Universal Ad',
               subtitle: 'Show ad without screen context',
               icon: Icons.public,
               onPreload: () => _preloadAd(null.toString()),
-              onShow: () => _showAd(null.toString()),
+              onShowReady: () => _showAdIfReady(null.toString()),
+              onLoadAndShow: () => _loadAndShowAd(null.toString()),
+            ),
+            const Divider(height: 40),
+            _buildSectionHeader('Convenience Method'),
+            const Text(
+              'Use loadAndShow to handle both loading and showing with a single call. This is ideal for one-off rewards.',
+              style: TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: () => _loadAndShowAd('load_and_show_demo'),
+              icon: const Icon(Icons.flash_on),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                backgroundColor: Colors.green.withValues(alpha: 0.1),
+                foregroundColor: Colors.green,
+              ),
+              label: const Text('One-Tap: Load & Show'),
             ),
             const Divider(height: 40),
             _buildSectionHeader('Validation & Controls'),
@@ -187,7 +228,8 @@ class _RewardedsScreenState extends State<RewardedsScreen> {
     required String subtitle,
     required IconData icon,
     required VoidCallback onPreload,
-    required VoidCallback onShow,
+    required VoidCallback onShowReady,
+    required VoidCallback onLoadAndShow,
   }) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
@@ -211,11 +253,20 @@ class _RewardedsScreenState extends State<RewardedsScreen> {
                   icon: const Icon(Icons.download),
                   label: const Text('PRELOAD'),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 4),
+                TextButton.icon(
+                  onPressed: onShowReady,
+                  icon: const Icon(Icons.remove_red_eye),
+                  label: const Text('SHOW'),
+                ),
+                const SizedBox(width: 4),
                 ElevatedButton.icon(
-                  onPressed: onShow,
-                  icon: const Icon(Icons.play_arrow),
-                  label: const Text('SHOW AD'),
+                  onPressed: onLoadAndShow,
+                  icon: const Icon(Icons.flash_on),
+                  label: const Text('L&S'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                  ),
                 ),
               ],
             ),

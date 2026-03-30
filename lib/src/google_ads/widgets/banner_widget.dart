@@ -207,7 +207,7 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
     if (height <= 0) height = 50.0;
 
     return Shimmer.fromColors(
-      baseColor: widget.shimmerColor?.withOpacity(0.5) ?? Colors.grey[300]!,
+      baseColor: widget.shimmerColor?.withValues(alpha: 0.5) ?? Colors.grey[300]!,
       highlightColor: widget.shimmerColor ?? Colors.grey[100]!,
       child: Container(
         width: width,

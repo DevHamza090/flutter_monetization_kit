@@ -14,10 +14,10 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
 
   bool _isLoading = false;
 
-  void _showAd(String screenName) async {
+  void _loadAndShowAd(String screenName) async {
     setState(() => _isLoading = true);
 
-    await MonetizationKit.instance.interstitial.loadNShow(
+    await MonetizationKit.instance.interstitial.loadAndShow(
       context: context,
       screenName: screenName,
       screenRemote: true,
@@ -27,7 +27,7 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
       reloadAfterShow: true,
       callbacks: InterstitialAdCallbacks(
         onAdShowedFullScreenContent: (ad) {
-          debugPrint('Interstitial Demo: Ad showed for $screenName');
+          debugPrint('Interstitial Demo: Ad showed via LoadAndShow for $screenName');
         },
         onAdDismissedFullScreenContent: (ad) {
           debugPrint('Interstitial Demo: Ad dismissed for $screenName');
@@ -38,9 +38,6 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
             'Interstitial Demo: Ad failed to show for $screenName. Error: ${error.message}',
           );
           setState(() => _isLoading = false);
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Failed to show ad: ${error.message}')));
         },
         onAdValidated: (reason) {
           debugPrint('Interstitial Demo: Ad blocked for $screenName. Reason: $reason');
@@ -48,6 +45,30 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text('Ad blocked: $reason')));
+        },
+      ),
+    );
+  }
+
+  void _showAdIfReady(String screenName) async {
+    await MonetizationKit.instance.interstitial.show(
+      context: context,
+      screenName: screenName,
+      screenRemote: true,
+      androidAdUnit: _adUnitId,
+      iosAdUnit: _adUnitId,
+      loadingDialog: false, // Don't show loading dialog for direct show
+      callbacks: InterstitialAdCallbacks(
+        onAdShowedFullScreenContent: (ad) {
+          debugPrint('Interstitial Demo: Ad showed from cache for $screenName');
+        },
+        onAdDismissedFullScreenContent: (ad) {
+          debugPrint('Interstitial Demo: Ad dismissed for $screenName');
+        },
+        onAdValidated: (reason) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Ad not ready or blocked: $reason')),
+          );
         },
       ),
     );
@@ -109,22 +130,41 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
               subtitle: 'Preload and show specifically for dashboard',
               icon: Icons.dashboard,
               onPreload: () => _preloadAd('dashboard'),
-              onShow: () => _showAd('dashboard'),
+              onShowReady: () => _showAdIfReady('dashboard'),
+              onLoadAndShow: () => _loadAndShowAd('dashboard'),
             ),
             _buildActionCard(
               title: 'Settings Ads',
               subtitle: 'Preload and show specifically for settings',
               icon: Icons.settings,
               onPreload: () => _preloadAd('settings'),
-              onShow: () => _showAd('settings'),
+              onShowReady: () => _showAdIfReady('settings'),
+              onLoadAndShow: () => _loadAndShowAd('settings'),
             ),
             _buildActionCard(
               title: 'Universal Ad',
               subtitle: 'Show ad without screen context',
               icon: Icons.public,
               onPreload: () => _preloadAd(null.toString()),
-              // Generic load
-              onShow: () => _showAd(null.toString()),
+              onShowReady: () => _showAdIfReady(null.toString()),
+              onLoadAndShow: () => _loadAndShowAd(null.toString()),
+            ),
+            const Divider(height: 40),
+            _buildSectionHeader('Convenience Method'),
+            const Text(
+              'Use loadAndShow to handle both loading and showing with a single call. If the ad is already ready, it shows immediately.',
+              style: TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: () => _loadAndShowAd('load_and_show_demo'),
+              icon: const Icon(Icons.flash_on),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                backgroundColor: Colors.orange.withValues(alpha: 0.1),
+                foregroundColor: Colors.orange,
+              ),
+              label: const Text('One-Tap: Load & Show'),
             ),
             const Divider(height: 40),
             _buildSectionHeader('Validation & Controls'),
@@ -172,7 +212,8 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
     required String subtitle,
     required IconData icon,
     required VoidCallback onPreload,
-    required VoidCallback onShow,
+    required VoidCallback onShowReady,
+    required VoidCallback onLoadAndShow,
   }) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
@@ -193,11 +234,20 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
                   icon: const Icon(Icons.download),
                   label: const Text('PRELOAD'),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 4),
+                TextButton.icon(
+                  onPressed: onShowReady,
+                  icon: const Icon(Icons.remove_red_eye),
+                  label: const Text('SHOW'),
+                ),
+                const SizedBox(width: 4),
                 ElevatedButton.icon(
-                  onPressed: onShow,
-                  icon: const Icon(Icons.play_arrow),
-                  label: const Text('SHOW AD'),
+                  onPressed: onLoadAndShow,
+                  icon: const Icon(Icons.flash_on),
+                  label: const Text('L&S'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                  ),
                 ),
               ],
             ),

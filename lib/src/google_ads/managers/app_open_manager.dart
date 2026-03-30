@@ -98,6 +98,10 @@ class AppOpenManager {
   /// [iosAdUnit] (String?): The AdMob iOS Ad Unit ID.
   /// [callbacks] (AppOpenAdCallbacks?): Callbacks for ad events.
   /// [loadingDialog] (bool): Whether to show a loading dialog before showing the ad. (Requires context to be non-null)
+  /// [fullScreenDialog] (bool): Whether to show the loading dialog in full screen.
+  /// [customLoadingWidget] (Widget?): Optional custom widget to show in the loading dialog.
+  /// [loadingDelay] (Duration): Wait duration to ensure user sees the transition before ad pops up.
+  /// [isDialogShowing] (bool): Internal use only to avoid double dialogs.
   /// [reloadAfterShow] (bool): Whether to automatically start loading a new ad after dismissal.
   Future<void> show({
     BuildContext? context,
@@ -107,6 +111,10 @@ class AppOpenManager {
     String? iosAdUnit,
     AppOpenAdCallbacks? callbacks,
     bool loadingDialog = true,
+    bool fullScreenDialog = true,
+    Widget? customLoadingWidget,
+    Duration loadingDelay = const Duration(milliseconds: 500),
+    bool isDialogShowing = false,
     bool reloadAfterShow = true,
   }) async {
     // 1. Core Logic & Validation
@@ -165,9 +173,16 @@ class AppOpenManager {
 
     // 3. Show Loading Dialog
     final effectiveContext = context ?? MonetizationKit.instance.navigatorKey?.currentContext;
-    if (loadingDialog && effectiveContext != null) {
-      _showLoadingDialog(effectiveContext);
-      await Future.delayed(const Duration(milliseconds: 500));
+    if (loadingDialog && !isDialogShowing && effectiveContext != null) {
+      _showLoadingDialog(
+        context: effectiveContext,
+        fullScreen: fullScreenDialog,
+        customWidget: customLoadingWidget,
+      );
+    }
+
+    if (loadingDialog || loadingDelay > Duration.zero) {
+      await Future.delayed(loadingDelay);
     }
 
     // 4. Actual Show Logic
@@ -221,6 +236,87 @@ class AppOpenManager {
     await ad.show();
   }
 
+  /// Loads and Shows an App Open Ad in one go.
+  /// If the ad is already ready, it shows it immediately.
+  /// If not, it loads the ad first and then shows it.
+  Future<void> loadAndShow({
+    required BuildContext context,
+    String? screenName,
+    required bool screenRemote,
+    String? androidAdUnit,
+    String? iosAdUnit,
+    AppOpenAdCallbacks? callbacks,
+    bool loadingDialog = true,
+    bool fullScreenDialog = true,
+    Widget? customLoadingWidget,
+    bool reloadAfterShow = true,
+  }) async {
+    final registryKey = _getRegistryKey(screenName);
+
+    // If ad is ready, show it
+    if (AdRegistry.instance.isAdReady(registryKey)) {
+      await show(
+        context: context,
+        screenName: screenName,
+        screenRemote: screenRemote,
+        androidAdUnit: androidAdUnit,
+        iosAdUnit: iosAdUnit,
+        callbacks: callbacks,
+        loadingDialog: loadingDialog,
+        fullScreenDialog: fullScreenDialog,
+        customLoadingWidget: customLoadingWidget,
+        reloadAfterShow: reloadAfterShow,
+      );
+      return;
+    }
+
+    // If ad is not ready, start loading process
+    if (loadingDialog) {
+      _showLoadingDialog(
+        context: context,
+        fullScreen: fullScreenDialog,
+        customWidget: customLoadingWidget,
+      );
+    }
+
+    await load(
+      screenName: screenName,
+      screenRemote: screenRemote,
+      androidAdUnit: androidAdUnit,
+      iosAdUnit: iosAdUnit,
+      callbacks: AppOpenAdCallbacks(
+        onAdLoaded: (ad) async {
+          callbacks?.onAdLoaded?.call(ad);
+          await show(
+            context: context,
+            screenName: screenName,
+            screenRemote: screenRemote,
+            androidAdUnit: androidAdUnit,
+            iosAdUnit: iosAdUnit,
+            callbacks: callbacks,
+            loadingDialog: loadingDialog,
+            fullScreenDialog: fullScreenDialog,
+            customLoadingWidget: customLoadingWidget,
+            isDialogShowing: loadingDialog, // Pass that dialog is already visible
+            reloadAfterShow: reloadAfterShow,
+          );
+        },
+        onAdFailedToLoad: (error) {
+          if (loadingDialog && context.mounted) {
+            Navigator.of(context, rootNavigator: true).pop();
+          }
+          callbacks?.onAdFailedToLoad?.call(error);
+        },
+        onAdValidated: (reason) {
+          if (loadingDialog && context.mounted) {
+            Navigator.of(context, rootNavigator: true).pop();
+          }
+          callbacks?.onAdValidated?.call(reason);
+        },
+      ),
+    );
+  }
+
   String _getRegistryKey(String? screenName) {
     if (screenName != null && screenName.isNotEmpty) {
       return "${screenName}_app_open";
@@ -228,22 +324,36 @@ class AppOpenManager {
     return "universal_app_open";
   }
 
-  void _showLoadingDialog(BuildContext context) {
+  void _showLoadingDialog({
+    required BuildContext context,
+    required bool fullScreen,
+    Widget? customWidget,
+  }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final backgroundColor = isDark ? Colors.black : Colors.white;
 
     showDialog(
       context: context,
       barrierDismissible: false,
-      useSafeArea: false, // Full screen
+      useSafeArea: !fullScreen,
       builder: (_) => PopScope(
         canPop: false,
-        child: Container(
-          color: backgroundColor,
-          child: const Center(
-            child: CircularProgressIndicator(),
-          ),
-        ),
+        child: customWidget != null
+            ? (fullScreen ? Material(color: backgroundColor, child: customWidget) : customWidget)
+            : Container(
+                color: fullScreen ? backgroundColor : Colors.transparent,
+                child: Center(
+                  child: fullScreen
+                      ? const CircularProgressIndicator()
+                      : Card(
+                          elevation: 8,
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: const CircularProgressIndicator(),
+                          ),
+                        ),
+                ),
+              ),
       ),
     );
   }

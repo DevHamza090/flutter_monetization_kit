@@ -265,7 +265,7 @@ class RewardedInterstitialAdManager {
   /// Loads and Shows a Rewarded Interstitial Ad in one go.
   /// If the ad is already ready, it shows it immediately.
   /// If not, it loads the ad first and then shows it.
-  Future<void> loadNShow({
+  Future<void> loadAndShow({
     required BuildContext context,
     String? screenName,
     required bool screenRemote,
@@ -361,26 +361,31 @@ class RewardedInterstitialAdManager {
     required bool fullScreen,
     Widget? customWidget,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDark ? Colors.black : Colors.white;
+
     showDialog(
       context: context,
       barrierDismissible: false,
       useSafeArea: !fullScreen,
       builder: (_) => PopScope(
         canPop: false,
-        child: Material(
-          type: MaterialType.transparency,
-          child: Center(
-            child: customWidget ??
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const CircularProgressIndicator(),
+        child: customWidget != null
+            ? (fullScreen ? Material(color: backgroundColor, child: customWidget) : customWidget)
+            : Container(
+                color: fullScreen ? backgroundColor : Colors.transparent,
+                child: Center(
+                  child: fullScreen
+                      ? const CircularProgressIndicator()
+                      : Card(
+                          elevation: 8,
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: const CircularProgressIndicator(),
+                          ),
+                        ),
                 ),
-          ),
-        ),
+              ),
       ),
     );
   }

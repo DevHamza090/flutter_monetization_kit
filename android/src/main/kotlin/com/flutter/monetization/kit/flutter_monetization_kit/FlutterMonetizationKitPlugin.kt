@@ -37,7 +37,6 @@ class FlutterMonetizationKitPlugin : FlutterPlugin, MethodCallHandler {
 
     override fun onMethodCall(call: MethodCall, result: Result) {
         when (call.method) {
-            "getPlatformVersion" -> result.success("Android ${android.os.Build.VERSION.RELEASE}")
             "loadAd" -> {
                 val cacheId = call.argument<String>("cacheId") ?: return
                 val adUnitId = call.argument<String>("adUnitId") ?: return
