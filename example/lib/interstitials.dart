@@ -21,7 +21,8 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
       context: context,
       screenName: screenName,
       screenRemote: true,
-      adUnitId: _adUnitId,
+      androidAdUnit: _adUnitId,
+      iosAdUnit: _adUnitId,
       loadingDialog: true,
       reloadAfterShow: true,
       callbacks: InterstitialAdCallbacks(
@@ -63,7 +64,8 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
     await MonetizationKit.instance.interstitial.load(
       screenName: screenName,
       screenRemote: true,
-      adUnitId: _adUnitId,
+      androidAdUnit: _adUnitId,
+      iosAdUnit: _adUnitId,
       callbacks: InterstitialAdCallbacks(
         onAdLoaded: (ad) {
           debugPrint('Interstitial Demo: Ad preloaded successfully for $screenName');

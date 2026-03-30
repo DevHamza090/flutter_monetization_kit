@@ -123,7 +123,8 @@ class _MyAppState extends State<MyApp> {
 
         // 3. Register App Open Ads Observer (Optional)
         final observer = AppOpenObserver(
-          adUnitId: AdUtils.testId(AdType.appOpen),
+          androidAdUnit: AdUtils.testId(AdType.appOpen),
+          iosAdUnit: AdUtils.testId(AdType.appOpen),
         );
         WidgetsBinding.instance.addObserver(observer);
         
@@ -158,7 +159,8 @@ Pre-load and show interstitial ads. `MonetizationKit` handles automatic loading 
 ```dart
 // Preload the ad
 MonetizationKit.instance.interstitial.load(
-  adUnitId: 'YOUR_AD_UNIT_ID', 
+  androidAdUnit: 'YOUR_ANDROID_AD_UNIT_ID', 
+  iosAdUnit: 'YOUR_IOS_AD_UNIT_ID',
   screenName: 'home_screen',
 );
 
@@ -177,7 +179,8 @@ Provide value to users in exchange for watching an ad.
 
 ```dart
 MonetizationKit.instance.rewarded.load(
-  adUnitId: 'YOUR_AD_UNIT_ID',
+  androidAdUnit: 'YOUR_ANDROID_AD_UNIT_ID',
+  iosAdUnit: 'YOUR_IOS_AD_UNIT_ID',
   screenName: 'store_screen',
 );
 
@@ -209,9 +212,10 @@ Using the provided `BannerWidget` simplifies rendering standard banner ads.
 import 'package:flutter_monetization_kit/monetization_kit.dart';
 
 Container(
-  child: BannerWidget(
-    adUnitId: 'YOUR_AD_UNIT_ID',
-    bannerType: BannerType.standard, // standard, mediumRectangle, largeBanner
+  child: BannerAdWidget(
+    androidAdUnit: 'YOUR_ANDROID_AD_UNIT_ID',
+    iosAdUnit: 'YOUR_IOS_AD_UNIT_ID',
+    type: BannerType.standard, // standard, largeBanner, rectangleBanner, adaptiveBanner
     screenName: 'dashboard',
   ),
 );
@@ -224,7 +228,8 @@ Using the provided `NativeWidget` to render deeply integrated custom UI componen
 ```dart
 // First load the native ad configuration
 MonetizationKit.instance.native.load(
-  adUnitId: 'YOUR_AD_UNIT_ID',
+  androidAdUnit: 'YOUR_ANDROID_AD_UNIT_ID',
+  iosAdUnit: 'YOUR_IOS_AD_UNIT_ID',
   screenName: 'feed_screen',
 );
 

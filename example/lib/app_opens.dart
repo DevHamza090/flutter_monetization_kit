@@ -18,7 +18,8 @@ class _AppOpensScreenState extends State<AppOpensScreen> {
       context: context,
       screenName: screenName,
       screenRemote: true,
-      adUnitId: _adUnitId,
+      androidAdUnit: _adUnitId,
+      iosAdUnit: _adUnitId,
       loadingDialog: true,
       reloadAfterShow: true,
       callbacks: AppOpenAdCallbacks(
@@ -59,7 +60,8 @@ class _AppOpensScreenState extends State<AppOpensScreen> {
     await MonetizationKit.instance.appOpen.load(
       screenName: screenName,
       screenRemote: true,
-      adUnitId: _adUnitId,
+      androidAdUnit: _adUnitId,
+      iosAdUnit: _adUnitId,
       callbacks: AppOpenAdCallbacks(
         onAdLoaded: (ad) {
           debugPrint(

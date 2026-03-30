@@ -17,7 +17,6 @@ class NativeAdStyle {
   // Content Text Style
   final Color? headingColor;
   final Color? bodyColor;
-  final int? maxBodyLines;
   final Color? advertiserColor;
 
   // Ratings Style
@@ -45,7 +44,6 @@ class NativeAdStyle {
     this.adStrokeWidth = 0.0,
     this.headingColor = Colors.black,
     this.bodyColor = Colors.grey,
-    this.maxBodyLines = 2,
     this.advertiserColor = Colors.grey,
     this.ratingColor = Colors.amber,
     this.ratingBgColor = Colors.black12,

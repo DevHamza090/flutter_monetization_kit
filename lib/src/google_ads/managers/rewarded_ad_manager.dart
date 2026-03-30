@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+
 import '../callbacks/rewarded_ad_callbacks.dart';
 import '../core/ads_registry.dart';
 import '../core/ads_settings.dart';
@@ -11,17 +12,20 @@ import '../core/enums/ad_validation_reason.dart';
 /// Handles preloading, validation (Premium, Internet), and professional display logic.
 class RewardedAdManager {
   RewardedAdManager._();
+
   static final RewardedAdManager instance = RewardedAdManager._();
 
   /// Loads a Rewarded Ad.
   /// [screenName] (String?): Optional name of the screen for preloading.
   /// [screenRemote] (bool): Whether to check remote config for this screen.
-  /// [adUnitId] (String): The AdMob Ad Unit ID.
+  /// [androidAdUnit] (String?): The AdMob Android Ad Unit ID.
+  /// [iosAdUnit] (String?): The AdMob iOS Ad Unit ID.
   /// [callbacks] (RewardedAdCallbacks?): Callbacks for ad events.
   Future<void> load({
     String? screenName,
     required bool screenRemote,
-    required String adUnitId,
+    String? androidAdUnit,
+    String? iosAdUnit,
     RewardedAdCallbacks? callbacks,
   }) async {
     // 1. Validation Logic (Premium, Internet)
@@ -29,6 +33,17 @@ class RewardedAdManager {
     if (validationReason != null) {
       debugPrint("RewardedAdManager: Ad request blocked ($validationReason)");
       callbacks?.onAdValidated?.call(validationReason);
+      return;
+    }
+
+    final adUnitId = AdUtils.getAdUnitId(
+      adType: AdType.rewarded,
+      androidAdUnit: androidAdUnit,
+      iosAdUnit: iosAdUnit,
+    );
+    if (adUnitId.isEmpty) {
+      debugPrint("RewardedAdManager: No ad unit provided");
+      callbacks?.onAdValidated?.call(AdValidationReason.adNotAvailable);
       return;
     }
 
@@ -42,9 +57,7 @@ class RewardedAdManager {
     final registryKey = _getRegistryKey(screenName);
 
     if (AdRegistry.instance.isAdLoading(registryKey)) {
-      debugPrint(
-        AdUtils.logAlreadyLoading(AdType.rewarded, adUnitId, screenName),
-      );
+      debugPrint(AdUtils.logAlreadyLoading(AdType.rewarded, adUnitId, screenName));
       callbacks?.onAdValidated?.call(AdValidationReason.adAlreadyLoading);
       return;
     }
@@ -52,9 +65,7 @@ class RewardedAdManager {
     if (AdRegistry.instance.isAdReady(registryKey)) {
       debugPrint("RewardedAdManager: Ad already loaded for $registryKey");
       callbacks?.onAdValidated?.call(AdValidationReason.adAlreadyReady);
-      callbacks?.onAdLoaded?.call(
-        AdRegistry.instance.getAd<RewardedAd>(registryKey)!,
-      );
+      callbacks?.onAdLoaded?.call(AdRegistry.instance.getAd<RewardedAd>(registryKey)!);
       return;
     }
 
@@ -72,9 +83,7 @@ class RewardedAdManager {
           callbacks?.onAdLoaded?.call(ad);
         },
         onAdFailedToLoad: (error) {
-          debugPrint(
-            AdUtils.logFailed(AdType.rewarded, screenName, error.message),
-          );
+          debugPrint(AdUtils.logFailed(AdType.rewarded, screenName, error.message));
           AdRegistry.instance.removeAd(registryKey);
           callbacks?.onAdFailedToLoad?.call(error);
         },
@@ -86,7 +95,8 @@ class RewardedAdManager {
   /// [context] (BuildContext): The context to show the ad and loading dialog.
   /// [screenName] (String?): Optional name of the screen.
   /// [screenRemote] (bool): Whether to check remote config for this screen.
-  /// [adUnitId] (String): The AdMob Ad Unit ID.
+  /// [androidAdUnit] (String?): The AdMob Android Ad Unit ID.
+  /// [iosAdUnit] (String?): The AdMob iOS Ad Unit ID.
   /// [callbacks] (RewardedAdCallbacks?): Callbacks for ad events.
   /// [loadingDialog] (bool): Whether to show a loading dialog before showing the ad.
   /// [fullScreenDialog] (bool): Whether to show the loading dialog in full screen.
@@ -109,7 +119,8 @@ class RewardedAdManager {
     required BuildContext context,
     String? screenName,
     required bool screenRemote,
-    required String adUnitId,
+    String? androidAdUnit,
+    String? iosAdUnit,
     RewardedAdCallbacks? callbacks,
     bool loadingDialog = true,
     bool fullScreenDialog = true,
@@ -121,20 +132,25 @@ class RewardedAdManager {
     // 1. Core Logic & Validation
     final validationReason = AdsSettings.instance.validateRewardedShow();
     if (validationReason != null) {
-      debugPrint(
-        "RewardedAdManager: Cannot show rewarded ad ($validationReason)",
-      );
+      debugPrint("RewardedAdManager: Cannot show rewarded ad ($validationReason)");
       callbacks?.onAdValidated?.call(validationReason);
       return;
     }
 
+    final adUnitId = AdUtils.getAdUnitId(
+      adType: AdType.rewarded,
+      androidAdUnit: androidAdUnit,
+      iosAdUnit: iosAdUnit,
+    );
+    if (adUnitId.isEmpty) {
+      debugPrint("RewardedAdManager: No ad unit provided");
+      callbacks?.onAdValidated?.call(AdValidationReason.adNotAvailable);
+      return;
+    }
+
     if (AdRegistry.instance.isFullScreenAdShowing) {
-      debugPrint(
-        "RewardedAdManager: Another full screen ad is already showing.",
-      );
-      callbacks?.onAdValidated?.call(
-        AdValidationReason.anotherFullScreenShowing,
-      );
+      debugPrint("RewardedAdManager: Another full screen ad is already showing.");
+      callbacks?.onAdValidated?.call(AdValidationReason.anotherFullScreenShowing);
       return;
     }
 
@@ -157,7 +173,8 @@ class RewardedAdManager {
         load(
           screenName: screenName,
           screenRemote: screenRemote,
-          adUnitId: adUnitId,
+          androidAdUnit: androidAdUnit,
+          iosAdUnit: iosAdUnit,
           callbacks: null,
         );
       }
@@ -198,7 +215,8 @@ class RewardedAdManager {
           load(
             screenName: screenName,
             screenRemote: screenRemote,
-            adUnitId: adUnitId,
+            androidAdUnit: androidAdUnit,
+            iosAdUnit: iosAdUnit,
             callbacks: null,
           );
         }
@@ -211,9 +229,7 @@ class RewardedAdManager {
         }
         ad.dispose();
         AdRegistry.instance.removeAd(registryKey);
-        debugPrint(
-          "RewardedAdManager: Failed to show ad. Error: ${error.message}",
-        );
+        debugPrint("RewardedAdManager: Failed to show ad. Error: ${error.message}");
         callbacks?.onAdFailedToShowFullScreenContent?.call(ad, error);
       },
       onAdClicked: (ad) {
@@ -236,7 +252,8 @@ class RewardedAdManager {
     required BuildContext context,
     String? screenName,
     required bool screenRemote,
-    required String adUnitId,
+    String? androidAdUnit,
+    String? iosAdUnit,
     RewardedAdCallbacks? callbacks,
     bool loadingDialog = true,
     bool fullScreenDialog = true,
@@ -251,7 +268,8 @@ class RewardedAdManager {
         context: context,
         screenName: screenName,
         screenRemote: screenRemote,
-        adUnitId: adUnitId,
+        androidAdUnit: androidAdUnit,
+        iosAdUnit: iosAdUnit,
         callbacks: callbacks,
         loadingDialog: loadingDialog,
         fullScreenDialog: fullScreenDialog,
@@ -272,7 +290,8 @@ class RewardedAdManager {
     await load(
       screenName: screenName,
       screenRemote: screenRemote,
-      adUnitId: adUnitId,
+      androidAdUnit: androidAdUnit,
+      iosAdUnit: iosAdUnit,
       callbacks: RewardedAdCallbacks(
         onAdLoaded: (ad) async {
           callbacks?.onAdLoaded?.call(ad);
@@ -280,7 +299,8 @@ class RewardedAdManager {
             context: context,
             screenName: screenName,
             screenRemote: screenRemote,
-            adUnitId: adUnitId,
+            androidAdUnit: androidAdUnit,
+            iosAdUnit: iosAdUnit,
             callbacks: callbacks,
             loadingDialog: loadingDialog,
             fullScreenDialog: fullScreenDialog,
@@ -304,8 +324,7 @@ class RewardedAdManager {
         },
         onAdShowedFullScreenContent: callbacks?.onAdShowedFullScreenContent,
         onAdDismissedFullScreenContent: callbacks?.onAdDismissedFullScreenContent,
-        onAdFailedToShowFullScreenContent:
-            callbacks?.onAdFailedToShowFullScreenContent,
+        onAdFailedToShowFullScreenContent: callbacks?.onAdFailedToShowFullScreenContent,
         onAdClicked: callbacks?.onAdClicked,
         onUserEarnedReward: callbacks?.onUserEarnedReward,
       ),
@@ -333,7 +352,8 @@ class RewardedAdManager {
         child: Material(
           type: MaterialType.transparency,
           child: Center(
-            child: customWidget ??
+            child:
+                customWidget ??
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(

@@ -21,7 +21,8 @@ class _RewardedsScreenState extends State<RewardedsScreen> {
       context: context,
       screenName: screenName,
       screenRemote: true,
-      adUnitId: _adUnitId,
+      androidAdUnit: _adUnitId,
+      iosAdUnit: _adUnitId,
       loadingDialog: true,
       reloadAfterShow: true,
       callbacks: RewardedAdCallbacks(
@@ -71,7 +72,8 @@ class _RewardedsScreenState extends State<RewardedsScreen> {
     await MonetizationKit.instance.rewarded.load(
       screenName: screenName,
       screenRemote: true,
-      adUnitId: _adUnitId,
+      androidAdUnit: _adUnitId,
+      iosAdUnit: _adUnitId,
       callbacks: RewardedAdCallbacks(
         onAdLoaded: (ad) {
           debugPrint(

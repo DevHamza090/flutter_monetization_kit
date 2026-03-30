@@ -82,14 +82,12 @@ class _NativesScreenState extends State<NativesScreen>
             title: 'Native Ad - Small 3',
             type: NativeType.small3,
             screenRemote: false,
-            style: const NativeAdStyle(maxBodyLines: 1),
           ),
           _buildNativeDemo(
             title: 'Native Ad - Small 4',
             type: NativeType.small4,
             screenRemote: false,
             style: const NativeAdStyle(
-              maxBodyLines: 1,
               priceColor: Colors
                   .blue, // Explicitly assign a color to see if it triggers correctly natively
             ),
@@ -194,7 +192,6 @@ class _NativesScreenState extends State<NativesScreen>
               adStrokeColor: Colors.white,
               buttonCornerRadius: 20.0,
               adTextBgCorner: 20.0,
-              maxBodyLines: 1,
               fontFamily: 'Poppins',
             ),
           ),
@@ -243,7 +240,8 @@ class _NativesScreenState extends State<NativesScreen>
               ),
               child: NativeWidget(
                 screenRemote: screenRemote,
-                adUnit: _testAdUnitId,
+                androidAdUnit: _testAdUnitId,
+                iosAdUnit: _testAdUnitId,
                 type: type,
                 style: style,
                 screenName: screenName,

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+
 import '../core/enums/native_type.dart';
-import '../core/native_ad_style.dart';
 import '../core/native_ad_shimmer_style.dart';
+import '../core/native_ad_style.dart';
 
 class NativeShimmer extends StatelessWidget {
   final NativeType type;
@@ -27,14 +28,12 @@ class NativeShimmer extends StatelessWidget {
         color: shimmerStyle.bgColor ?? style.bgColor ?? Colors.white,
         borderRadius: BorderRadius.circular(shimmerStyle.bgCorner),
         border: Border.all(
-          color:
-              shimmerStyle.bgStrokeColor ??
-              style.bgStrokeColor ??
-              Colors.transparent,
+          color: shimmerStyle.bgStrokeColor ?? style.bgStrokeColor ?? Colors.transparent,
           width: shimmerStyle.bgStrokeWidth,
         ),
       ),
-      padding: type == NativeType.small3 ||
+      padding:
+          type == NativeType.small3 ||
               type == NativeType.small4 ||
               type == NativeType.small5 ||
               type == NativeType.small6 ||
@@ -152,18 +151,12 @@ class NativeShimmer extends StatelessWidget {
                 children: [
                   _adBadge(),
                   const SizedBox(width: 4),
-                  Expanded(
-                    child: Container(height: 14, color: shimmerStyle.onBgColor),
-                  ),
+                  Expanded(child: Container(height: 14, color: shimmerStyle.onBgColor)),
                 ],
               ),
               const SizedBox(height: 4),
               // Body line
-              Container(
-                height: 12,
-                width: double.infinity,
-                color: shimmerStyle.onBgColor,
-              ),
+              Container(height: 12, width: double.infinity, color: shimmerStyle.onBgColor),
             ],
           ),
         ),
@@ -197,17 +190,11 @@ class NativeShimmer extends StatelessWidget {
                 children: [
                   _adBadge(),
                   const SizedBox(width: 4),
-                  Expanded(
-                    child: Container(height: 14, color: shimmerStyle.onBgColor),
-                  ),
+                  Expanded(child: Container(height: 14, color: shimmerStyle.onBgColor)),
                 ],
               ),
               const SizedBox(height: 4),
-              Container(
-                height: 12,
-                width: double.infinity,
-                color: shimmerStyle.onBgColor,
-              ),
+              Container(height: 12, width: double.infinity, color: shimmerStyle.onBgColor),
             ],
           ),
         ),
@@ -259,35 +246,18 @@ class NativeShimmer extends StatelessWidget {
                         children: [
                           _adBadge(),
                           const SizedBox(width: 4),
-                          Expanded(
-                            child: Container(
-                              height: 14,
-                              color: shimmerStyle.onBgColor,
-                            ),
-                          ),
+                          Expanded(child: Container(height: 14, color: shimmerStyle.onBgColor)),
                         ],
                       ),
                       const SizedBox(height: 4),
-                      Container(
-                        height: 12,
-                        width: double.infinity,
-                        color: shimmerStyle.onBgColor,
-                      ),
+                      Container(height: 12, width: double.infinity, color: shimmerStyle.onBgColor),
                       const SizedBox(height: 4),
                       // Advertiser + rating placeholder
                       Row(
                         children: [
-                          Container(
-                            width: 56,
-                            height: 10,
-                            color: shimmerStyle.onBgColor,
-                          ),
+                          Container(width: 56, height: 10, color: shimmerStyle.onBgColor),
                           const SizedBox(width: 6),
-                          Container(
-                            width: 40,
-                            height: 10,
-                            color: shimmerStyle.onBgColor,
-                          ),
+                          Container(width: 40, height: 10, color: shimmerStyle.onBgColor),
                         ],
                       ),
                     ],
@@ -303,9 +273,7 @@ class NativeShimmer extends StatelessWidget {
           width: 80,
           decoration: BoxDecoration(
             color: shimmerStyle.onBgColor,
-            borderRadius: BorderRadius.horizontal(
-              right: Radius.circular(shimmerStyle.bgCorner),
-            ),
+            borderRadius: BorderRadius.horizontal(right: Radius.circular(shimmerStyle.bgCorner)),
           ),
         ),
       ],
@@ -345,26 +313,13 @@ class NativeShimmer extends StatelessWidget {
                         children: [
                           _adBadge(),
                           const SizedBox(width: 4),
-                          Expanded(
-                            child: Container(
-                              height: 14,
-                              color: shimmerStyle.onBgColor,
-                            ),
-                          ),
+                          Expanded(child: Container(height: 14, color: shimmerStyle.onBgColor)),
                         ],
                       ),
                       const SizedBox(height: 4),
-                      Container(
-                        height: 12,
-                        width: double.infinity,
-                        color: shimmerStyle.onBgColor,
-                      ),
+                      Container(height: 12, width: double.infinity, color: shimmerStyle.onBgColor),
                       const SizedBox(height: 3),
-                      Container(
-                        height: 12,
-                        width: double.infinity,
-                        color: shimmerStyle.onBgColor,
-                      ),
+                      Container(height: 12, width: double.infinity, color: shimmerStyle.onBgColor),
                     ],
                   ),
                 ),
@@ -378,9 +333,7 @@ class NativeShimmer extends StatelessWidget {
           width: 80,
           decoration: BoxDecoration(
             color: shimmerStyle.onBgColor,
-            borderRadius: BorderRadius.horizontal(
-              right: Radius.circular(shimmerStyle.bgCorner),
-            ),
+            borderRadius: BorderRadius.horizontal(right: Radius.circular(shimmerStyle.bgCorner)),
           ),
         ),
       ],
@@ -403,20 +356,11 @@ class NativeShimmer extends StatelessWidget {
                   children: [
                     _adBadge(),
                     const SizedBox(width: 4),
-                    Expanded(
-                      child: Container(
-                        height: 14,
-                        color: shimmerStyle.onBgColor,
-                      ),
-                    ),
+                    Expanded(child: Container(height: 14, color: shimmerStyle.onBgColor)),
                   ],
                 ),
                 const SizedBox(height: 4),
-                Container(
-                  height: 12,
-                  width: double.infinity,
-                  color: shimmerStyle.onBgColor,
-                ),
+                Container(height: 12, width: double.infinity, color: shimmerStyle.onBgColor),
               ],
             ),
           ),
@@ -427,9 +371,7 @@ class NativeShimmer extends StatelessWidget {
           width: 80,
           decoration: BoxDecoration(
             color: shimmerStyle.onBgColor,
-            borderRadius: BorderRadius.horizontal(
-              right: Radius.circular(shimmerStyle.bgCorner),
-            ),
+            borderRadius: BorderRadius.horizontal(right: Radius.circular(shimmerStyle.bgCorner)),
           ),
         ),
       ],
@@ -452,26 +394,13 @@ class NativeShimmer extends StatelessWidget {
                   children: [
                     _adBadge(),
                     const SizedBox(width: 4),
-                    Expanded(
-                      child: Container(
-                        height: 14,
-                        color: shimmerStyle.onBgColor,
-                      ),
-                    ),
+                    Expanded(child: Container(height: 14, color: shimmerStyle.onBgColor)),
                   ],
                 ),
                 const SizedBox(height: 4),
-                Container(
-                  height: 12,
-                  width: double.infinity,
-                  color: shimmerStyle.onBgColor,
-                ),
+                Container(height: 12, width: double.infinity, color: shimmerStyle.onBgColor),
                 const SizedBox(height: 3),
-                Container(
-                  height: 12,
-                  width: double.infinity,
-                  color: shimmerStyle.onBgColor,
-                ),
+                Container(height: 12, width: double.infinity, color: shimmerStyle.onBgColor),
               ],
             ),
           ),
@@ -482,9 +411,7 @@ class NativeShimmer extends StatelessWidget {
           width: 80,
           decoration: BoxDecoration(
             color: shimmerStyle.onBgColor,
-            borderRadius: BorderRadius.horizontal(
-              right: Radius.circular(shimmerStyle.bgCorner),
-            ),
+            borderRadius: BorderRadius.horizontal(right: Radius.circular(shimmerStyle.bgCorner)),
           ),
         ),
       ],
@@ -545,25 +472,19 @@ class NativeShimmer extends StatelessWidget {
                           children: [
                             _adBadge(),
                             const SizedBox(width: 4),
-                            Expanded(
-                              child: Container(
-                                height: 14,
-                                color: shimmerStyle.onBgColor,
-                              ),
-                            ),
+                            Expanded(child: Container(height: 14, color: shimmerStyle.onBgColor)),
                           ],
                         ),
+                        const SizedBox(height: 8),
+                        // Body lines
+                        Container(height: 12, color: shimmerStyle.onBgColor),
+                        const SizedBox(height: 4),
+                        Container(height: 12, color: shimmerStyle.onBgColor),
                       ],
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
-
-              // Body lines
-              Container(height: 12, color: shimmerStyle.onBgColor),
-              const SizedBox(height: 4),
-              Container(height: 12, color: shimmerStyle.onBgColor),
               const Spacer(),
 
               // Full-width CTA
@@ -571,8 +492,7 @@ class NativeShimmer extends StatelessWidget {
                 height: 44,
                 decoration: BoxDecoration(
                   color: shimmerStyle.onBgColor,
-                  borderRadius:
-                      BorderRadius.circular(style.buttonCornerRadius),
+                  borderRadius: BorderRadius.circular(style.buttonCornerRadius),
                 ),
               ),
             ],
@@ -614,30 +534,24 @@ class NativeShimmer extends StatelessWidget {
                           children: [
                             _adBadge(),
                             const SizedBox(width: 4),
-                            Expanded(
-                              child: Container(
-                                height: 14,
-                                color: shimmerStyle.onBgColor,
-                              ),
-                            ),
+                            Expanded(child: Container(height: 14, color: shimmerStyle.onBgColor)),
                           ],
                         ),
+                        const SizedBox(height: 8),
+                        Container(height: 12, color: shimmerStyle.onBgColor),
+                        const SizedBox(height: 4),
+                        Container(height: 12, color: shimmerStyle.onBgColor),
                       ],
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
-              Container(height: 12, color: shimmerStyle.onBgColor),
-              const SizedBox(height: 4),
-              Container(height: 12, color: shimmerStyle.onBgColor),
               const Spacer(),
               Container(
                 height: 44,
                 decoration: BoxDecoration(
                   color: shimmerStyle.onBgColor,
-                  borderRadius:
-                      BorderRadius.circular(style.buttonCornerRadius),
+                  borderRadius: BorderRadius.circular(style.buttonCornerRadius),
                 ),
               ),
             ],
@@ -670,11 +584,7 @@ class NativeShimmer extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Icon
-              Container(
-                width: 56,
-                height: 56,
-                color: shimmerStyle.onBgColor,
-              ),
+              Container(width: 56, height: 56, color: shimmerStyle.onBgColor),
               const SizedBox(width: 12),
 
               // Text block
@@ -688,43 +598,22 @@ class NativeShimmer extends StatelessWidget {
                       children: [
                         _adBadge(),
                         const SizedBox(width: 4),
-                        Expanded(
-                          child: Container(
-                            height: 16,
-                            color: shimmerStyle.onBgColor,
-                          ),
-                        ),
+                        Expanded(child: Container(height: 16, color: shimmerStyle.onBgColor)),
                       ],
                     ),
                     const SizedBox(height: 4),
                     Container(height: 12, color: shimmerStyle.onBgColor),
                     const SizedBox(height: 4),
-                    Container(
-                      height: 12,
-                      width: 100,
-                      color: shimmerStyle.onBgColor,
-                    ),
+                    Container(height: 12, width: 100, color: shimmerStyle.onBgColor),
                     const SizedBox(height: 6),
                     // Advertiser + rating + price row
                     Row(
                       children: [
-                        Container(
-                          width: 56,
-                          height: 10,
-                          color: shimmerStyle.onBgColor,
-                        ),
+                        Container(width: 56, height: 10, color: shimmerStyle.onBgColor),
                         const SizedBox(width: 6),
-                        Container(
-                          width: 36,
-                          height: 10,
-                          color: shimmerStyle.onBgColor,
-                        ),
+                        Container(width: 36, height: 10, color: shimmerStyle.onBgColor),
                         const Spacer(),
-                        Container(
-                          width: 36,
-                          height: 10,
-                          color: shimmerStyle.onBgColor,
-                        ),
+                        Container(width: 36, height: 10, color: shimmerStyle.onBgColor),
                       ],
                     ),
                   ],
@@ -767,11 +656,7 @@ class NativeShimmer extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                width: 56,
-                height: 56,
-                color: shimmerStyle.onBgColor,
-              ),
+              Container(width: 56, height: 56, color: shimmerStyle.onBgColor),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -782,42 +667,21 @@ class NativeShimmer extends StatelessWidget {
                       children: [
                         _adBadge(),
                         const SizedBox(width: 4),
-                        Expanded(
-                          child: Container(
-                            height: 16,
-                            color: shimmerStyle.onBgColor,
-                          ),
-                        ),
+                        Expanded(child: Container(height: 16, color: shimmerStyle.onBgColor)),
                       ],
                     ),
                     const SizedBox(height: 4),
                     Container(height: 12, color: shimmerStyle.onBgColor),
                     const SizedBox(height: 4),
-                    Container(
-                      height: 12,
-                      width: 100,
-                      color: shimmerStyle.onBgColor,
-                    ),
+                    Container(height: 12, width: 100, color: shimmerStyle.onBgColor),
                     const SizedBox(height: 6),
                     Row(
                       children: [
-                        Container(
-                          width: 56,
-                          height: 10,
-                          color: shimmerStyle.onBgColor,
-                        ),
+                        Container(width: 56, height: 10, color: shimmerStyle.onBgColor),
                         const SizedBox(width: 6),
-                        Container(
-                          width: 36,
-                          height: 10,
-                          color: shimmerStyle.onBgColor,
-                        ),
+                        Container(width: 36, height: 10, color: shimmerStyle.onBgColor),
                         const Spacer(),
-                        Container(
-                          width: 36,
-                          height: 10,
-                          color: shimmerStyle.onBgColor,
-                        ),
+                        Container(width: 36, height: 10, color: shimmerStyle.onBgColor),
                       ],
                     ),
                   ],
@@ -839,11 +703,7 @@ class NativeShimmer extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                width: 56,
-                height: 56,
-                color: shimmerStyle.onBgColor,
-              ),
+              Container(width: 56, height: 56, color: shimmerStyle.onBgColor),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -854,22 +714,13 @@ class NativeShimmer extends StatelessWidget {
                       children: [
                         _adBadge(),
                         const SizedBox(width: 4),
-                        Expanded(
-                          child: Container(
-                            height: 16,
-                            color: shimmerStyle.onBgColor,
-                          ),
-                        ),
+                        Expanded(child: Container(height: 16, color: shimmerStyle.onBgColor)),
                       ],
                     ),
                     const SizedBox(height: 4),
                     Container(height: 12, color: shimmerStyle.onBgColor),
                     const SizedBox(height: 4),
-                    Container(
-                      height: 12,
-                      width: 100,
-                      color: shimmerStyle.onBgColor,
-                    ),
+                    Container(height: 12, width: 100, color: shimmerStyle.onBgColor),
                   ],
                 ),
               ),
@@ -905,11 +756,7 @@ class NativeShimmer extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                width: 56,
-                height: 56,
-                color: shimmerStyle.onBgColor,
-              ),
+              Container(width: 56, height: 56, color: shimmerStyle.onBgColor),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -920,22 +767,13 @@ class NativeShimmer extends StatelessWidget {
                       children: [
                         _adBadge(),
                         const SizedBox(width: 4),
-                        Expanded(
-                          child: Container(
-                            height: 16,
-                            color: shimmerStyle.onBgColor,
-                          ),
-                        ),
+                        Expanded(child: Container(height: 16, color: shimmerStyle.onBgColor)),
                       ],
                     ),
                     const SizedBox(height: 4),
                     Container(height: 12, color: shimmerStyle.onBgColor),
                     const SizedBox(height: 4),
-                    Container(
-                      height: 12,
-                      width: 100,
-                      color: shimmerStyle.onBgColor,
-                    ),
+                    Container(height: 12, width: 100, color: shimmerStyle.onBgColor),
                   ],
                 ),
               ),
@@ -959,11 +797,7 @@ class NativeShimmer extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: 64,
-              height: 64,
-              color: shimmerStyle.onBgColor,
-            ),
+            Container(width: 64, height: 64, color: shimmerStyle.onBgColor),
             const SizedBox(width: 8),
             Expanded(
               child: Column(
@@ -973,12 +807,7 @@ class NativeShimmer extends StatelessWidget {
                     children: [
                       _adBadge(),
                       const SizedBox(width: 4),
-                      Expanded(
-                        child: Container(
-                          height: 18,
-                          color: shimmerStyle.onBgColor,
-                        ),
-                      ),
+                      Expanded(child: Container(height: 18, color: shimmerStyle.onBgColor)),
                     ],
                   ),
                   const SizedBox(height: 4),
@@ -987,23 +816,11 @@ class NativeShimmer extends StatelessWidget {
                   // Advertiser + price row
                   Row(
                     children: [
-                      Container(
-                        width: 60,
-                        height: 10,
-                        color: shimmerStyle.onBgColor,
-                      ),
+                      Container(width: 60, height: 10, color: shimmerStyle.onBgColor),
                       const SizedBox(width: 6),
-                      Container(
-                        width: 36,
-                        height: 10,
-                        color: shimmerStyle.onBgColor,
-                      ),
+                      Container(width: 36, height: 10, color: shimmerStyle.onBgColor),
                       const Spacer(),
-                      Container(
-                        width: 36,
-                        height: 10,
-                        color: shimmerStyle.onBgColor,
-                      ),
+                      Container(width: 36, height: 10, color: shimmerStyle.onBgColor),
                     ],
                   ),
                 ],
@@ -1014,9 +831,7 @@ class NativeShimmer extends StatelessWidget {
         const SizedBox(height: 8),
 
         // MediaView
-        Expanded(
-          child: Container(color: shimmerStyle.onBgColor),
-        ),
+        Expanded(child: Container(color: shimmerStyle.onBgColor)),
         const SizedBox(height: 8),
 
         // Full-width CTA button
@@ -1050,11 +865,7 @@ class NativeShimmer extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: 64,
-              height: 64,
-              color: shimmerStyle.onBgColor,
-            ),
+            Container(width: 64, height: 64, color: shimmerStyle.onBgColor),
             const SizedBox(width: 8),
             Expanded(
               child: Column(
@@ -1064,12 +875,7 @@ class NativeShimmer extends StatelessWidget {
                     children: [
                       _adBadge(),
                       const SizedBox(width: 4),
-                      Expanded(
-                        child: Container(
-                          height: 18,
-                          color: shimmerStyle.onBgColor,
-                        ),
-                      ),
+                      Expanded(child: Container(height: 18, color: shimmerStyle.onBgColor)),
                     ],
                   ),
                   const SizedBox(height: 4),
@@ -1077,23 +883,11 @@ class NativeShimmer extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Container(
-                        width: 60,
-                        height: 10,
-                        color: shimmerStyle.onBgColor,
-                      ),
+                      Container(width: 60, height: 10, color: shimmerStyle.onBgColor),
                       const SizedBox(width: 6),
-                      Container(
-                        width: 36,
-                        height: 10,
-                        color: shimmerStyle.onBgColor,
-                      ),
+                      Container(width: 36, height: 10, color: shimmerStyle.onBgColor),
                       const Spacer(),
-                      Container(
-                        width: 36,
-                        height: 10,
-                        color: shimmerStyle.onBgColor,
-                      ),
+                      Container(width: 36, height: 10, color: shimmerStyle.onBgColor),
                     ],
                   ),
                 ],
@@ -1104,9 +898,7 @@ class NativeShimmer extends StatelessWidget {
         const SizedBox(height: 8),
 
         // MediaView
-        Expanded(
-          child: Container(color: shimmerStyle.onBgColor),
-        ),
+        Expanded(child: Container(color: shimmerStyle.onBgColor)),
       ],
     );
   }
@@ -1120,11 +912,7 @@ class NativeShimmer extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: 64,
-              height: 64,
-              color: shimmerStyle.onBgColor,
-            ),
+            Container(width: 64, height: 64, color: shimmerStyle.onBgColor),
             const SizedBox(width: 8),
             Expanded(
               child: Column(
@@ -1134,12 +922,7 @@ class NativeShimmer extends StatelessWidget {
                     children: [
                       _adBadge(),
                       const SizedBox(width: 4),
-                      Expanded(
-                        child: Container(
-                          height: 18,
-                          color: shimmerStyle.onBgColor,
-                        ),
-                      ),
+                      Expanded(child: Container(height: 18, color: shimmerStyle.onBgColor)),
                     ],
                   ),
                   const SizedBox(height: 4),
@@ -1147,23 +930,11 @@ class NativeShimmer extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Container(
-                        width: 60,
-                        height: 10,
-                        color: shimmerStyle.onBgColor,
-                      ),
+                      Container(width: 60, height: 10, color: shimmerStyle.onBgColor),
                       const SizedBox(width: 6),
-                      Container(
-                        width: 36,
-                        height: 10,
-                        color: shimmerStyle.onBgColor,
-                      ),
+                      Container(width: 36, height: 10, color: shimmerStyle.onBgColor),
                       const Spacer(),
-                      Container(
-                        width: 36,
-                        height: 10,
-                        color: shimmerStyle.onBgColor,
-                      ),
+                      Container(width: 36, height: 10, color: shimmerStyle.onBgColor),
                     ],
                   ),
                 ],
@@ -1184,9 +955,7 @@ class NativeShimmer extends StatelessWidget {
         const SizedBox(height: 8),
 
         // MediaView
-        Expanded(
-          child: Container(color: shimmerStyle.onBgColor),
-        ),
+        Expanded(child: Container(color: shimmerStyle.onBgColor)),
       ],
     );
   }
@@ -1219,12 +988,7 @@ class NativeShimmer extends StatelessWidget {
                     children: [
                       _adBadge(),
                       const SizedBox(width: 4),
-                      Expanded(
-                        child: Container(
-                          height: 18,
-                          color: shimmerStyle.onBgColor,
-                        ),
-                      ),
+                      Expanded(child: Container(height: 18, color: shimmerStyle.onBgColor)),
                     ],
                   ),
                   const SizedBox(height: 4),
@@ -1232,17 +996,9 @@ class NativeShimmer extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Container(
-                        width: 60,
-                        height: 10,
-                        color: shimmerStyle.onBgColor,
-                      ),
+                      Container(width: 60, height: 10, color: shimmerStyle.onBgColor),
                       const SizedBox(width: 6),
-                      Container(
-                        width: 36,
-                        height: 10,
-                        color: shimmerStyle.onBgColor,
-                      ),
+                      Container(width: 36, height: 10, color: shimmerStyle.onBgColor),
                     ],
                   ),
                 ],
@@ -1251,19 +1007,13 @@ class NativeShimmer extends StatelessWidget {
             const SizedBox(width: 8),
 
             // Icon on the right
-            Container(
-              width: 64,
-              height: 64,
-              color: shimmerStyle.onBgColor,
-            ),
+            Container(width: 64, height: 64, color: shimmerStyle.onBgColor),
           ],
         ),
         const SizedBox(height: 8),
 
         // MediaView
-        Expanded(
-          child: Container(color: shimmerStyle.onBgColor),
-        ),
+        Expanded(child: Container(color: shimmerStyle.onBgColor)),
       ],
     );
   }
@@ -1274,9 +1024,7 @@ class NativeShimmer extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // MediaView top
-        Expanded(
-          child: Container(color: shimmerStyle.onBgColor),
-        ),
+        Expanded(child: Container(color: shimmerStyle.onBgColor)),
         const SizedBox(height: 8),
 
         // Bottom bar: icon + text + button
@@ -1284,11 +1032,7 @@ class NativeShimmer extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Icon
-            Container(
-              width: 56,
-              height: 56,
-              color: shimmerStyle.onBgColor,
-            ),
+            Container(width: 56, height: 56, color: shimmerStyle.onBgColor),
             const SizedBox(width: 8),
 
             // Text block
@@ -1301,12 +1045,7 @@ class NativeShimmer extends StatelessWidget {
                     children: [
                       _adBadge(),
                       const SizedBox(width: 4),
-                      Expanded(
-                        child: Container(
-                          height: 16,
-                          color: shimmerStyle.onBgColor,
-                        ),
-                      ),
+                      Expanded(child: Container(height: 16, color: shimmerStyle.onBgColor)),
                     ],
                   ),
                   const SizedBox(height: 4),
@@ -1315,17 +1054,9 @@ class NativeShimmer extends StatelessWidget {
                   // Advertiser / rating / price row
                   Row(
                     children: [
-                      Container(
-                        width: 56,
-                        height: 10,
-                        color: shimmerStyle.onBgColor,
-                      ),
+                      Container(width: 56, height: 10, color: shimmerStyle.onBgColor),
                       const SizedBox(width: 6),
-                      Container(
-                        width: 36,
-                        height: 10,
-                        color: shimmerStyle.onBgColor,
-                      ),
+                      Container(width: 36, height: 10, color: shimmerStyle.onBgColor),
                     ],
                   ),
                 ],
@@ -1339,8 +1070,7 @@ class NativeShimmer extends StatelessWidget {
               height: 36,
               decoration: BoxDecoration(
                 color: shimmerStyle.onBgColor,
-                borderRadius:
-                    BorderRadius.circular(style.buttonCornerRadius),
+                borderRadius: BorderRadius.circular(style.buttonCornerRadius),
               ),
             ),
           ],
@@ -1359,11 +1089,7 @@ class NativeShimmer extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Icon
-            Container(
-              width: 56,
-              height: 56,
-              color: shimmerStyle.onBgColor,
-            ),
+            Container(width: 56, height: 56, color: shimmerStyle.onBgColor),
             const SizedBox(width: 8),
 
             // Text block
@@ -1376,12 +1102,7 @@ class NativeShimmer extends StatelessWidget {
                     children: [
                       _adBadge(),
                       const SizedBox(width: 4),
-                      Expanded(
-                        child: Container(
-                          height: 16,
-                          color: shimmerStyle.onBgColor,
-                        ),
-                      ),
+                      Expanded(child: Container(height: 16, color: shimmerStyle.onBgColor)),
                     ],
                   ),
                   const SizedBox(height: 4),
@@ -1389,17 +1110,9 @@ class NativeShimmer extends StatelessWidget {
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      Container(
-                        width: 56,
-                        height: 10,
-                        color: shimmerStyle.onBgColor,
-                      ),
+                      Container(width: 56, height: 10, color: shimmerStyle.onBgColor),
                       const SizedBox(width: 6),
-                      Container(
-                        width: 36,
-                        height: 10,
-                        color: shimmerStyle.onBgColor,
-                      ),
+                      Container(width: 36, height: 10, color: shimmerStyle.onBgColor),
                     ],
                   ),
                 ],
@@ -1413,8 +1126,7 @@ class NativeShimmer extends StatelessWidget {
               height: 40,
               decoration: BoxDecoration(
                 color: shimmerStyle.onBgColor,
-                borderRadius:
-                    BorderRadius.circular(style.buttonCornerRadius),
+                borderRadius: BorderRadius.circular(style.buttonCornerRadius),
               ),
             ),
           ],
@@ -1422,9 +1134,7 @@ class NativeShimmer extends StatelessWidget {
         const SizedBox(height: 8),
 
         // MediaView bottom
-        Expanded(
-          child: Container(color: shimmerStyle.onBgColor),
-        ),
+        Expanded(child: Container(color: shimmerStyle.onBgColor)),
       ],
     );
   }

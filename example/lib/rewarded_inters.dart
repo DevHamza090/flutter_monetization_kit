@@ -21,7 +21,8 @@ class _RewardedIntersScreenState extends State<RewardedIntersScreen> {
       context: context,
       screenName: screenName,
       screenRemote: true,
-      adUnitId: _adUnitId,
+      androidAdUnit: _adUnitId,
+      iosAdUnit: _adUnitId,
       callbacks: RewardedInterAdCallbacks(
         onUserEarnedReward: (ad, reward) {
           debugPrint(
@@ -69,7 +70,8 @@ class _RewardedIntersScreenState extends State<RewardedIntersScreen> {
     await MonetizationKit.instance.rewardedInterstitial.load(
       screenName: screenName,
       screenRemote: true,
-      adUnitId: _adUnitId,
+      androidAdUnit: _adUnitId,
+      iosAdUnit: _adUnitId,
       callbacks: RewardedInterAdCallbacks(
         onAdLoaded: (ad) {
           debugPrint(

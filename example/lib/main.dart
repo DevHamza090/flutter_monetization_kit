@@ -43,7 +43,8 @@ class _MyAppState extends State<MyApp> {
 
         // 3. Setup App Open Ads Observer
         // final observer = AppOpenObserver(
-        //   adUnitId: AdUtils.testId(AdType.appOpen),
+        //   androidAdUnit: AdUtils.testId(AdType.appOpen),
+        //   iosAdUnit: AdUtils.testId(AdType.appOpen),
         // );
         // WidgetsBinding.instance.addObserver(observer);
 

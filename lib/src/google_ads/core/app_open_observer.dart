@@ -7,7 +7,8 @@ import '../managers/app_open_manager.dart';
 /// and automatically requests an App Open Ad to show when the app resumes.
 class AppOpenObserver extends WidgetsBindingObserver {
   /// The specific unit id for app open ads to display.
-  final String adUnitId;
+  final String? androidAdUnit;
+  final String? iosAdUnit;
 
   /// Optional callback to hook into ad events.
   final AppOpenAdCallbacks? callbacks;
@@ -16,7 +17,8 @@ class AppOpenObserver extends WidgetsBindingObserver {
   final bool screenRemote;
 
   AppOpenObserver({
-    required this.adUnitId,
+    this.androidAdUnit,
+    this.iosAdUnit,
     this.callbacks,
     this.screenRemote = false,
   });
@@ -54,7 +56,8 @@ class AppOpenObserver extends WidgetsBindingObserver {
       AppOpenManager.instance.show(
         context: null,
         screenRemote: screenRemote,
-        adUnitId: adUnitId,
+        androidAdUnit: androidAdUnit,
+        iosAdUnit: iosAdUnit,
         loadingDialog: true,
         reloadAfterShow: true,
         callbacks: callbacks,

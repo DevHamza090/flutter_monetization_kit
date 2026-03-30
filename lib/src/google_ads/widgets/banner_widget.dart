@@ -11,7 +11,6 @@ import '../managers/banner_ad_manager.dart';
 
 class BannerAdWidget extends StatefulWidget {
   final bool? screenRemote;
-  final String? adUnit;
   final BannerType type;
   final BannerAdCallbacks? callbacks;
   final String? androidAdUnit;
@@ -25,7 +24,6 @@ class BannerAdWidget extends StatefulWidget {
   const BannerAdWidget({
     super.key,
     this.screenRemote,
-    this.adUnit,
     this.type = BannerType.standard,
     this.callbacks,
     this.androidAdUnit,
@@ -80,23 +78,13 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
   }
 
   Future<void> _loadAd() async {
-    String finalAdUnitId = "";
-
-    // Debug check
-    if (AdsSettings.instance.isDebugMode) {
-      finalAdUnitId = AdUtils.testId(
-        (widget.type is AdaptiveBanner || widget.type is CollapsibleBanner)
-            ? AdType.adaptiveBanner
-            : AdType.banner,
-      );
-    } else {
-      // Platform specific ad units
-      if (Platform.isAndroid) {
-        finalAdUnitId = widget.androidAdUnit ?? widget.adUnit ?? "";
-      } else if (Platform.isIOS) {
-        finalAdUnitId = widget.iosAdUnit ?? widget.adUnit ?? "";
-      }
-    }
+    String finalAdUnitId = AdUtils.getAdUnitId(
+      adType: (widget.type is AdaptiveBanner || widget.type is CollapsibleBanner)
+          ? AdType.adaptiveBanner
+          : AdType.banner,
+      androidAdUnit: widget.androidAdUnit,
+      iosAdUnit: widget.iosAdUnit,
+    );
 
     if (finalAdUnitId.isEmpty) {
       if (mounted) setState(() => _isLoading = false);
@@ -160,6 +148,10 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
 
   @override
   Widget build(BuildContext context) {
+    if (AdsSettings.instance.isPremium) {
+      return const SizedBox.shrink();
+    }
+    
     if (!_canShowAd) return const SizedBox.shrink();
 
     if (_isLoading) {

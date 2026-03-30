@@ -117,8 +117,6 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
         bodyView.translatesAutoresizingMaskIntoConstraints = false
         bodyView.font = regularFont
         bodyView.textColor = colorFromHex(customOptions["bodyColor"] as? String) ?? UIColor.darkGray
-        let maxBodyLines = customOptions["maxBodyLines"] as? Int ?? 2
-        bodyView.numberOfLines = maxBodyLines
 
         let advertiserView = UILabel()
         advertiserView.translatesAutoresizingMaskIntoConstraints = false

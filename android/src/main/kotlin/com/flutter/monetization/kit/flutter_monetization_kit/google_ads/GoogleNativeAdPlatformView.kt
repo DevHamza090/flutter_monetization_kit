@@ -298,11 +298,6 @@ class GoogleNativeAdPlatformView(
                 bodyView.setTextColor(Color.parseColor(bodyColorStr))
             }
             
-            val maxBodyLines = options["maxBodyLines"] as? Int
-            if (maxBodyLines != null) {
-                bodyView.maxLines = maxBodyLines
-            }
-
             val advertiserColorStr = options["advertiserColor"] as? String
             if (!advertiserColorStr.isNullOrEmpty() && advertiserColorStr.length >= 7) {
                 advertiserView?.setTextColor(Color.parseColor(advertiserColorStr))

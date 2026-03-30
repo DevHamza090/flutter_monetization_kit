@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../monetization_kit.dart';
 import '../callbacks/native_ad_callbacks.dart';
 import '../core/ads_registry.dart';
 import '../core/enums/native_type.dart';
@@ -13,7 +14,8 @@ import '../managers/native_ad_manager.dart';
 import 'native_shimmer.dart';
 
 class NativeWidget extends StatefulWidget {
-  final String adUnit;
+  final String? androidAdUnit;
+  final String? iosAdUnit;
   final NativeType type;
   final bool screenRemote;
   final String? screenName;
@@ -24,7 +26,8 @@ class NativeWidget extends StatefulWidget {
 
   const NativeWidget({
     super.key,
-    required this.adUnit,
+    this.androidAdUnit,
+    this.iosAdUnit,
     required this.type,
     this.screenRemote = true,
     this.screenName,
@@ -52,7 +55,8 @@ class _NativeWidgetState extends State<NativeWidget> {
   @override
   void didUpdateWidget(NativeWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.adUnit != widget.adUnit ||
+    if (oldWidget.androidAdUnit != widget.androidAdUnit ||
+        oldWidget.iosAdUnit != widget.iosAdUnit ||
         oldWidget.screenName != widget.screenName ||
         oldWidget.type != widget.type) {
       _loadOrGetAd();
@@ -61,16 +65,20 @@ class _NativeWidgetState extends State<NativeWidget> {
 
   void _loadOrGetAd() {
     _adFailed = false;
+    final String finalAdUnitId = AdUtils.getAdUnitId(
+      adType: AdType.native,
+      androidAdUnit: widget.androidAdUnit,
+      iosAdUnit: widget.iosAdUnit,
+    );
     bool isPreloaded = NativeAdManager.instance.isAdPreloaded(
       widget.screenName,
-      widget.adUnit,
     );
 
     if (isPreloaded) {
       setState(() {
         _adLoaded = true;
       });
-      widget.callback?.onAdLoaded?.call(widget.adUnit);
+      widget.callback?.onAdLoaded?.call(finalAdUnitId);
     } else {
       setState(() {
         _adLoaded = false;
@@ -106,8 +114,15 @@ class _NativeWidgetState extends State<NativeWidget> {
       onAdValidated: widget.callback?.onAdValidated,
     );
 
+    final String finalAdUnitId = AdUtils.getAdUnitId(
+      adType: AdType.native,
+      androidAdUnit: widget.androidAdUnit,
+      iosAdUnit: widget.iosAdUnit,
+    );
+
     NativeAdManager.instance.load(
-      adUnitId: widget.adUnit,
+      androidAdUnit: widget.androidAdUnit,
+      iosAdUnit: widget.iosAdUnit,
       screenName: widget.screenName,
       screenRemote: widget.screenRemote,
       callbacks: interceptCallback,
@@ -117,9 +132,15 @@ class _NativeWidgetState extends State<NativeWidget> {
   @override
   void dispose() {
     if (widget.reloadAfterShow) {
+      final String finalAdUnitId = AdUtils.getAdUnitId(
+        adType: AdType.native,
+        androidAdUnit: widget.androidAdUnit,
+        iosAdUnit: widget.iosAdUnit,
+      );
       NativeAdManager.instance.removeAd(widget.screenName);
       NativeAdManager.instance.load(
-        adUnitId: widget.adUnit,
+        androidAdUnit: widget.androidAdUnit,
+        iosAdUnit: widget.iosAdUnit,
         screenName: widget.screenName,
         screenRemote: widget.screenRemote,
         callbacks: null,
@@ -130,6 +151,10 @@ class _NativeWidgetState extends State<NativeWidget> {
 
   @override
   Widget build(BuildContext context) {
+    if (AdsSettings.instance.isPremium) {
+      return const SizedBox.shrink();
+    }
+
     final height = _dynamicHeight ?? _getHeightForType(widget.type);
 
     if (_adLoaded) {
@@ -155,9 +180,14 @@ class _NativeWidgetState extends State<NativeWidget> {
   }
 
   Widget _buildPlatformView() {
+    final String finalAdUnitId = AdUtils.getAdUnitId(
+      adType: AdType.native,
+      androidAdUnit: widget.androidAdUnit,
+      iosAdUnit: widget.iosAdUnit,
+    );
+
     final String targetCacheId = NativeAdManager.instance.getTargetCacheId(
       widget.screenName,
-      widget.adUnit,
     );
 
     String colorToHex(Color? color) {
@@ -179,7 +209,6 @@ class _NativeWidgetState extends State<NativeWidget> {
       'adStrokeWidth': widget.style.adStrokeWidth,
       'headingColor': colorToHex(widget.style.headingColor),
       'bodyColor': colorToHex(widget.style.bodyColor),
-      'maxBodyLines': widget.style.maxBodyLines,
       'advertiserColor': colorToHex(widget.style.advertiserColor),
       'ratingColor': colorToHex(widget.style.ratingColor),
       'ratingBgColor': colorToHex(widget.style.ratingBgColor),
@@ -213,6 +242,12 @@ class _NativeWidgetState extends State<NativeWidget> {
   void _onPlatformViewCreated(int id) {
     NativeAdManager.instance.consumeAd(widget.screenName);
 
+    final String finalAdUnitId = AdUtils.getAdUnitId(
+      adType: AdType.native,
+      androidAdUnit: widget.androidAdUnit,
+      iosAdUnit: widget.iosAdUnit,
+    );
+
     final MethodChannel channel = MethodChannel(
       'monetization_native_ad_view_$id',
     );
@@ -229,18 +264,18 @@ class _NativeWidgetState extends State<NativeWidget> {
         case 'onAdClicked':
           AdRegistry.instance.wasAdClickedRecently = true;
           AdRegistry.instance.lastDismissedTime = DateTime.now();
-          widget.callback?.onAdClicked?.call(widget.adUnit);
+          widget.callback?.onAdClicked?.call(finalAdUnitId);
           break;
         case 'onAdImpression':
-          widget.callback?.onAdImpression?.call(widget.adUnit);
+          widget.callback?.onAdImpression?.call(finalAdUnitId);
           break;
         case 'onAdClosed':
-          widget.callback?.onAdClosed?.call(widget.adUnit);
+          widget.callback?.onAdClosed?.call(finalAdUnitId);
           break;
         case 'onAdOpened':
           AdRegistry.instance.wasAdClickedRecently = true;
           AdRegistry.instance.lastDismissedTime = DateTime.now();
-          widget.callback?.onAdOpened?.call(widget.adUnit);
+          widget.callback?.onAdOpened?.call(finalAdUnitId);
           break;
       }
     });
@@ -255,8 +290,8 @@ class _NativeWidgetState extends State<NativeWidget> {
     if (type == NativeType.small6) return 70.0;
     if (type == NativeType.small7) return 70.0;
     if (type == NativeType.small8) return 70.0;
-    if (type == NativeType.medium1) return 130.0;
-    if (type == NativeType.medium2) return 130.0;
+    if (type == NativeType.medium1) return Platform.isAndroid ? 140.0 : 130;
+    if (type == NativeType.medium2) return Platform.isAndroid ? 140.0 : 130;
     if (type == NativeType.medium3) return 150.0;
     if (type == NativeType.medium4) return 150.0;
     if (type == NativeType.medium5) return 140.0;

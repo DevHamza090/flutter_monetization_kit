@@ -18,7 +18,8 @@ class RewardedInterstitialAdManager {
   Future<void> load({
     String? screenName,
     required bool screenRemote,
-    required String adUnitId,
+    String? androidAdUnit,
+    String? iosAdUnit,
     RewardedInterAdCallbacks? callbacks,
   }) async {
     // 1. Validation Logic
@@ -28,6 +29,17 @@ class RewardedInterstitialAdManager {
         "RewardedInterAdManager: Ad request blocked ($validationReason)",
       );
       callbacks?.onAdValidated?.call(validationReason);
+      return;
+    }
+
+    final adUnitId = AdUtils.getAdUnitId(
+      adType: AdType.rewardedInterstitial,
+      androidAdUnit: androidAdUnit,
+      iosAdUnit: iosAdUnit,
+    );
+    if (adUnitId.isEmpty) {
+      debugPrint("RewardedInterAdManager: No ad unit provided");
+      callbacks?.onAdValidated?.call(AdValidationReason.adNotAvailable);
       return;
     }
 
@@ -99,7 +111,8 @@ class RewardedInterstitialAdManager {
   /// [context] (BuildContext): The context to show the ad and loading dialog.
   /// [screenName] (String?): Optional name of the screen.
   /// [screenRemote] (bool): Whether to check remote config for this screen.
-  /// [adUnitId] (String): The AdMob Ad Unit ID.
+  /// [androidAdUnit] (String?): The AdMob Android Ad Unit ID.
+  /// [iosAdUnit] (String?): The AdMob iOS Ad Unit ID.
   /// [callbacks] (RewardedInterAdCallbacks?): Callbacks for ad events.
   /// [loadingDialog] (bool): Whether to show a loading dialog before showing the ad.
   /// [fullScreenDialog] (bool): Whether to show the loading dialog in full screen.
@@ -111,7 +124,8 @@ class RewardedInterstitialAdManager {
     required BuildContext context,
     String? screenName,
     required bool screenRemote,
-    required String adUnitId,
+    String? androidAdUnit,
+    String? iosAdUnit,
     RewardedInterAdCallbacks? callbacks,
     bool loadingDialog = true,
     bool fullScreenDialog = true,
@@ -127,6 +141,17 @@ class RewardedInterstitialAdManager {
         "RewardedInterAdManager: Cannot show rewarded inter ad ($validationReason)",
       );
       callbacks?.onAdValidated?.call(validationReason);
+      return;
+    }
+
+    final adUnitId = AdUtils.getAdUnitId(
+      adType: AdType.rewardedInterstitial,
+      androidAdUnit: androidAdUnit,
+      iosAdUnit: iosAdUnit,
+    );
+    if (adUnitId.isEmpty) {
+      debugPrint("RewardedInterAdManager: No ad unit provided");
+      callbacks?.onAdValidated?.call(AdValidationReason.adNotAvailable);
       return;
     }
 
@@ -160,7 +185,8 @@ class RewardedInterstitialAdManager {
         load(
           screenName: screenName,
           screenRemote: screenRemote,
-          adUnitId: adUnitId,
+          androidAdUnit: androidAdUnit,
+          iosAdUnit: iosAdUnit,
           callbacks: null,
         );
       }
@@ -201,7 +227,8 @@ class RewardedInterstitialAdManager {
           load(
             screenName: screenName,
             screenRemote: screenRemote,
-            adUnitId: adUnitId,
+            androidAdUnit: androidAdUnit,
+            iosAdUnit: iosAdUnit,
             callbacks: null,
           );
         }
@@ -242,7 +269,8 @@ class RewardedInterstitialAdManager {
     required BuildContext context,
     String? screenName,
     required bool screenRemote,
-    required String adUnitId,
+    String? androidAdUnit,
+    String? iosAdUnit,
     RewardedInterAdCallbacks? callbacks,
     bool loadingDialog = true,
     bool fullScreenDialog = true,
@@ -257,7 +285,8 @@ class RewardedInterstitialAdManager {
         context: context,
         screenName: screenName,
         screenRemote: screenRemote,
-        adUnitId: adUnitId,
+        androidAdUnit: androidAdUnit,
+        iosAdUnit: iosAdUnit,
         callbacks: callbacks,
         loadingDialog: loadingDialog,
         fullScreenDialog: fullScreenDialog,
@@ -278,7 +307,8 @@ class RewardedInterstitialAdManager {
     await load(
       screenName: screenName,
       screenRemote: screenRemote,
-      adUnitId: adUnitId,
+      androidAdUnit: androidAdUnit,
+      iosAdUnit: iosAdUnit,
       callbacks: RewardedInterAdCallbacks(
         onAdLoaded: (ad) async {
           callbacks?.onAdLoaded?.call(ad);
@@ -286,7 +316,8 @@ class RewardedInterstitialAdManager {
             context: context,
             screenName: screenName,
             screenRemote: screenRemote,
-            adUnitId: adUnitId,
+            androidAdUnit: androidAdUnit,
+            iosAdUnit: iosAdUnit,
             callbacks: callbacks,
             loadingDialog: loadingDialog,
             fullScreenDialog: fullScreenDialog,

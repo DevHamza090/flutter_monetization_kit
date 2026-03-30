@@ -11,12 +11,14 @@ class AppOpenManager {
   /// Loads an App Open Ad.
   /// [screenName] (String?): Optional name of the screen for preloading.
   /// [screenRemote] (bool): Whether to check remote config for this screen.
-  /// [adUnitId] (String): The AdMob Ad Unit ID.
+  /// [androidAdUnit] (String?): The AdMob Android Ad Unit ID.
+  /// [iosAdUnit] (String?): The AdMob iOS Ad Unit ID.
   /// [callbacks] (AppOpenAdCallbacks?): Callbacks for ad events.
   Future<void> load({
     String? screenName,
     required bool screenRemote,
-    required String adUnitId,
+    String? androidAdUnit,
+    String? iosAdUnit,
     AppOpenAdCallbacks? callbacks,
   }) async {
     // 1. Validation Logic (Premium, Internet)
@@ -24,6 +26,17 @@ class AppOpenManager {
     if (validationReason != null) {
       debugPrint("AppOpenManager: Ad request blocked ($validationReason)");
       callbacks?.onAdValidated?.call(validationReason);
+      return;
+    }
+
+    final adUnitId = AdUtils.getAdUnitId(
+      adType: AdType.appOpen,
+      androidAdUnit: androidAdUnit,
+      iosAdUnit: iosAdUnit,
+    );
+    if (adUnitId.isEmpty) {
+      debugPrint("AppOpenManager: No ad unit provided");
+      callbacks?.onAdValidated?.call(AdValidationReason.adNotAvailable);
       return;
     }
 
@@ -81,7 +94,8 @@ class AppOpenManager {
   /// [context] (BuildContext?): The context to show the ad and loading dialog. Optional for app resume showing.
   /// [screenName] (String?): Optional name of the screen.
   /// [screenRemote] (bool): Whether to check remote config for this screen.
-  /// [adUnitId] (String): The AdMob Ad Unit ID.
+  /// [androidAdUnit] (String?): The AdMob Android Ad Unit ID.
+  /// [iosAdUnit] (String?): The AdMob iOS Ad Unit ID.
   /// [callbacks] (AppOpenAdCallbacks?): Callbacks for ad events.
   /// [loadingDialog] (bool): Whether to show a loading dialog before showing the ad. (Requires context to be non-null)
   /// [reloadAfterShow] (bool): Whether to automatically start loading a new ad after dismissal.
@@ -89,7 +103,8 @@ class AppOpenManager {
     BuildContext? context,
     String? screenName,
     required bool screenRemote,
-    required String adUnitId,
+    String? androidAdUnit,
+    String? iosAdUnit,
     AppOpenAdCallbacks? callbacks,
     bool loadingDialog = true,
     bool reloadAfterShow = true,
@@ -107,6 +122,17 @@ class AppOpenManager {
       callbacks?.onAdValidated?.call(
         AdValidationReason.anotherFullScreenShowing,
       );
+      return;
+    }
+
+    final adUnitId = AdUtils.getAdUnitId(
+      adType: AdType.appOpen,
+      androidAdUnit: androidAdUnit,
+      iosAdUnit: iosAdUnit,
+    );
+    if (adUnitId.isEmpty) {
+      debugPrint("AppOpenManager: No ad unit provided");
+      callbacks?.onAdValidated?.call(AdValidationReason.adNotAvailable);
       return;
     }
 
@@ -129,7 +155,8 @@ class AppOpenManager {
         load(
           screenName: screenName,
           screenRemote: screenRemote,
-          adUnitId: adUnitId,
+          androidAdUnit: androidAdUnit,
+          iosAdUnit: iosAdUnit,
           callbacks: null,
         );
       }
@@ -166,7 +193,8 @@ class AppOpenManager {
           load(
             screenName: screenName,
             screenRemote: screenRemote,
-            adUnitId: adUnitId,
+            androidAdUnit: androidAdUnit,
+            iosAdUnit: iosAdUnit,
             callbacks: null,
           );
         }

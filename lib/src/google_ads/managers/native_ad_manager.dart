@@ -51,13 +51,25 @@ class NativeAdManager {
   Future<void> load({
     String? screenName,
     required bool screenRemote,
-    required String adUnitId,
+    String? androidAdUnit,
+    String? iosAdUnit,
     NativeAdCallbacks? callbacks,
   }) async {
     final validationReason = await AdUtils.validateAdProcess();
     if (validationReason != null) {
       debugPrint("NativeAdManager: Ad request blocked ($validationReason)");
       callbacks?.onAdValidated?.call(validationReason);
+      return;
+    }
+
+    final adUnitId = AdUtils.getAdUnitId(
+      adType: AdType.native,
+      androidAdUnit: androidAdUnit,
+      iosAdUnit: iosAdUnit,
+    );
+    if (adUnitId.isEmpty) {
+      debugPrint("NativeAdManager: No ad unit provided");
+      callbacks?.onAdValidated?.call(AdValidationReason.adNotAvailable);
       return;
     }
 
@@ -106,7 +118,7 @@ class NativeAdManager {
     }
   }
 
-  bool isAdPreloaded(String? screenName, String adUnitId) {
+  bool isAdPreloaded(String? screenName) {
     bool ready = AdRegistry.instance.isAdReady(getRegistryKey(screenName));
     if (!ready && screenName != null) {
       ready = AdRegistry.instance.isAdReady(
@@ -116,7 +128,7 @@ class NativeAdManager {
     return ready;
   }
 
-  String getTargetCacheId(String? screenName, String adUnitId) {
+  String getTargetCacheId(String? screenName) {
     bool screenReady = AdRegistry.instance.isAdReady(
       getRegistryKey(screenName),
     );

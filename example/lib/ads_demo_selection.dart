@@ -26,7 +26,8 @@ class _AdsDemoSelectionState extends State<AdsDemoSelection> {
   void initState() {
     MonetizationKit.instance.native.load(
       screenRemote: true,
-      adUnitId: _testAdUnitId,
+      androidAdUnit: _testAdUnitId,
+      iosAdUnit: _testAdUnitId,
       screenName: "custom",
     );
 

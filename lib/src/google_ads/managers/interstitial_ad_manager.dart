@@ -16,12 +16,14 @@ class InterstitialAdManager {
   /// Loads an Interstitial Ad.
   /// [screenName] (String?): Optional name of the screen for preloading.
   /// [screenRemote] (bool): Whether to check remote config for this screen.
-  /// [adUnitId] (String): The AdMob Ad Unit ID.
+  /// [androidAdUnit] (String?): The AdMob Android Ad Unit ID.
+  /// [iosAdUnit] (String?): The AdMob iOS Ad Unit ID.
   /// [callbacks] (InterstitialAdCallbacks?): Callbacks for ad events.
   Future<void> load({
     String? screenName,
     required bool screenRemote,
-    required String adUnitId,
+    String? androidAdUnit,
+    String? iosAdUnit,
     InterstitialAdCallbacks? callbacks,
   }) async {
     // 1. Validation Logic (Premium, Internet)
@@ -31,6 +33,17 @@ class InterstitialAdManager {
         "InterstitialAdManager: Ad request blocked ($validationReason)",
       );
       callbacks?.onAdValidated?.call(validationReason);
+      return;
+    }
+
+    final adUnitId = AdUtils.getAdUnitId(
+      adType: AdType.interstitial,
+      androidAdUnit: androidAdUnit,
+      iosAdUnit: iosAdUnit,
+    );
+    if (adUnitId.isEmpty) {
+      debugPrint("InterstitialAdManager: No ad unit provided");
+      callbacks?.onAdValidated?.call(AdValidationReason.adNotAvailable);
       return;
     }
 
@@ -92,7 +105,8 @@ class InterstitialAdManager {
   /// [context] (BuildContext): The context to show the ad and loading dialog.
   /// [screenName] (String?): Optional name of the screen.
   /// [screenRemote] (bool): Whether to check remote config for this screen.
-  /// [adUnitId] (String): The AdMob Ad Unit ID.
+  /// [androidAdUnit] (String?): The AdMob Android Ad Unit ID.
+  /// [iosAdUnit] (String?): The AdMob iOS Ad Unit ID.
   /// [callbacks] (InterstitialAdCallbacks?): Callbacks for ad events.
   /// [loadingDialog] (bool): Whether to show a loading dialog before showing the ad.
   /// [fullScreenDialog] (bool): Whether to show the loading dialog in full screen.
@@ -104,7 +118,8 @@ class InterstitialAdManager {
     required BuildContext context,
     String? screenName,
     required bool screenRemote,
-    required String adUnitId,
+    String? androidAdUnit,
+    String? iosAdUnit,
     InterstitialAdCallbacks? callbacks,
     bool loadingDialog = true,
     bool fullScreenDialog = true,
@@ -120,6 +135,17 @@ class InterstitialAdManager {
         "InterstitialAdManager: Cannot show interstitial ($validationReason)",
       );
       callbacks?.onAdValidated?.call(validationReason);
+      return;
+    }
+
+    final adUnitId = AdUtils.getAdUnitId(
+      adType: AdType.interstitial,
+      androidAdUnit: androidAdUnit,
+      iosAdUnit: iosAdUnit,
+    );
+    if (adUnitId.isEmpty) {
+      debugPrint("InterstitialAdManager: No ad unit provided");
+      callbacks?.onAdValidated?.call(AdValidationReason.adNotAvailable);
       return;
     }
 
@@ -155,7 +181,8 @@ class InterstitialAdManager {
         load(
           screenName: screenName,
           screenRemote: screenRemote,
-          adUnitId: adUnitId,
+          androidAdUnit: androidAdUnit,
+          iosAdUnit: iosAdUnit,
           callbacks: null,
         );
       }
@@ -197,7 +224,8 @@ class InterstitialAdManager {
           load(
             screenName: screenName,
             screenRemote: screenRemote,
-            adUnitId: adUnitId,
+            androidAdUnit: androidAdUnit,
+            iosAdUnit: iosAdUnit,
             callbacks: null,
           );
         }
@@ -231,7 +259,8 @@ class InterstitialAdManager {
     required BuildContext context,
     String? screenName,
     required bool screenRemote,
-    required String adUnitId,
+    String? androidAdUnit,
+    String? iosAdUnit,
     InterstitialAdCallbacks? callbacks,
     bool loadingDialog = true,
     bool fullScreenDialog = true,
@@ -246,7 +275,8 @@ class InterstitialAdManager {
         context: context,
         screenName: screenName,
         screenRemote: screenRemote,
-        adUnitId: adUnitId,
+        androidAdUnit: androidAdUnit,
+        iosAdUnit: iosAdUnit,
         callbacks: callbacks,
         loadingDialog: loadingDialog,
         fullScreenDialog: fullScreenDialog,
@@ -267,7 +297,8 @@ class InterstitialAdManager {
     await load(
       screenName: screenName,
       screenRemote: screenRemote,
-      adUnitId: adUnitId,
+      androidAdUnit: androidAdUnit,
+      iosAdUnit: iosAdUnit,
       callbacks: InterstitialAdCallbacks(
         onAdLoaded: (ad) async {
           callbacks?.onAdLoaded?.call(ad);
@@ -275,7 +306,8 @@ class InterstitialAdManager {
             context: context,
             screenName: screenName,
             screenRemote: screenRemote,
-            adUnitId: adUnitId,
+            androidAdUnit: androidAdUnit,
+            iosAdUnit: iosAdUnit,
             callbacks: callbacks,
             loadingDialog: loadingDialog,
             fullScreenDialog: fullScreenDialog,
@@ -328,16 +360,18 @@ class InterstitialAdManager {
         canPop: false,
         child: Material(
           type: MaterialType.transparency,
-          child: Center(
-            child: customWidget ??
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
+          child: Expanded(
+            child: Center(
+              child: customWidget ??
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const CircularProgressIndicator(),
                   ),
-                  child: const CircularProgressIndicator(),
-                ),
+            ),
           ),
         ),
       ),

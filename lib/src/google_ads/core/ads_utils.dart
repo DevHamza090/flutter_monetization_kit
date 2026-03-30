@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'ads_constants.dart';
@@ -95,6 +96,23 @@ class AdUtils {
           return 'ca-app-pub-3940256099942544/5575463023';
       }
     }
+  }
+
+  /// Utility to get the correct ad unit depending on platform and debug mode.
+  static String getAdUnitId({
+    required AdType adType,
+    String? androidAdUnit,
+    String? iosAdUnit,
+  }) {
+    if (kDebugMode || AdsSettings.instance.isDebugMode) {
+      return testId(adType);
+    }
+    if (Platform.isAndroid) {
+      return androidAdUnit ?? '';
+    } else if (Platform.isIOS) {
+      return iosAdUnit ?? '';
+    }
+    return '';
   }
 
   /// Example: [MonetizationKit] 🔄 Loading INTERSTITIAL for screen: Dashboard (ID: ca-app-pub...)
