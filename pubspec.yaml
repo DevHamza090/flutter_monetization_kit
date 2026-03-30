@@ -1,6 +1,6 @@
 name: flutter_monetization_kit
 description: "A Flutter plugin that provides a unified and easy-to-use API for Google Mobile Ads and in-app purchases on Android and iOS."
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/DevHamza090/flutter_monetization_kit.git
 
 environment:
@@ -8,12 +8,12 @@ environment:
   flutter: '>=3.3.0'
 
 dependencies:
-  connectivity_plus: ^7.0.0
+  connectivity_plus: ^7.1.0
   flutter:
     sdk: flutter
-  plugin_platform_interface: ^2.0.2
+  plugin_platform_interface: ^2.1.8
   google_mobile_ads: ^7.0.0
-  shared_preferences: ^2.5.4
+  shared_preferences: ^2.5.5
   shimmer: ^3.0.0
 
 dev_dependencies:

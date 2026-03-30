@@ -291,27 +291,40 @@ Container(
 );
 ```
 
-### 5. Native Ads
+### 7. Native Ads
 
-Using the provided `NativeWidget` to render deeply integrated custom UI components. 
+Using the provided `NativeWidget` to render deeply integrated custom UI components. The package provides 20+ built-in templates (Small, Medium, Large, and Fullscreen) that can be further customized with `NativeAdStyle`.
 
 ```dart
-// First load the native ad configuration
+// 1. (Optional) Preload the native ad configuration
 MonetizationKit.instance.native.load(
   androidAdUnit: 'YOUR_ANDROID_AD_UNIT_ID',
   iosAdUnit: 'YOUR_IOS_AD_UNIT_ID',
   screenName: 'feed_screen',
 );
 
-// Then render it anywhere in the tree
+// 2. Render it anywhere in your widget tree
 NativeWidget(
+  androidAdUnit: 'YOUR_ANDROID_AD_UNIT_ID',
+  iosAdUnit: 'YOUR_IOS_AD_UNIT_ID',
+  type: NativeType.medium1, // Small, Medium, Large, Fullscreen templates
   screenName: 'feed_screen',
-  factoryId: 'mediumFactory', // Factory ID registered in your native Android/iOS platform code
-  height: 300,
+  style: NativeAdStyle(
+    bgColor: Colors.white,
+    headingColor: Colors.black,
+    buttonBgColor: Colors.blue,
+    buttonTextColor: Colors.white,
+  ),
 );
 ```
 
-### 6. Premium Status Control
+#### Supported Native Types
+- **Small**: `NativeType.small1` to `small8`
+- **Medium**: `NativeType.medium1` to `medium6`
+- **Large**: `NativeType.large1` to `large6`
+- **Fullscreen**: `NativeType.fullscreen1` to `fullscreen5`
+
+### 8. Premium Status Control
 
 Have premium users? With one line, you can disable all ad logs across the entire SDK.
 
@@ -320,7 +333,7 @@ Have premium users? With one line, you can disable all ad logs across the entire
 await MonetizationKit.instance.setPremium(true); 
 ```
 
-### 7. Google Consent Privacy Options (GDPR)
+### 9. Google Consent Privacy Options (GDPR)
 
 In order to comply with GDPR policies, users must be able to change their consent statuses at any time.
 
