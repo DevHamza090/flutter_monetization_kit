@@ -4,12 +4,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../monetization_kit.dart';
+import '../../../flutter_monetization_kit.dart';
 import '../callbacks/native_ad_callbacks.dart';
 import '../core/ads_registry.dart';
-import '../core/enums/native_type.dart';
-import '../core/native_ad_style.dart';
-import '../core/native_ad_shimmer_style.dart';
 import '../managers/native_ad_manager.dart';
 import 'native_shimmer.dart';
 
@@ -114,12 +111,6 @@ class _NativeWidgetState extends State<NativeWidget> {
       onAdValidated: widget.callback?.onAdValidated,
     );
 
-    final String finalAdUnitId = AdUtils.getAdUnitId(
-      adType: AdType.native,
-      androidAdUnit: widget.androidAdUnit,
-      iosAdUnit: widget.iosAdUnit,
-    );
-
     NativeAdManager.instance.load(
       androidAdUnit: widget.androidAdUnit,
       iosAdUnit: widget.iosAdUnit,
@@ -132,11 +123,6 @@ class _NativeWidgetState extends State<NativeWidget> {
   @override
   void dispose() {
     if (widget.reloadAfterShow) {
-      final String finalAdUnitId = AdUtils.getAdUnitId(
-        adType: AdType.native,
-        androidAdUnit: widget.androidAdUnit,
-        iosAdUnit: widget.iosAdUnit,
-      );
       NativeAdManager.instance.removeAd(widget.screenName);
       NativeAdManager.instance.load(
         androidAdUnit: widget.androidAdUnit,
@@ -180,12 +166,6 @@ class _NativeWidgetState extends State<NativeWidget> {
   }
 
   Widget _buildPlatformView() {
-    final String finalAdUnitId = AdUtils.getAdUnitId(
-      adType: AdType.native,
-      androidAdUnit: widget.androidAdUnit,
-      iosAdUnit: widget.iosAdUnit,
-    );
-
     final String targetCacheId = NativeAdManager.instance.getTargetCacheId(
       widget.screenName,
     );

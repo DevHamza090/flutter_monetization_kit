@@ -68,7 +68,7 @@ Update your `Info.plist` (located at `ios/Runner/Info.plist`) with your AdMob Ap
 To request App Tracking Transparency (ATT) authorization on iOS 14+, you can use the built-in tracker:
 
 ```dart
-import 'package:flutter_monetization_kit/monetization_kit.dart';
+import 'package:flutter_monetization_kit/flutter_monetization_kit.dart';
 
 final status = await AppTrackingTransparency.requestTrackingAuthorization();
 if (status == AppTrackingStatus.authorized) {
@@ -82,7 +82,7 @@ It is crucial to request user consent via the UMP SDK before initializing the ad
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:flutter_monetization_kit/monetization_kit.dart';
+import 'package:flutter_monetization_kit/flutter_monetization_kit.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -155,7 +155,7 @@ The SDK supports three distinct patterns for full-screen ads:
 2. **Show (`show`)**: Display a previously preloaded ad instantly.
 3. **Load & Show (`loadAndShow`)**: A convenience method that handles both loading and showing in one go.
 
-💡 **Universal Ad Caching:** The `screenName` parameter in `load()` and `show()` methods is entirely **optional**. If you do not pass a `screenName`, the ad is loaded and cached **universally** and can be shown from anywhere in your app!
+💡 **Universal Ad Caching:** The `screenName` parameter is **optional**. If you provide `null` or omit it entirely, the ad is loaded and cached **universally**, meaning it can be shown from any screen in your app!
 
 ### 1. Interstitial Ads
 
@@ -279,7 +279,7 @@ MonetizationKit.instance.interstitial.loadAndShow(
 Using the provided `BannerWidget` simplifies rendering standard banner ads.
 
 ```dart
-import 'package:flutter_monetization_kit/monetization_kit.dart';
+import 'package:flutter_monetization_kit/flutter_monetization_kit.dart';
 
 Container(
   child: BannerAdWidget(

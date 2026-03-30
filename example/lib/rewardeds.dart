@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_monetization_kit/monetization_kit.dart';
+import 'package:flutter_monetization_kit/flutter_monetization_kit.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class RewardedsScreen extends StatefulWidget {

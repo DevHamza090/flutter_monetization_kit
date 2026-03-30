@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_monetization_kit/monetization_kit.dart';
+import 'package:flutter_monetization_kit/flutter_monetization_kit.dart';
 
 class NativesScreen extends StatefulWidget {
   const NativesScreen({super.key});

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_monetization_kit/monetization_kit.dart';
+import 'package:flutter_monetization_kit/flutter_monetization_kit.dart';
 
 class InterstitialsScreen extends StatefulWidget {
   const InterstitialsScreen({Key? key}) : super(key: key);
@@ -57,7 +57,8 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
       screenRemote: true,
       androidAdUnit: _adUnitId,
       iosAdUnit: _adUnitId,
-      loadingDialog: false, // Don't show loading dialog for direct show
+      loadingDialog: false,
+      // Don't show loading dialog for direct show
       callbacks: InterstitialAdCallbacks(
         onAdShowedFullScreenContent: (ad) {
           debugPrint('Interstitial Demo: Ad showed from cache for $screenName');
@@ -66,9 +67,9 @@ class _InterstitialsScreenState extends State<InterstitialsScreen> {
           debugPrint('Interstitial Demo: Ad dismissed for $screenName');
         },
         onAdValidated: (reason) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Ad not ready or blocked: $reason')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Ad not ready or blocked: $reason')));
         },
       ),
     );

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_monetization_kit/monetization_kit.dart';
+import 'package:flutter_monetization_kit/flutter_monetization_kit.dart';
 import 'package:flutter_monetization_kit_example/ads_demo_selection.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

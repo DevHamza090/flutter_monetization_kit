@@ -1,3 +1,5 @@
+library;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_monetization_kit/src/google_ads/core/ads_settings.dart';
@@ -29,6 +31,7 @@ export 'src/google_ads/core/enums/ad_type.dart';
 export 'src/google_ads/core/enums/ad_validation_reason.dart';
 export 'src/google_ads/core/enums/banner_type.dart';
 export 'src/google_ads/core/enums/native_type.dart';
+export 'src/google_ads/core/native_ad_shimmer_style.dart';
 export 'src/google_ads/core/native_ad_style.dart';
 export 'src/google_ads/widgets/banner_widget.dart';
 export 'src/google_ads/widgets/native_widget.dart';

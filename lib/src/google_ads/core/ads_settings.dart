@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../monetization_kit.dart';
+import '../../../flutter_monetization_kit.dart';
 
 class AdsSettings {
   // Private constructor
