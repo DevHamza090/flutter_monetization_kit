@@ -37,7 +37,8 @@ class NativeShimmer extends StatelessWidget {
               type == NativeType.small4 ||
               type == NativeType.small5 ||
               type == NativeType.small6 ||
-              type == NativeType.small7
+              type == NativeType.small7 ||
+              type.name.startsWith('fullscreen')
           ? EdgeInsets.zero
           : const EdgeInsets.all(8.0),
       child: Shimmer.fromColors(
@@ -115,8 +116,16 @@ class NativeShimmer extends StatelessWidget {
         return _buildLarge5Shimmer();
       case NativeType.large6:
         return _buildLarge6Shimmer();
-      default:
-        return _buildSmall1Shimmer();
+      case NativeType.fullscreen1:
+        return _buildFullscreen1Shimmer();
+      case NativeType.fullscreen2:
+        return _buildFullscreen2Shimmer();
+      case NativeType.fullscreen3:
+        return _buildFullscreen3Shimmer();
+      case NativeType.fullscreen4:
+        return _buildFullscreen4Shimmer();
+      case NativeType.fullscreen5:
+        return _buildFullscreen5Shimmer();
     }
   }
 
@@ -1135,6 +1144,201 @@ class NativeShimmer extends StatelessWidget {
 
         // MediaView bottom
         Expanded(child: Container(color: shimmerStyle.onBgColor)),
+      ],
+    );
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // FULLSCREEN TEMPLATES (same visual rhythm as native Android / iOS layouts)
+  // ══════════════════════════════════════════════════════════════════════════
+
+  /// fullscreen1 — top metadata | Expanded media | bottom CTA
+  Widget _buildFullscreen1Shimmer() {
+    return _buildLarge1Shimmer();
+  }
+
+  /// fullscreen2 — top CTA | metadata | Expanded media
+  Widget _buildFullscreen2Shimmer() {
+    return _buildLarge2Shimmer();
+  }
+
+  /// fullscreen3 — full-bleed media + bottom overlay stack
+  Widget _buildFullscreen3Shimmer() {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Container(color: shimmerStyle.onBgColor),
+        Positioned(
+          top: 12,
+          left: 12,
+          child: _adBadge(),
+        ),
+        Positioned(
+          left: 12,
+          right: 12,
+          bottom: 12,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: shimmerStyle.onBgColor,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(height: 18, color: shimmerStyle.onBgColor),
+                        const SizedBox(height: 6),
+                        Container(height: 12, color: shimmerStyle.onBgColor),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Container(width: 56, height: 10, color: shimmerStyle.onBgColor),
+                  const SizedBox(width: 6),
+                  Container(width: 40, height: 10, color: shimmerStyle.onBgColor),
+                  const Spacer(),
+                  Container(width: 36, height: 10, color: shimmerStyle.onBgColor),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Container(
+                height: 52,
+                decoration: BoxDecoration(
+                  color: shimmerStyle.onBgColor,
+                  borderRadius: BorderRadius.circular(style.buttonCornerRadius),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// fullscreen4 — top half media | bottom half metadata + CTA
+  Widget _buildFullscreen4Shimmer() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(child: Container(color: shimmerStyle.onBgColor)),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(width: 56, height: 56, color: shimmerStyle.onBgColor),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              _adBadge(),
+                              const SizedBox(width: 4),
+                              Expanded(child: Container(height: 16, color: shimmerStyle.onBgColor)),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Container(height: 12, color: shimmerStyle.onBgColor),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Container(width: 60, height: 10, color: shimmerStyle.onBgColor),
+                              const SizedBox(width: 6),
+                              Container(width: 36, height: 10, color: shimmerStyle.onBgColor),
+                              const Spacer(),
+                              Container(width: 36, height: 10, color: shimmerStyle.onBgColor),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                Container(
+                  height: 52,
+                  decoration: BoxDecoration(
+                    color: shimmerStyle.onBgColor,
+                    borderRadius: BorderRadius.circular(style.buttonCornerRadius),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// fullscreen5 — top CTA | Expanded media | bottom icon + text
+  Widget _buildFullscreen5Shimmer() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          height: 52,
+          decoration: BoxDecoration(
+            color: shimmerStyle.onBgColor,
+            borderRadius: BorderRadius.circular(style.buttonCornerRadius),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Expanded(child: Container(color: shimmerStyle.onBgColor)),
+        const SizedBox(height: 12),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(width: 52, height: 52, color: shimmerStyle.onBgColor),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      _adBadge(),
+                      const SizedBox(width: 4),
+                      Expanded(child: Container(height: 14, color: shimmerStyle.onBgColor)),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Container(height: 12, color: shimmerStyle.onBgColor),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Container(width: 56, height: 10, color: shimmerStyle.onBgColor),
+                      const SizedBox(width: 6),
+                      Container(width: 36, height: 10, color: shimmerStyle.onBgColor),
+                      const Spacer(),
+                      Container(width: 36, height: 10, color: shimmerStyle.onBgColor),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }

@@ -247,6 +247,32 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
                               advertiserView: advertiserView, ratingView: ratingView,
                               priceView: priceView, actionButton: actionButton, padding: padding)
 
+        } else if type == "fullscreen1" {
+            applyLayoutFullscreen1(adView: adView, iconView: iconView, badgeView: badgeView,
+                                   headlineView: headlineView, bodyView: bodyView,
+                                   advertiserView: advertiserView, ratingView: ratingView,
+                                   priceView: priceView, actionButton: actionButton, padding: padding)
+        } else if type == "fullscreen2" {
+            applyLayoutFullscreen2(adView: adView, iconView: iconView, badgeView: badgeView,
+                                     headlineView: headlineView, bodyView: bodyView,
+                                     advertiserView: advertiserView, ratingView: ratingView,
+                                     priceView: priceView, actionButton: actionButton, padding: padding)
+        } else if type == "fullscreen3" {
+            applyLayoutFullscreen3(adView: adView, iconView: iconView, badgeView: badgeView,
+                                     headlineView: headlineView, bodyView: bodyView,
+                                     advertiserView: advertiserView, ratingView: ratingView,
+                                     priceView: priceView, actionButton: actionButton, padding: padding)
+        } else if type == "fullscreen4" {
+            applyLayoutFullscreen4(adView: adView, iconView: iconView, badgeView: badgeView,
+                                     headlineView: headlineView, bodyView: bodyView,
+                                     advertiserView: advertiserView, ratingView: ratingView,
+                                     priceView: priceView, actionButton: actionButton, padding: padding)
+        } else if type == "fullscreen5" {
+            applyLayoutFullscreen5(adView: adView, iconView: iconView, badgeView: badgeView,
+                                     headlineView: headlineView, bodyView: bodyView,
+                                     advertiserView: advertiserView, ratingView: ratingView,
+                                     priceView: priceView, actionButton: actionButton, padding: padding)
+
         } else {
             // Default / Fallback
             applyLayoutDefault(adView: adView, iconView: iconView, badgeView: badgeView,
@@ -314,6 +340,7 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
 
         let isMediumTemplate = type == "medium1" || type == "medium2"
         let isLargeTemplate = type.hasPrefix("large")
+        let isFullscreenTemplate = type.hasPrefix("fullscreen")
         let isTemplateWithoutIcon = (type == "small2" || type == "small5" || type == "small6" || type == "small7" || type == "small8")
 
         if (nativeAd.icon == nil && !isTemplateWithoutIcon) {
@@ -324,7 +351,7 @@ public class GoogleNativeAdPlatformView: NSObject, FlutterPlatformView {
             iconView.heightAnchor.constraint(equalToConstant: 0).isActive = true
         }
 
-        if (isMediumTemplate || isLargeTemplate) && nativeAd.mediaContent == nil {
+        if (isMediumTemplate || isLargeTemplate || isFullscreenTemplate) && nativeAd.mediaContent == nil {
             adView.isHidden = true
             self.methodChannel.invokeMethod("onAdSized", arguments: ["height": 0.0])
             return adView

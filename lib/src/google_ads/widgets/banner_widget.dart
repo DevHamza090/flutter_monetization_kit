@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_monetization_kit/flutter_monetization_kit.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shimmer/shimmer.dart';
 import '../core/ads_utils.dart';
@@ -56,12 +57,15 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
   }
 
   Future<void> _checkAndLoadAd() async {
-    // 1. Validation Logic
-    // final bool canProcess = await AdUtils.canProcessAd();
-    // if (!canProcess) {
-    //   if (mounted) setState(() => _isLoading = false);
-    //   return;
-    // }
+
+    // 1. Validation Logic (Premium, Internet)
+    final validationReason = await AdUtils.validateAdProcess();
+    if (validationReason != null) {
+      _canShowAd = false;
+      _isLoading = false;
+      widget.callbacks?.onAdValidated?.call(validationReason);
+      return;
+    }
 
     // if screenRemote is false, don't show ad
     if (widget.screenRemote == false) {

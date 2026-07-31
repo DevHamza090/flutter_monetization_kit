@@ -22,7 +22,7 @@ class _NativesScreenState extends State<NativesScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 21, vsync: this);
+    _tabController = TabController(length: 26, vsync: this);
   }
 
   @override
@@ -61,6 +61,11 @@ class _NativesScreenState extends State<NativesScreen>
             Tab(text: 'Large 4'),
             Tab(text: 'Large 5'),
             Tab(text: 'Large 6'),
+            Tab(text: 'Full 1'),
+            Tab(text: 'Full 2'),
+            Tab(text: 'Full 3'),
+            Tab(text: 'Full 4'),
+            Tab(text: 'Full 5'),
             Tab(text: 'Custom Style'),
           ],
         ),
@@ -172,6 +177,26 @@ class _NativesScreenState extends State<NativesScreen>
             type: NativeType.large6,
             screenRemote: false,
           ),
+          _buildFullscreenNativeDemo(
+            title: 'Native Ad — Fullscreen 1',
+            type: NativeType.fullscreen1,
+          ),
+          _buildFullscreenNativeDemo(
+            title: 'Native Ad — Fullscreen 2',
+            type: NativeType.fullscreen2,
+          ),
+          _buildFullscreenNativeDemo(
+            title: 'Native Ad — Fullscreen 3',
+            type: NativeType.fullscreen3,
+          ),
+          _buildFullscreenNativeDemo(
+            title: 'Native Ad — Fullscreen 4',
+            type: NativeType.fullscreen4,
+          ),
+          _buildFullscreenNativeDemo(
+            title: 'Native Ad — Fullscreen 5',
+            type: NativeType.fullscreen5,
+          ),
           _buildNativeDemo(
             title: 'Native Ad - Custom Dark Style',
             type: NativeType.small1,
@@ -197,6 +222,45 @@ class _NativesScreenState extends State<NativesScreen>
           ),
         ],
       ),
+    );
+  }
+
+  /// Full width × height: fills the tab body (no [Card] shrink-wrap).
+  Widget _buildFullscreenNativeDemo({
+    required String title,
+    required NativeType type,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+          child: Text(
+            title,
+            style: Theme.of(context).textTheme.titleMedium,
+            textAlign: TextAlign.center,
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: Text(
+            'Uses MediaQuery height and width so the native layout matches the visible area.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.grey, fontSize: 12),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Expanded(
+          child: NativeWidget(
+            screenRemote: false,
+            androidAdUnit: _testAdUnitId,
+            iosAdUnit: _testAdUnitId,
+            type: type,
+            reloadAfterShow: true,
+            screenName: 'example_${type.name}',
+          ),
+        ),
+      ],
     );
   }
 

@@ -66,7 +66,13 @@ class GoogleNativeAdPlatformView(
 
     private fun buildNativeAdView(nativeAd: NativeAd, options: Map<String, Any?>?): NativeAdView {
         val type = options?.get("nativeType") as? String ?: "small1"
+        val isFullscreenTemplateEarly = type.startsWith("fullscreen")
         val layoutRes = when (type) {
+            "fullscreen5" -> R.layout.native_ad_fullscreen_5
+            "fullscreen4" -> R.layout.native_ad_fullscreen_4
+            "fullscreen3" -> R.layout.native_ad_fullscreen_3
+            "fullscreen2" -> R.layout.native_ad_fullscreen_2
+            "fullscreen1" -> R.layout.native_ad_fullscreen_1
             "small8" -> R.layout.native_ad_small_8
             "small7" -> R.layout.native_ad_small_7
             "small6" -> R.layout.native_ad_small_6
@@ -112,9 +118,13 @@ class GoogleNativeAdPlatformView(
         if (mediaView != null) {
             view.mediaView = mediaView
             
-            // Visual Polish: Rounded corners for MediaView
+            // Visual Polish: Rounded corners for MediaView (full-bleed fullscreen uses square corners)
             val density = context.resources.displayMetrics.density
-            val cornerRadius = 12f * density
+            val cornerRadius = when {
+                type == "fullscreen3" -> 0f
+                isFullscreenTemplateEarly -> 8f * density
+                else -> 12f * density
+            }
             mediaView.clipToOutline = true
             mediaView.outlineProvider = object : android.view.ViewOutlineProvider() {
                 override fun getOutline(view: View, outline: android.graphics.Outline) {
@@ -146,6 +156,7 @@ class GoogleNativeAdPlatformView(
         val isSmallTemplate = type.startsWith("small")
         val isMediumTemplate = type.startsWith("medium")
         val isLargeTemplate = type.startsWith("large")
+        val isFullscreenTemplate = type.startsWith("fullscreen")
 
         // Check icon requirement: small2, small4, small7, small8 do NOT have icons in layout
         val expectsIcon = !(type == "small2" || type == "small5" || type == "small6" || type == "small7" || type == "small8")
@@ -157,7 +168,7 @@ class GoogleNativeAdPlatformView(
 
         // Check media requirement: medium and large templates generally expect media
         // except possibly some specific ones? Most of our medium/large have ad_media.
-        if ((isMediumTemplate || isLargeTemplate) && nativeAd.mediaContent == null) {
+        if ((isMediumTemplate || isLargeTemplate || isFullscreenTemplate) && nativeAd.mediaContent == null) {
              view.visibility = View.GONE
              methodChannel.invokeMethod("onAdSized", mapOf("height" to 0.0))
              return view

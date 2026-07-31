@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../flutter_monetization_kit.dart';
-import '../callbacks/native_ad_callbacks.dart';
-import '../core/ads_registry.dart';
 import '../managers/native_ad_manager.dart';
 import 'native_shimmer.dart';
 
@@ -41,12 +39,15 @@ class NativeWidget extends StatefulWidget {
 class _NativeWidgetState extends State<NativeWidget> {
   bool _adLoaded = false;
   bool _adFailed = false;
+  bool _isValidating = true;
   double? _dynamicHeight;
+
+  static bool _isFullscreenType(NativeType type) => type.name.startsWith('fullscreen');
 
   @override
   void initState() {
     super.initState();
-    _loadOrGetAd();
+    _checkAndLoad();
   }
 
   @override
@@ -60,6 +61,31 @@ class _NativeWidgetState extends State<NativeWidget> {
     }
   }
 
+  /// New wrapper to handle the async validation from AdUtils
+  Future<void> _checkAndLoad() async {
+    setState(() => _isValidating = true);
+
+    final validationReason = await AdUtils.validateAdProcess();
+
+    if (validationReason != null) {
+      // If validation fails (Premium, No Internet, etc.)
+      widget.callback?.onAdValidated?.call(validationReason);
+      if (mounted) {
+        setState(() {
+          _isValidating = false;
+          _adFailed = true; // Hide the shimmer and return SizedBox.shrink
+        });
+      }
+      return;
+    }
+
+    // If validation passes, proceed with existing logic
+    if (mounted) {
+      setState(() => _isValidating = false);
+      _loadOrGetAd();
+    }
+  }
+
   void _loadOrGetAd() {
     _adFailed = false;
     final String finalAdUnitId = AdUtils.getAdUnitId(
@@ -67,9 +93,7 @@ class _NativeWidgetState extends State<NativeWidget> {
       androidAdUnit: widget.androidAdUnit,
       iosAdUnit: widget.iosAdUnit,
     );
-    bool isPreloaded = NativeAdManager.instance.isAdPreloaded(
-      widget.screenName,
-    );
+    bool isPreloaded = NativeAdManager.instance.isAdPreloaded(widget.screenName);
 
     if (isPreloaded) {
       setState(() {
@@ -137,16 +161,36 @@ class _NativeWidgetState extends State<NativeWidget> {
 
   @override
   Widget build(BuildContext context) {
+    // 1. Double check premium (Sync check for immediate UI update)
     if (AdsSettings.instance.isPremium) {
       return const SizedBox.shrink();
     }
 
-    final height = _dynamicHeight ?? _getHeightForType(widget.type);
+    // 2. While validating or if failed validation, show nothing or shimmer
+    if (_isValidating) {
+      final mq = MediaQuery.sizeOf(context);
+      final h = _isFullscreenType(widget.type) ? mq.height : _getHeightForType(widget.type);
+      return SizedBox(width: _isFullscreenType(widget.type) ? mq.width : null, height: h);
+    }
+
+    final mq = MediaQuery.sizeOf(context);
+    final height =
+        _isFullscreenType(widget.type) ? mq.height : (_dynamicHeight ?? _getHeightForType(widget.type));
 
     if (_adLoaded) {
+      if (_isFullscreenType(widget.type)) {
+        return SizedBox(
+          width: mq.width,
+          height: height,
+          child: ConstrainedBox(
+            constraints: BoxConstraints.tightFor(width: mq.width, height: height),
+            child: _buildPlatformView(),
+          ),
+        );
+      }
       return ConstrainedBox(
         constraints: BoxConstraints(
-          minWidth: 320, 
+          minWidth: 320,
           minHeight: _dynamicHeight != null ? height : 0,
           maxHeight: height,
         ),
@@ -154,11 +198,15 @@ class _NativeWidgetState extends State<NativeWidget> {
       );
     } else if (!_adFailed) {
       // Shimmer
-      return NativeShimmer(
-        type: widget.type,
-        style: widget.style,
-        shimmerStyle: widget.shimmerStyle,
+      return SizedBox(
+        width: _isFullscreenType(widget.type) ? mq.width : null,
         height: height,
+        child: NativeShimmer(
+          type: widget.type,
+          style: widget.style,
+          shimmerStyle: widget.shimmerStyle,
+          height: height,
+        ),
       );
     } else {
       return const SizedBox.shrink();
@@ -166,9 +214,7 @@ class _NativeWidgetState extends State<NativeWidget> {
   }
 
   Widget _buildPlatformView() {
-    final String targetCacheId = NativeAdManager.instance.getTargetCacheId(
-      widget.screenName,
-    );
+    final String targetCacheId = NativeAdManager.instance.getTargetCacheId(widget.screenName);
 
     String colorToHex(Color? color) {
       if (color == null) return '';
@@ -228,9 +274,7 @@ class _NativeWidgetState extends State<NativeWidget> {
       iosAdUnit: widget.iosAdUnit,
     );
 
-    final MethodChannel channel = MethodChannel(
-      'monetization_native_ad_view_$id',
-    );
+    final MethodChannel channel = MethodChannel('monetization_native_ad_view_$id');
     channel.setMethodCallHandler((call) async {
       switch (call.method) {
         case 'onAdSized':
@@ -282,10 +326,14 @@ class _NativeWidgetState extends State<NativeWidget> {
     if (type == NativeType.large4) return 280.0;
     if (type == NativeType.large5) return 280.0;
     if (type == NativeType.large6) return 280.0;
+    if (type == NativeType.fullscreen1) return 800.0;
+    if (type == NativeType.fullscreen2) return 800.0;
+    if (type == NativeType.fullscreen3) return 800.0;
+    if (type == NativeType.fullscreen4) return 800.0;
+    if (type == NativeType.fullscreen5) return 800.0;
     if (type.name.startsWith('small')) return 100.0;
     if (type.name.startsWith('medium')) return 250.0;
     if (type.name.startsWith('large')) return 350.0;
-    if (type.name.startsWith('fullscreen')) return double.infinity;
     return 110.0;
   }
 }
